@@ -12,14 +12,11 @@ client.on('ready', () => {
     console.log(`${client.user.username} has logged in.`)
 });
 
-
-
 client.on('message', async (message) => {   
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot) return;
     if (message.content.startsWith(COMMAND_PREFIX)) {
         await commandHandler(COMMAND_PREFIX, client, message);
     }
 })
-
 
 client.login(process.env.SPOTBOT_TOKEN);

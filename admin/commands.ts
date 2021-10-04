@@ -21,7 +21,6 @@ export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, ar
         message.delete();  
         str = str.substring(str.indexOf(";;message") + 10); 
         message.channel.send(str);
-
         if (message.attachments.size > 0) {
             message.attachments.forEach(element => {
                 message.channel.send(element);
