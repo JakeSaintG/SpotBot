@@ -11,7 +11,8 @@ export const helloKeywords =  [
 ]
 
 export const adminKeywords =  [
-    'message'
+    'message',
+    'contest-winner'
 ]
 
 export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, arg: string[]) => {
@@ -26,6 +27,12 @@ export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, ar
                 message.channel.send(element);
             });
         }  
+    }
+    
+    if(COMMAND_NAME === 'contest-winner'){
+        message.delete();
+        let winMessage: string = "_____ has won the contest!"
+        message.channel.send(winMessage);
     }
     
     if (helloKeywords.includes(COMMAND_NAME)) {
