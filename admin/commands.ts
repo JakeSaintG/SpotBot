@@ -17,7 +17,8 @@ export const adminKeywords =  [
 export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, arg: string[]) => {
     
     if (COMMAND_NAME === "message") {
-        let str: string = message.toString(); 
+        let str: string = message.toString();
+        message.delete();  
         str = str.substring(str.indexOf(";;message") + 10); 
         message.channel.send(str);
 
@@ -25,8 +26,7 @@ export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, ar
             message.attachments.forEach(element => {
                 message.channel.send(element);
             });
-        }
-        message.delete(); 
+        }  
     }
     
     if (helloKeywords.includes(COMMAND_NAME)) {
