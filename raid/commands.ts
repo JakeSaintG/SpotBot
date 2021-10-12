@@ -1,9 +1,11 @@
 import * as Discord from 'discord.js';
 
+//Keywords for using raid commands
 export const raidKeywords =  [
     'raid'
 ]
 
+//The raid command is a work in progress.
 export const raidCommands = (message: Discord.Message, COMMAND_NAME: string, arg: string[], client: Discord.Client) => {
     /*
     TODO: Allow the following commands
