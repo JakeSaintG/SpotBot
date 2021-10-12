@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js';
 import { IFinalists } from '../interfaces/IContest';
 
+//Keywords for using admin commands
 export const adminKeywords =  [
     'message',
     'contest-winner'
@@ -38,9 +39,9 @@ export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, ar
         try {
             const finalists: IFinalists = {
                 contestants: [
-                    {name: "JakeSaintG", entries: 1},
-                    {name: "Twistedship", entries: 1},
-                    {name: "PrincessPizza22", entries: 1}
+                    {name: "", entries: 0},
+                    {name: "", entries: 0},
+                    {name: "", entries: 0}
                 ]  
             };
             var declareWinner = (finalists: IFinalists) => {
@@ -60,5 +61,4 @@ export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, ar
             message.channel.send(`Hmm...Something isn't right. The contestants may not have been added correctly.`)
         }
     }
-
 }
