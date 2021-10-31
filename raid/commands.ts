@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js';
 
 //Keywords for using raid commands
-export const raidKeywords =  [
+export const raidKeywords: Array<String> =  [
     'raid'
 ]
 
