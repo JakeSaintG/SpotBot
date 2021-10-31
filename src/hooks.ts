@@ -1,8 +1,9 @@
 import * as Discord from 'discord.js';
 import { Client, Message, Permissions, TextChannel, VoiceChannel } from 'discord.js';
 import { adminKeywords, adminCommands } from '../admin/commands';
-import { helloKeywords, userCommands } from '../help/commands';
+import { helloKeywords, userCommands } from '../hello/commands';
 import { raidKeywords, raidCommands } from '../raid/commands';
+import { helpCommands, helpKeywords } from '../help/commands'
 
 export async function commandHandler(COMMAND_PREFIX: string, client: Client, message: Message) {
     const [COMMAND_NAME, ...arg] = message.content
@@ -25,6 +26,11 @@ export async function commandHandler(COMMAND_PREFIX: string, client: Client, mes
         if (raidKeywords.includes(COMMAND_NAME)) {
             console.log(`${message.member.user.tag} used user command "${COMMAND_NAME}"`) 
             raidCommands(message, COMMAND_NAME, arg, client) 
+        }
+        //Handles raid commands.
+        if (helpKeywords.includes(COMMAND_NAME)) {
+            console.log(`${message.member.user.tag} used user command "${COMMAND_NAME}"`) 
+            helpCommands(message, COMMAND_NAME, arg, client) 
         }
     } catch (error) {
         const embed = new Discord.MessageEmbed()

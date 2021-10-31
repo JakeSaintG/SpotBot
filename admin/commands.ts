@@ -2,17 +2,17 @@ import * as Discord from 'discord.js';
 import { IFinalists } from '../interfaces/IContest';
 
 //Keywords for using admin commands
-export const adminKeywords =  [
+export const adminKeywords: Array<String> =  [
     'message',
     'contest-winner'
 ]
 
 export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, arg: string[], client: Discord.Client) => {
     
-    if (COMMAND_NAME === "message") {
+    if (COMMAND_NAME === "message") { //need to utilize the adminKeywords array
         let str: string = message.toString();
         message.delete();  
-        str = str.substring(str.indexOf(";;message") + 10); 
+        str = str.substring(str.indexOf(`;;${COMMAND_NAME}`) + COMMAND_NAME.length + 3); 
         message.channel.send(str);
         if (message.attachments.size > 0) {
             message.attachments.forEach(element => {
@@ -21,7 +21,7 @@ export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, ar
         }  
     }
     
-    if(COMMAND_NAME === 'contest-winner'){
+    if(COMMAND_NAME === 'contest-winner'){ //need to utilize the adminKeywords array
         message.delete();
         /*
         TODO: Have contestants be pulled from/added to a JSON.
