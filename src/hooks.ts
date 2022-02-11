@@ -14,23 +14,18 @@ export async function commandHandler(COMMAND_PREFIX: string, client: Client, mes
     try { 
         //Handles commands used to get a greeting from SpotBot
         if (helloKeywords.includes(COMMAND_NAME)) {           
-            console.log(`${message.member.user.tag} used admin command "${COMMAND_NAME}"`) //These are getting redundant and I should probably build a logger...
+            console.log(`${message.member.user.tag} used command \"${COMMAND_NAME}\" from server: ${message.guild.id}`) //These are getting redundant and I should probably build a logger...
             userCommands(message, COMMAND_NAME, arg)        
         }
         //Handles commands for use by server Admins only
         if (adminKeywords.includes(COMMAND_NAME) && message.member.roles.cache.some(role => role.name === 'Admin')) {
-            console.log(`${message.member.user.tag} used admin command "${COMMAND_NAME}"`)           
+            console.log(`${message.member.user.tag} used admin command \"${COMMAND_NAME}\" from server: ${message.guild.name}`)           
             adminCommands(message, COMMAND_NAME, arg, client);                  
         }
         //Handles raid commands.
         if (raidKeywords.includes(COMMAND_NAME)) {
-            console.log(`${message.member.user.tag} used user command "${COMMAND_NAME}"`) 
+            console.log(`${message.member.user.tag} used user command \"${COMMAND_NAME}\" from server: ${message.guild.name}`) 
             raidCommands(message, COMMAND_NAME, arg, client) 
-        }
-        //Handles raid commands.
-        if (helpKeywords.includes(COMMAND_NAME)) {
-            console.log(`${message.member.user.tag} used user command "${COMMAND_NAME}"`) 
-            helpCommands(message, COMMAND_NAME, arg, client) 
         }
     } catch (error) {
         const embed = new Discord.MessageEmbed()
