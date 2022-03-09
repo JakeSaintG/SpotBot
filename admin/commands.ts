@@ -39,8 +39,6 @@ export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, ar
         try {
             const finalists: IFinalists = {
                 contestants: [
-                    {name: "", entries: 0},
-                    {name: "", entries: 0},
                     {name: "", entries: 0}
                 ]  
             };

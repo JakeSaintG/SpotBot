@@ -1,8 +1,9 @@
 import * as Discord from 'discord.js';
 import * as dotenv from 'dotenv';
 import { commandHandler } from './hooks';
-const axios = require('axios');
 dotenv.config();
+
+import { getRaidEvents } from '../events/commands';
 
 //Client extends BaseClient extends EventEmitter
 const client = new Discord.Client();
@@ -15,15 +16,6 @@ client.on('ready', () => {
     console.log(`${client.user.username} has logged in.`)
 });
 
-axios
-    .get('https://discord.com/api/guilds/941116114346323999/scheduled-events', {headers: {"Authorization": "Bot ODY5NDkxMzc5Nzc5MjkzMjU0.YP--8w.nQi1Yxpj9obWIftUeRPJCcNTfBk"}})
-    .then((res: { status: any }) => {
-        console.log(`statusCode: ${res}`)
-    })
-    .catch((error: { status: any }) => {
-        console.error(error)
-    })
-
 //Most commands to SpotBot are done by using a message.
 //This listens to all messages and sends it to the hooks if it is a command.
 client.on('message', async (message) => {   
@@ -32,5 +24,9 @@ client.on('message', async (message) => {
         await commandHandler(COMMAND_PREFIX, client, message);
     }
 })
+
+/*===================Test===================*/
+getRaidEvents();
+/*===================Test===================*/
 
 client.login(process.env.SPOTBOT_TOKEN);
