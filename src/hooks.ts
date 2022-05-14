@@ -34,9 +34,9 @@ export async function commandHandler(COMMAND_PREFIX: string, client: Client, mes
         }
     } catch (error) {
         const embed = new Discord.MessageEmbed()
-        .setDescription(`An unknown error occurred`)
-        .addField('Error', error.message);
-      message.channel.send(embed);
-      throw error;
+            .setDescription(`An unknown error occurred`)
+            .addField('Error', error.message);
+        message.channel.send(embed);
+        throw error;
     }
 }
