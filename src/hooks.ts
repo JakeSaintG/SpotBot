@@ -1,10 +1,7 @@
 import * as Discord from 'discord.js'
 import {
     Client,
-    Message,
-    Permissions,
-    TextChannel,
-    VoiceChannel,
+    Message
 } from 'discord.js'
 import { adminKeywords, adminCommands } from './admin/commands'
 import { helloKeywords, userCommands } from './hello/commands'
@@ -25,7 +22,7 @@ export async function commandHandler(
         //Handles commands used to get a greeting from SpotBot
         if (helloKeywords.includes(COMMAND_NAME)) {
             console.log(
-                `${message.member.user.tag} used admin command "${COMMAND_NAME}"`
+                `${message.member.user.tag} used command "${COMMAND_NAME}"`
             ) //These are getting redundant and I should probably build a logger...
             userCommands(message, COMMAND_NAME, arg)
         }
