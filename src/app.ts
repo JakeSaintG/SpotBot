@@ -2,7 +2,7 @@ import { commandHandler } from './hooks'
 
 import * as Discord from 'discord.js'
 import * as dotenv from 'dotenv'
-import { constructLeaveMessage } from './app.services'
+import { constructLeaveMessage, constructWelcomeMessage } from './app.services'
 
 dotenv.config()
 const client = new Discord.Client()
@@ -16,6 +16,8 @@ client.on('ready', () => {
 
 //Listening for commands
 client.on('message', async (message) => {
+    //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
         return
     if (message.content.startsWith(COMMAND_PREFIX)) {
@@ -25,16 +27,17 @@ client.on('message', async (message) => {
 
 // Hotfix requested by admins
 // TODO: add tests, clean up
-// client.on('guildMemberAdd', (member) => {
-//     //TODO: Allow admin to set welcome channel via command
-//     const welcomeChannel = client.channels.cache.find(
-//         (channel: Discord.TextChannel) => channel.name === 'member-welcome'
-//     ).id;
+client.on('guildMemberAdd', (member) => {
+    //TODO: Allow admin to set welcome channel via command
+    const welcomeChannel = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'member-welcome'
+    ).id;
+
+    // TODO: Allow welcome message to be set via config
+    let welcomeMessage = constructWelcomeMessage(member);
     
-//     (client.channels.cache.get(welcomeChannel) as Discord.TextChannel).send(
-//         `${member.user.tag} joined!`
-//     )
-// })
+    // (client.channels.cache.get(welcomeChannel) as Discord.TextChannel).send(welcomeMessage);
+})
 
 
 // Hotfix requested by admins
