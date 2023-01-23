@@ -34,9 +34,9 @@ client.on('guildMemberAdd', (member) => {
     ).id;
 
     // TODO: Allow welcome message to be set via config
-    let welcomeMessage = constructWelcomeMessage(member);
+    let welcomeMessage = constructWelcomeMessage(member, client);
     
-    // (client.channels.cache.get(welcomeChannel) as Discord.TextChannel).send(welcomeMessage);
+    (client.channels.cache.get(welcomeChannel) as Discord.TextChannel).send(welcomeMessage);
 })
 
 
