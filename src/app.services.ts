@@ -66,7 +66,7 @@ const hardCodedWelcome = (client: Discord.Client): string => {
     return `Thanks for joining us! We are so happy you are here!
 
 Here are just a couple of things to help get you started:
-• Please read our <#${rules}> thoroughly, and go to the <#${roster}> to tell us your name and what team you're on in Pok.
+• Please read our <#${rules}> thoroughly, and go to the <#${roster}> to tell us your name and what team you're on in Pokémon GO.
 • Post in <#${friendCodes}>, and let us know your code and game name so we can add you. 
 • We raid often! Check the raid channels for your respective location and tap your way to victory! 
 • Feel free to ask <#${questions}>.
