@@ -53,7 +53,7 @@ client.on('guildMemberRemove', (member) => {
 
     let leaveMessage = constructLeaveMessage(member, adminRoleId);
     
-    (client.channels.cache.get(logChannel) as Discord.TextChannel).send(leaveMessage);
+    // (client.channels.cache.get(logChannel) as Discord.TextChannel).send(leaveMessage);
 })
 
 client.login(process.env.SPOTBOT_TOKEN);

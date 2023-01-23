@@ -1,51 +1,87 @@
 import * as Discord from 'discord.js'
 
+// This is SUPER TEMPORARY!
+// TODO: Remove hard coded welcome message
+// TODO: Allow admin to set welcome image via ;;configure -welcome arg
+// TODO: Allow stored configurations to be stored as a file
 export const constructWelcomeMessage = (
-    member: Discord.GuildMember | Discord.PartialGuildMember
+    member: Discord.GuildMember | Discord.PartialGuildMember,
+    client: Discord.Client
 ) => {
 
-    const rules = "";
-    const roster = "";
-    const friendCodes = "";
-    const questions = "";
-    const raidEast = "";
-    const raidWest = "";
-    const raidCental = "";
-    const raidAround = "";
-    const events = "";
-    const flex = "";
-    const trades = "";
-    const communityDay = "";
-    const battle = "";
-    const research = "";
-    const chat = "";
+    const welcomeUser = `Hey <@${member.user.id}>, welcome to ${client.guilds.cache.first().name}!`;
+    //In the future, this will be assigned to a welcome message that the user can configure
+    const customWelcome = hardCodedWelcome(client);
 
+    return `
+${welcomeUser}
 
-    let m = `
-Hey ${member.user.tag}, welcome to The PokeSpot!
+${customWelcome}`
 
-Thanks for joining us! We are so happy you are here!
+}
+
+const hardCodedWelcome = (client: Discord.Client): string => {
+
+    // These fields are super hacked together and are delicate...this is temporary
+    const rules = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'rules'
+    ).id;
+
+    const roster = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'roster'
+    ).id;
+
+    const friendCodes = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'friend-codes'
+    ).id;
+
+    const questions = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'questions'
+    ).id;
+
+    const events = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'events'
+    ).id;
+
+    const flex = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'flex-📷'
+    ).id;
+
+    const trades = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'trades'
+    ).id;
+
+    const communityDay = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'community-day'
+    ).id;
+
+    const research = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'research'
+    ).id;
+
+    const chat = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'chat'
+    ).id;
+
+    return `Thanks for joining us! We are so happy you are here!
 
 Here are just a couple of things to help get you started:
-• Please read our <#${rules}> thoroughly, and go to the <#${roster}> to tell us your name and what team you're on.
-• Post in <#${friendCodes}> , and let us know your code and game name so we can add you. 
-• If you're looking to post locations and/or find raids with everyone else, we have 4 locations <#${raidEast}> (Kentucky), <#${raidCental}> (Texas), <#${raidWest}> (California) and a special <#${raidAround}> (for international raids)
+• Please read our <#${rules}> thoroughly, and go to the <#${roster}> to tell us your name and what team you're on in Pok.
+• Post in <#${friendCodes}>, and let us know your code and game name so we can add you. 
+• We raid often! Check the raid channels for your respective location and tap your way to victory! 
 • Feel free to ask <#${questions}>.
-• If you see a news on an upcoming event and it has not been posted, then please share in <#${events}>. 
+• If you see a news on an upcoming event, and it has not been posted, then please share in <#${events}>. 
 
-Check out these other tabs too!
-• <#${flex}>, <#${trades}>, <#${communityDay}>, <#${battle}>, <#${research}>, <#${chat}> 
+Check out these other channels too!
+• <#${flex}>, <#${trades}>, <#${communityDay}>, <#${research}>, <#${chat}> 
 
-If you don't want 𝐂𝐎𝐍𝐒𝐓𝐀𝐍𝐓 𝐍𝐎𝐓𝐈𝐅𝐈𝐂𝐀𝐓𝐈𝐎𝐍𝐒? 𝐅𝐄𝐄𝐋 𝐅𝐑𝐄𝐄 𝐓𝐎 𝐌𝐔𝐓𝐄.
-• Just hit the 🛎️ icon in the upper right-hand corner.
-•  or simply go to settings, notifications and mute a particular channel. 
+Don't want certain notifications? 𝐅𝐄𝐄𝐋 𝐅𝐑𝐄𝐄 𝐓𝐎 𝐌𝐔𝐓𝐄.
+• Text channels can be muted individually if you aren't interested in a specific topic.
+• Server notifications can be mangaed by hitting the 🛎️ icon in the upper right-hand corner.
 
-ENJOY!!!
-    `;
-
-    //swap to m when done
-    return `${member.user.tag} joined!`;
+ENJOY!!!`
 };
+
 
 export const constructLeaveMessage = (
     member: Discord.GuildMember | Discord.PartialGuildMember,
