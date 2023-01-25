@@ -7,6 +7,8 @@ export const adminKeywords: Array<String> =  [
     'contest-winner'
 ]
 
+// In my time as a nascent dev, I made these giant and untestable functions
+    // TODO: fix that
 export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, arg: string[], client: Discord.Client) => {
     
     if (COMMAND_NAME === "message") { //need to utilize the adminKeywords array
@@ -62,3 +64,8 @@ export const adminCommands = (message: Discord.Message, COMMAND_NAME: string, ar
         }
     }
 }
+
+//Setting up long over-due unit tests
+export const testFn = (input: string) => {
+    return `${input} was received`
+};

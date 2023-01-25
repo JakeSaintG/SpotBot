@@ -17,6 +17,8 @@ const tips: Array<ITip> = [ // TODO: Move to JSON
     {tipNumber: 5, tip: "Don't claim your research breakthrough unless you know what it currently is and you want it."}
 ]
 
+// In my time as a nascent dev, I made these giant and untestable functions
+    // TODO: fix that
 export const helpCommands = (message: Discord.Message, COMMAND_NAME: string, arg: string[], client: Discord.Client) => { 
     if (COMMAND_NAME.startsWith('tip')) { //need to utilize the adminKeywords array
         // message.channel.send("received");

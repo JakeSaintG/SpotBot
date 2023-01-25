@@ -25,3 +25,5 @@ export const userCommands = (message: Discord.Message, COMMAND_NAME: string, arg
         message.channel.send(response);
     }    
 }
+// In my time as a nascent dev, I made these giant and untestable functions
+    // TODO: fix that

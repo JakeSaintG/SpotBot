@@ -11,7 +11,13 @@ const client = new Discord.Client()
 const COMMAND_PREFIX: string = ';;'
 
 client.on('ready', () => {
-    console.log(`${client.user.username} has logged in.`)
+    
+    const logChannel = client.channels.cache.find(
+        (channel: Discord.TextChannel) => channel.name === 'bot-logs'
+    ).id;
+
+    (client.channels.cache.get(logChannel) as Discord.TextChannel).send(`${client.user.username} has logged in!`);
+    console.log(`${client.user.username} has logged in.`);
 })
 
 //Listening for commands
