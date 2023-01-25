@@ -52,16 +52,13 @@ npm start
     - should return PoGo name, team, player ID, alt (if included), alt ID (if included)
     - Should process the username but use the discord user-id to search for the stored player info to prevent mixup.
     - Helpful for coordinating raids, moderation, etc.
-- ;;raid - see commands.ts under the "raid" folder for more details.
-    - Allow the following commands
-        - ;;raid <openslots>
-        - ;;raid <openslots> <pokemon>
-        - ;;raid <openslots> <pokemon> <minutes left>
-        - ;;raid <openslots> <minutes left>
-    - Should
-        - allow user to specify number of available slots
-        - allow user to specify Pokemon being raided 
-        - message should be removed after 1hr (setTimeOut(){};)
-        - added emoji's should populate slots up until raidSlots.length is reached.
-        - a user removing their emoji should remove the removers name from the list
-        - SpotBot should NOT Count its own emoji for any work being done
+- ;;configure *arg*
+    - should allow an argument to configure certain things about the bot.
+        - welcome: The welcome message for the server including user and channel tags
+            - where the welcome message goes (currently hard coded)
+            - should record ids and check against them any time a text channels/user id changes
+        - leave-message: the user leaving message 
+            - where the message goes (I'm fine with a static, unchangable leave message)
+        - admin-role: the name of the admin role
+            - should listen for changes to this name and ping the logs channel that @admin tags may not work anymore
+            - could also find away to just always grab the highest level permission role and not let it be configured
