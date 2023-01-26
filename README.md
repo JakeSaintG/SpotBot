@@ -1,6 +1,6 @@
 # SpotBot
 ## A Discord bot, written in _TypeScript_, for use on the PokeSpot server. 
-##### The PokeSpot is a server that is centered around Pokemon GO and development of this bot will incorporate aspects of the game into its features.
+##### The PokeSpot is a server that is centered around Pokemon GO and development of this bot will incorporate aspects of the game into its features. The hope is to create a general-use bot that can features in line with a Pokemon GO focused user base.
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
 ## Dev Dependencies
@@ -30,7 +30,8 @@ npm start
 -- **This is a work in progress**
 
 ## Special Thanks
-- My fellow admins of the SpotBot for finding way to break me bot! No seriously. It's helpful!
+- My fellow admins of the SpotBot for finding ways to break me bot! No seriously. It's helpful!
+- Tim Slaven for feature ideas, QA, and for reminding me to actually work on it.
 
 ## Known Issues
 - The ;;hello command and args are a little clunky.
