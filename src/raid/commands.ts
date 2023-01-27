@@ -6,7 +6,7 @@ export const raidKeywords: Array<String> =  [
 ]
 
 //The raid command is a work in progress.
-export const raidCommands = (message: Discord.Message, COMMAND_NAME: string, arg: string[], client: Discord.Client) => {
+export const raidCommands = (message: Discord.Message, COMMAND_NAME: string, messageContent: string, client: Discord.Client) => {
     /*
     TODO: Allow the following commands
         ;;raid <openslots>

@@ -12,12 +12,12 @@ export const helloKeywords =  [
 ]
 
 //SpotBot's first command! A simple Hello.
-export const userCommands = (message: Discord.Message, COMMAND_NAME: string, arg: string[]) => {
-    if (arg.length === 0) {
+export const userCommands = (message: Discord.Message, COMMAND_NAME: string, messageContent: string) => {
+    if (messageContent.length === 0) {
         message.channel.send("Hello!")
-    } else if (arg.length > 0) {
+    } else if (messageContent.length > 0) {
         let response: string = `Hello`;
-        if (arg.toString().toLowerCase().includes("spotbot")) {
+        if (messageContent.toString().toLowerCase().includes("spotbot")) {
             let sender = message.author.username
             response += `, ${sender}`
         }  
