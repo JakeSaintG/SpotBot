@@ -1,4 +1,4 @@
-import { testFn } from '../../src/admin/commands'
+import { testFn } from '../../src/admin/contestCommands'
 import { assert } from 'chai'
 
 //Temporary; For set up of Mocha/Chai

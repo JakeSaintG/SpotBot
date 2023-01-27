@@ -1,8 +1,9 @@
-import { commandHandler } from './hooks'
+import * as Discord from 'discord.js';
+import * as dotenv from 'dotenv';
 
-import * as Discord from 'discord.js'
-import * as dotenv from 'dotenv'
-import { constructLeaveMessage, constructWelcomeMessage } from './app.services'
+import { commandHandler } from './hooks';
+import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
+import { getLogChannelIdFromClient } from './services/logger';
 
 dotenv.config()
 const client = new Discord.Client()
@@ -11,19 +12,13 @@ const client = new Discord.Client()
 const COMMAND_PREFIX: string = ';;'
 
 client.on('ready', () => {
-    
-    const logChannel = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'bot-logs'
-    ).id;
-
-    (client.channels.cache.get(logChannel) as Discord.TextChannel).send(`${client.user.username} has logged in!`);
+    getLogChannelIdFromClient(client).send(`${client.user.username} has logged in!`);
     console.log(`${client.user.username} has logged in.`);
 })
 
 //Listening for commands
 client.on('message', async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
         return
     if (message.content.startsWith(COMMAND_PREFIX)) {
@@ -35,31 +30,21 @@ client.on('message', async (message) => {
 // TODO: add tests, clean up
 client.on('guildMemberAdd', (member) => {
     //TODO: Allow admin to set welcome channel via command
-    const welcomeChannel = client.channels.cache.find(
+    const welcomeChannel = client.channels.cache.get(client.channels.cache.find(
         (channel: Discord.TextChannel) => channel.name === 'member-welcome'
-    ).id;
+    ).id) as Discord.TextChannel;
 
     // TODO: Allow welcome message to be set via config
     let welcomeMessage = constructWelcomeMessage(member, client);
     
-    (client.channels.cache.get(welcomeChannel) as Discord.TextChannel).send(welcomeMessage);
+    welcomeChannel.send(welcomeMessage);
 })
-
 
 // Hotfix requested by admins
 // TODO: add tests, clean up
 client.on('guildMemberRemove', (member) => {
-    //TODO: Allow admin to set leave channel via command
-
-    const logChannel = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'bot-logs'
-    ).id
-    const server = client.guilds.cache.get(member.guild.id)
-    const adminRoleId = server.roles.cache.find((r) => r.name == 'Admin').id
-
-    let leaveMessage = constructLeaveMessage(member, adminRoleId);
-    
-    (client.channels.cache.get(logChannel) as Discord.TextChannel).send(leaveMessage);
+    const adminRoleIdFromServer = client.guilds.cache.get(member.guild.id).roles.cache.find((r) => r.name == 'Admin').id;
+    getLogChannelIdFromClient(client).send(constructLeaveMessage(member, adminRoleIdFromServer));
 })
 
 client.login(process.env.SPOTBOT_TOKEN);

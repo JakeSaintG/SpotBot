@@ -82,7 +82,6 @@ Don't want certain notifications? 𝐅𝐄𝐄𝐋 𝐅𝐑𝐄𝐄 𝐓𝐎 �
 ENJOY!!!`
 };
 
-
 export const constructLeaveMessage = (
     member: Discord.GuildMember | Discord.PartialGuildMember,
     adminRoleId: string
