@@ -4,9 +4,13 @@
   "description": "A Discord bot for The PokeSpot!",
   "main": "build/app.js",
   "scripts": {
-    "test": "tsc && mocha './build/tests/*/*.spec.*' --recursive --timeout 60000 --exit",
-    "start": "node ./build/app.js",
-    "dev": "nodemon"
+    "test": "tsc && mocha './build/tests/*/*.spec.*' --recursive --timeout 60000 --exit && ng test",
+    "start": "node ./build/src/app.js",
+    "dev": "nodemon",
+    "serve": "ng serve",
+    "build": "ng build",
+    "build-gh": "ng build --deploy-url /PokeUtils/ --base-href /PokeUtils/",
+    "watch": "ng build --watch --configuration development"
   },
   "author": "JakeSaintG",
   "license": "ISC",
