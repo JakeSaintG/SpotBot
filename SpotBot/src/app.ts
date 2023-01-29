@@ -5,8 +5,8 @@ import { commandHandler } from './hooks';
 import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
 import { getLogChannelIdFromClient } from './services/logger';
 
-dotenv.config()
-const client = new Discord.Client()
+dotenv.config();
+const client = new Discord.Client();
 
 //Messages will use ";;" to indicate a command. ex: ";;message" or "";;raid"
 const COMMAND_PREFIX: string = ';;'
