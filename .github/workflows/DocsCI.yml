@@ -24,23 +24,20 @@ jobs:
     
     runs-on: ubuntu-latest
 
-    # defaults:
-    #   run:
-    #     working-directory: './SpotBot-Docs'
+    defaults:
+      run:
+        working-directory: './SpotBot-Docs'
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: Experiment
-      run: |
-        cd SpotBot-Docs
     
     - name: Use Node.js 17.x
       uses: actions/setup-node@v3
       with:
         node-version: 17.x
         cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
     
     - name: Cache node modules
       id: cache-nodemodules
@@ -49,7 +46,7 @@ jobs:
         cache-name: cache-node-modules
       with:
         path: node_modules 
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/SpotBot-Docs/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
