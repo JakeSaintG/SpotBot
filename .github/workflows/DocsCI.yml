@@ -37,7 +37,7 @@ jobs:
       with:
         node-version: 17.x
         cache: 'npm'
-        cache-dependency-path: '**/Spotbot-Docs/package-lock.json'
+        cache-dependency-path: '**/SpotBot-Docs/package-lock.json'
     
     - name: Cache node modules
       id: cache-nodemodules
