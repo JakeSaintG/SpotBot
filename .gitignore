@@ -4,6 +4,13 @@ build/
 dist/
 .env
 .DS_Store
-.angular/
-.angular/cache
-/.angular
+
+# misc
+*/.angular/cache
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
