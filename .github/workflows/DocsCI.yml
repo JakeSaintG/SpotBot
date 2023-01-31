@@ -41,7 +41,7 @@ jobs:
     
     - name: Cache node modules
       id: cache-nodemodules
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       env:
         cache-name: cache-node-modules
       with:
@@ -65,7 +65,7 @@ jobs:
     #   run: npm test
     
     - name: Setup Pages
-      uses: actions/configure-pages@v1
+      uses: actions/configure-pages@v3
     
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1
