@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "build-gh": "ng build --deploy-url /SpotBot-Docs/ --base-href /SpotBot-Docs/",
+    "build-gh": "ng build --deploy-url /SpotBot/ --base-href /SpotBot/",
     "test": "ng test"
   },
   "private": true,
