@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+@import "@healthcatalyst/cashmere/scss/cashmere";
+@import "./_cashmere-overrides.scss";
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.navbar-app img {
+    height: 45px !important;
+}
+
+.navbar-brand img {
+    height: 55px !important;
+}
+
+.navbar-link a {
+    color: white;
+}
