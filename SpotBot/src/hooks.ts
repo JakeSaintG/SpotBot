@@ -1,9 +1,8 @@
 import * as Discord from 'discord.js'
-import { Client, Message } from 'discord.js';
+import { Client, Message } from 'discord.js'
 import { adminKeywords, routeAdminCommands } from './admin/routeAdminCommands'
 import { helloKeywords, userCommands } from './hello/commands'
-import { raidKeywords, raidCommands } from './raid/commands'
-import { helpCommands, helpKeywords } from './help/commands'
+import { routeHelpCommands, helpKeywords } from './help/routeHelpCommands'
 
 export async function commandHandler(
     COMMAND_PREFIX: string,
@@ -13,9 +12,14 @@ export async function commandHandler(
     const COMMAND_NAME = message.content
         .trim()
         .substring(COMMAND_PREFIX.length)
-        .split(/\s+/)[0];
+        .split(/\s+/)[0]
 
-    const messageContent = message.content.substring(COMMAND_PREFIX.length + message.content.indexOf(`;;${COMMAND_NAME}`) + COMMAND_NAME.length + 1);
+    const messageContent = message.content.substring(
+        COMMAND_PREFIX.length +
+            message.content.indexOf(`;;${COMMAND_NAME}`) +
+            COMMAND_NAME.length +
+            1
+    )
     console.log(messageContent)
 
     try {
@@ -34,27 +38,21 @@ export async function commandHandler(
             console.log(
                 `${message.member.user.tag} used admin command "${COMMAND_NAME}"`
             )
-            
+
             routeAdminCommands(message, COMMAND_NAME, messageContent, client)
         }
-        //Handles raid commands.
-        if (raidKeywords.includes(COMMAND_NAME)) {
-            console.log(
-                `${message.member.user.tag} used user command "${COMMAND_NAME}"`
-            )
-            raidCommands(message, COMMAND_NAME, messageContent, client)
-        }
+
         //Handles help commands.
         if (helpKeywords.includes(COMMAND_NAME)) {
             console.log(
                 `${message.member.user.tag} used user command "${COMMAND_NAME}"`
             )
-            helpCommands(message, COMMAND_NAME, messageContent, client)
+            routeHelpCommands(message, COMMAND_NAME, messageContent, client)
         }
     } catch (error) {
         const embed = new Discord.MessageEmbed()
             .setDescription(`An unknown error occurred`)
             .addField('Error', error.message)
-        message.channel.send(embed);
+        message.channel.send(embed)
     }
 }
