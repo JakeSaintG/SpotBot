@@ -1,5 +1,5 @@
-import * as Discord from 'discord.js'
-import { IFinalists } from '../interfaces/IContest'
+import * as Discord from 'discord.js';
+import { IFinalists } from '../interfaces/IContest';
 
 /*
 TODO: Have contestants be pulled from/added to a JSON.
