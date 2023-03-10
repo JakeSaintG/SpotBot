@@ -77,7 +77,7 @@ Check out these other channels too!
 
 Don't want certain notifications? 𝐅𝐄𝐄𝐋 𝐅𝐑𝐄𝐄 𝐓𝐎 𝐌𝐔𝐓𝐄.
 • Text channels can be muted individually if you aren't interested in a specific topic.
-• Server notifications can be mangaed by hitting the 🛎️ icon in the upper right-hand corner.
+• Server notifications can be managed by hitting the 🛎️ icon in the upper right-hand corner.
 
 ENJOY!!!`
 };
