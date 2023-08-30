@@ -5,7 +5,7 @@ class FileReaderWriter {
         this.fileName = name
     }
 
-    public getFIleName(): string {
+    public getFileName(): string {
         return this.fileName
     }
 }
