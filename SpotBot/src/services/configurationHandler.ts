@@ -1,3 +1,25 @@
+const fs = require('fs');
+
+export class ConfigurationHandler {
+    public config = {};
+    
+    public constructor() {};
+
+    public loadConfig = () => {
+
+        fs.readFile('./config_dev.json', 'utf8', (error: any, data: string) => {
+            if (error) {
+                console.log(error)
+                return
+            }
+            this.config = JSON.parse(data);
+        })
+    };
+
+    checkForInitialConfig = () => {};
+}
+
+module.exports = {ConfigurationHandler};
 // initial configuration
     // check if initial config has happened
     // If not, create spotbot-config text channel
@@ -27,3 +49,4 @@
 // be able to update configuration
     // What would you like to configure? Type: "channels", "roles"
         // channel: Which channel would you like to configure? (Show two lists. Already configured channels will be listed under "Update". Not yet configured channels will be under "Add") 
+        
