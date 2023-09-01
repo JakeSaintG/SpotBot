@@ -1,37 +1,38 @@
-import * as Discord from 'discord.js';
-import * as dotenv from 'dotenv';
+import * as Discord from 'discord.js'
+import * as dotenv from 'dotenv'
 
-import { commandHandler } from './hooks';
-import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
-import { getLogChannelIdFromClient } from './services/logger';
-import { ConfigurationHandler } from './services/configurationHandler';
+import { commandHandler } from './hooks'
+import { constructLeaveMessage, constructWelcomeMessage } from './app.services'
+import { getLogChannelIdFromClient } from './services/logger'
+import { ConfigurationHandler } from './services/configurationHandler'
 
-dotenv.config();
-const CLIENT = new Discord.Client();
-const COMMAND_PREFIX: string = ';;';
+dotenv.config()
+const CLIENT = new Discord.Client()
+const COMMAND_PREFIX: string = ';;'
 
 //TODO: This should be available via dependancy injection. Figure out how to do that in Node.
-const configHandler = new ConfigurationHandler();
-configHandler.loadConfig();
+const configHandler = new ConfigurationHandler(CLIENT);
+configHandler.checkForInitialConfiguration();
+
 
 CLIENT.on('ready', () => {
     if (!(process.env.NODE_ENV || 'development')) {
         getLogChannelIdFromClient(CLIENT).send(
             `${CLIENT.user.username} has logged in!`
-        );
+        )
     }
 
-    console.log(`${CLIENT.user.username} has logged in.`);
+    console.log(`${CLIENT.user.username} has logged in.`)
 })
 
 //Listening for commands
 CLIENT.on('message', async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
-        return;
+        return
 
     if (message.content.startsWith(COMMAND_PREFIX))
-        await commandHandler(COMMAND_PREFIX, CLIENT, message);
+        await commandHandler(COMMAND_PREFIX, CLIENT, message)
 })
 
 // Hotfix requested by admins
@@ -45,12 +46,12 @@ CLIENT.on(
                 (channel: Discord.TextChannel) =>
                     channel.name === 'member-welcome'
             ).id
-        ) as Discord.TextChannel;
+        ) as Discord.TextChannel
 
         // TODO: Allow welcome message to be set via config
-        let welcomeMessage = constructWelcomeMessage(member, CLIENT);
+        let welcomeMessage = constructWelcomeMessage(member, CLIENT)
 
-        welcomeChannel.send(welcomeMessage);
+        welcomeChannel.send(welcomeMessage)
     }
 )
 
@@ -68,5 +69,7 @@ CLIENT.on(
         )
     }
 )
+
+
 
 CLIENT.login(process.env.SPOTBOT_TOKEN)

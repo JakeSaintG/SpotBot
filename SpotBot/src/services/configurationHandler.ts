@@ -1,22 +1,38 @@
+import * as Discord from 'discord.js'
 const fs = require('fs');
 
 export class ConfigurationHandler {
-    public config = {};
+    //todo: use IConfig interface
+    public config: any = {};
+    private client: Discord.Client;
     
-    public constructor() {};
+    public constructor(client: Discord.Client) {
+        this.loadConfig();
+        this.client = client;
+    };
 
-    public loadConfig = () => {
+    public loadConfig = (): void => {
+        this.config = JSON.parse(fs.readFileSync('./config_dev.json', 'utf8'));
+    };
 
-        fs.readFile('./config_dev.json', 'utf8', (error: any, data: string) => {
+    public loadConfigAsync = async (): Promise<void> => {
+        await fs.readFile('./config_dev.json', 'utf8', (error: any, data: string) => {
             if (error) {
-                console.log(error)
-                return
+                console.log(error);
+                return;
             }
             this.config = JSON.parse(data);
         })
+        return;
     };
 
-    checkForInitialConfig = () => {};
+    public checkForInitialConfiguration = async () => {
+        if(!this.config.initial_configuration)
+        {
+            console.log("Initial configuration not set. ");
+        };
+
+    };
 }
 
 module.exports = {ConfigurationHandler};
