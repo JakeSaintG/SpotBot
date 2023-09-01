@@ -1,141 +1,141 @@
 {
-    "initial-configuration": false,
-    "config-last-modified-dts": "",
+    "initial_configuration": false,
+    "config_last_modified_dts": "",
     "channels": {
-        "pkmn-go-specific-channels": {
-            "main-raid-channel": {
+        "pkmn_go_specific_channels": {
+            "main_raid_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "main-raid-info-channel": {
+            "main_raid_info_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "flex-channel": {
+            "flex_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "trade-channel": {
+            "trade_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "friend-code-channel": {
+            "friend_code_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "roster-channel": {
+            "roster_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "community-day-channel": {
+            "community_day_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             }
         },
-        "discord-general-channels": {
-            "main-admin-channel": {
+        "discord_general_channels": {
+            "main_admin_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "main-announcement-channel": {
+            "main_announcement_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "rules-channel": {
+            "rules_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "welcome-channel": {
+            "welcome_channel": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             },
-            "bot-logs": {
+            "bot_logs": {
                 "configured": false,
                 "name": "",
                 "id": "",
-                "default-channel-topic": "",
-                "custom-channel-topic": "",
-                "slow-mode": false,
-                "age-restricted-channel": false,
+                "default_channel_topic": "",
+                "custom_channel_topic": "",
+                "slow_mode": false,
+                "age_restricted_channel": false,
                 "roles": []
             }
         }
     },
     "roles": {
-        "pkmn-go-specific-roles": {
+        "pkmn_go_specific_roles": {
             "valor": "",
             "mystic": "",
             "instinct": ""
         },
-        "discord-general-channels": {
-            "admin-role": "",
-            "mod-role": ""
+        "discord_general_channels": {
+            "admin_role": "",
+            "mod_role": ""
         }
     }
 }
