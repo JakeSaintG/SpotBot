@@ -1,18 +1,18 @@
-import * as Discord from 'discord.js'
-import * as dotenv from 'dotenv'
+import * as Discord from 'discord.js';
+import * as dotenv from 'dotenv';
 
-import { commandHandler } from './hooks'
-import { constructLeaveMessage, constructWelcomeMessage } from './app.services'
-import { getLogChannelIdFromClient } from './services/logger'
-import { ConfigurationHandler } from './services/configurationHandler'
+import { commandHandler } from './hooks';
+import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
+import { getLogChannelIdFromClient } from './services/logger';
+import { ConfigurationHandler } from './services/configurationHandler';
 
-dotenv.config()
-const CLIENT = new Discord.Client()
-const COMMAND_PREFIX: string = ';;'
+dotenv.config();
+const CLIENT = new Discord.Client();
+const COMMAND_PREFIX: string = ';;';
 
 //TODO: This should be available via dependancy injection. Figure out how to do that in Node.
 const configHandler = new ConfigurationHandler(CLIENT);
-configHandler.checkForInitialConfiguration();
+
 
 
 CLIENT.on('ready', () => {
@@ -22,6 +22,7 @@ CLIENT.on('ready', () => {
         )
     }
 
+    configHandler.checkForInitialConfiguration();
     console.log(`${CLIENT.user.username} has logged in.`)
 })
 
