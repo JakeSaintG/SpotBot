@@ -56,6 +56,7 @@ export class ConfigurationHandler {
 
                     configChannel.send(`This channel will be auto-deleted in 5min. Feel free to delete it manually if you wish.`);
                     
+                    //TODO: wrap delete logic in own function
                     setTimeout(() => {
                         const checkForConfigChannel = guild.channels.cache.find(
                             (channel: Discord.TextChannel) => channel.id === configChannel.id
