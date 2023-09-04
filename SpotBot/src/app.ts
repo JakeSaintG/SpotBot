@@ -13,8 +13,6 @@ const COMMAND_PREFIX: string = ';;';
 //TODO: This should be available via dependancy injection. Figure out how to do that in Node.
 const configHandler = new ConfigurationHandler(CLIENT);
 
-
-
 CLIENT.on('ready', () => {
     if (!(process.env.NODE_ENV || 'development')) {
         getLogChannelIdFromClient(CLIENT).send(
@@ -70,7 +68,5 @@ CLIENT.on(
         )
     }
 )
-
-
 
 CLIENT.login(process.env.SPOTBOT_TOKEN)

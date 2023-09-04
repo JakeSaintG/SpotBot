@@ -1,12 +1,12 @@
 import * as Discord from 'discord.js'
 import { TextChannel } from 'discord.js';
-const { createHash } = require('crypto')
+import { IConfig } from '../interfaces/IConfig';
 const fs = require('fs');
 
 
 export class ConfigurationHandler {
     //todo: use IConfig interface
-    public config: any = {};
+    public config: IConfig;
     private client: Discord.Client;
     
     public constructor(client: Discord.Client) {
@@ -29,6 +29,22 @@ export class ConfigurationHandler {
         return;
     };
 
+    private deleteConfigChannelWithTimeout = (guild: Discord.Guild, configChannel: Discord.TextChannel, timeout: number) => {
+        setTimeout(() => {
+            const checkForConfigChannel = guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === configChannel.id);
+            
+            console.log("Checking if channel exists...");
+
+            if(checkForConfigChannel) {
+                console.log("Deleteing config channel.");
+                configChannel.delete('Deleting bot configuration channel.');
+            } else {
+                console.log("Config channel deleted by hand. Nothing to delete.");
+            }
+
+        }, timeout);
+    }
+
     public checkForInitialConfiguration = async () => {
         if(!this.config.initial_configuration)
         {
@@ -42,7 +58,7 @@ export class ConfigurationHandler {
             const configChannel = await guild.channels.create(configChannelNameString, { reason: 'For bot configuration,' })
                 .catch(console.error) as Discord.TextChannel;
 
-            configChannel.send(`Hey, ${adminRole}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".`);
+            configChannel.send(`Hey, ${adminRole}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".\r\n\r\nDO NOT DELETE THIS CHANNEL MANUALLY.`);
             
             const filter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
             
@@ -54,45 +70,12 @@ export class ConfigurationHandler {
                         configChannel.send(`That's okay! Maybe later. You may be prompted with this option again the next time the bot starts up.`);
                     }
 
-                    configChannel.send(`This channel will be auto-deleted in 5min. Feel free to delete it manually if you wish.`);
-                    
-                    //TODO: wrap delete logic in own function
-                    setTimeout(() => {
-                        const checkForConfigChannel = guild.channels.cache.find(
-                            (channel: Discord.TextChannel) => channel.id === configChannel.id
-                        );
-                        
-                        console.log("Checking if channel exists");
-                        if(checkForConfigChannel) {
-                            console.log("Deleteing config channel.");
-                            configChannel.delete('Deleting bot configuration channel.');
-                        } else {
-                            console.log("Config channel deleted by hand. Nothing to delete.");
-                        }
-
-                    }, 300000);
-                    
-                    return;
+                    configChannel.send(`This channel will be auto-deleted in 1 minute. Feel free to delete this channel manually now if you wish.`);
+                    this.deleteConfigChannelWithTimeout(guild, configChannel, 60000);
                 })
                 .catch(() => {
-                    configChannel.send('No answer after 5 minutes, operation canceled.\r\nThis channel will be auto-deleted in 5min.');
-
-                    setTimeout(() => {
-                        const checkForConfigChannel = guild.channels.cache.find(
-                            (channel: Discord.TextChannel) => channel.id === configChannel.id
-                        );
-                        
-                        console.log("Checking if channel exists");
-                        if(checkForConfigChannel) {
-                            console.log("Deleteing config channel.");
-                            configChannel.delete('Deleting bot configuration channel.');
-                        } else {
-                            console.log("Config channel deleted by hand. Nothing to delete.");
-                        }
-
-                    }, 300000);
-
-                    return;
+                    configChannel.send(`${adminRole} No answer after 5 minutes, operation canceled.\r\nThis channel will be auto-deleted in 1 minute.`);
+                    this.deleteConfigChannelWithTimeout(guild, configChannel, 300000);
                 });
         };
     };
