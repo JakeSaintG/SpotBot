@@ -39,6 +39,7 @@ CLIENT.on('message', async (message) => {
 CLIENT.on(
     'guildMemberAdd',
     (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+        
         //TODO: Allow admin to set welcome channel via command
         const welcomeChannel = CLIENT.channels.cache.get(
             CLIENT.channels.cache.find(

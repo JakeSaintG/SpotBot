@@ -8,6 +8,7 @@ export class ConfigurationHandler {
     //todo: use IConfig interface
     public config: IConfig;
     private client: Discord.Client;
+    private guild: Discord.Guild;
     private affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
     
     public constructor(client: Discord.Client) {
@@ -17,11 +18,6 @@ export class ConfigurationHandler {
 
     public loadConfig = (): void => {
         this.config = JSON.parse(fs.readFileSync('./config_dev.json', 'utf8'));
-    };
-
-    public updateConfig = (): void => {
-        console.log(this.config);
-        fs.writeFileSync('./config_dev.json', JSON.stringify(this.config, null, 2));
     };
 
     public loadConfigAsync = async (): Promise<void> => {
@@ -35,19 +31,31 @@ export class ConfigurationHandler {
         return;
     };
 
-    private deleteConfigChannelWithTimeout = (guild: Discord.Guild, configChannel: Discord.TextChannel, timeout: number) => {
+    public updateConfig = (): void => {
+        fs.writeFileSync('./config_dev.json', JSON.stringify(this.config, null, 2));
+    };
+
+    public updateConfigAsync = (): void => {
+        fs.writeFile('./config_dev.json', JSON.stringify(this.config, null, 2), (e: Error) => {
+            if (e)
+                console.log("Error updating config file.");
+            else {
+                console.log("Config file written successfully.");
+            }
+        });
+    };
+
+    private deleteConfigChannelWithTimeout = (configChannel: Discord.TextChannel, timeout: number) => {
         setTimeout(() => {
-            const checkForConfigChannel = guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === configChannel.id);
+            const checkForConfigChannel = this.guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === configChannel.id);
             
             console.log("Checking if channel exists...");
-
             if(checkForConfigChannel) {
                 console.log("Deleteing config channel.");
                 configChannel.delete('Deleting bot configuration channel.');
             } else {
                 console.log("Config channel deleted by hand. Nothing to delete.");
             }
-
         }, timeout);
     }
 
@@ -56,12 +64,12 @@ export class ConfigurationHandler {
         {
             console.log("Initial configuration not set. Launching config text channel.");
             
-            const guild = this.client.guilds.cache.first(); 
+            this.guild = this.client.guilds.cache.first();
             const configChannelNameString = `bot_config_${new Date().toISOString()}`;
-            const adminRole = guild.roles.highest; 
-            const everyoneRole = guild.roles.everyone;
+            const adminRole = this.guild.roles.highest; 
+            const everyoneRole = this.guild.roles.everyone;
 
-            const configChannel = await guild.channels.create(configChannelNameString, { 
+            const configChannel = await this.guild.channels.create(configChannelNameString, { 
                 reason: 'For bot configuration',   
                 permissionOverwrites: [
                     {
@@ -77,47 +85,40 @@ export class ConfigurationHandler {
 
             configChannel.send(`Hey, ${adminRole}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".\r\n\r\nDO NOT DELETE THIS CHANNEL MANUALLY.`);
             
-            
-            
-            configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time'] })
+            configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
                 .then((collected) => {
-                    if (collected.first().content.toLocaleLowerCase() == 'yes') {
-                        configChannel.send(`Configuration is in alpha is not yet available. Sorry if this was misleading...\r\nPlease try again later!`);
-                        this.beginInitialConfiguration(configChannel);
+                    if (collected.first().content.toLowerCase() == 'yes') {
+                        configChannel.send(`Beginning configuration...`);
                     } else {
                         configChannel.send(`That's okay! Maybe later. You may be prompted with this option again the next time the bot starts up.`);
+                        configChannel.send(`This channel will be auto-deleted in 1 minute. Feel free to delete this channel manually now if you wish.`);
+                        this.deleteConfigChannelWithTimeout(configChannel, 60000);
+                        return;
                     }
-
-                    configChannel.send(`This channel will be auto-deleted in 1 minute. Feel free to delete this channel manually now if you wish.`);
-                    this.deleteConfigChannelWithTimeout(guild, configChannel, 60000);
+                })
+                .then(() => {
+                    this.beginInitialConfiguration(configChannel);
                 })
                 .catch(() => {
+                    console.log("Configuration timed out...");
                     configChannel.send(`${adminRole} No answer after 5 minutes, operation canceled.\r\nThis channel will be auto-deleted in 1 minute.`);
-                    this.deleteConfigChannelWithTimeout(guild, configChannel, 300000);
+                    this.deleteConfigChannelWithTimeout(configChannel, 300000);
                 });
         };
     };
 
-    // TODO: handle "stop" command
-    private beginInitialConfiguration = (configChannel: Discord.TextChannel) => {
+    private beginInitialConfiguration = async (configChannel: Discord.TextChannel) => {
+
+        await Configuration.configurePkmnGoFeatures(configChannel).then((r: any) =>{
+            this.config.configured_for_pkmn_go = r;
+            this.updateConfigAsync(); 
+        });
+
+        await Configuration.configureWelcomeChannel(configChannel);
         
-        configChannel.send("SpotBot is a general-use Discord bot by default but has Pokémon GO-specific functionality.\r\nWould you like to configure it for use with Pokémon GO?");
-        configChannel.awaitMessages(this.affrimFilter, { max: 1 })
-            .then((collected) => {
-                if (collected.first().content.toLocaleLowerCase() == 'yes') {
-                    configChannel.send("Sounds good! I will show Pokémon GO configurations as well.");
-                    this.config.configured_for_pkmn_go = true;
-                } else {
-                    configChannel.send("That's okay! Setting up for general use. You can change this later if you want.");
-                }
-        })
-
-        Configuration.configureWelcomeChannel(configChannel)
-            .then((r: any) => {
-                console.log(r);
-            });
-
-        this.updateConfigLastModifiedDts();
+        await configChannel.send("Ending configuration...");
+        // this.updateConfigLastModifiedDts();
+        return;
     }
 
     private updateConfigLastModifiedDts = () => {
