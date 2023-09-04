@@ -53,9 +53,20 @@ export class ConfigurationHandler {
             const guild = this.client.guilds.cache.first(); 
             const configChannelNameString = `bot_config_${new Date().toISOString()}`;
             const adminRole = guild.roles.highest; 
+            const everyoneRole = guild.roles.everyone;
 
-            //TODO: make sure this is for admin's eyes only.
-            const configChannel = await guild.channels.create(configChannelNameString, { reason: 'For bot configuration,' })
+            const configChannel = await guild.channels.create(configChannelNameString, { 
+                reason: 'For bot configuration',   
+                permissionOverwrites: [
+                    {
+                        id: adminRole.id,
+                        allow: ['VIEW_CHANNEL']
+                    },
+                    {
+                        id: everyoneRole.id,
+                        deny: ['VIEW_CHANNEL']
+                    }
+                ], })
                 .catch(console.error) as Discord.TextChannel;
 
             configChannel.send(`Hey, ${adminRole}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".\r\n\r\nDO NOT DELETE THIS CHANNEL MANUALLY.`);
@@ -66,6 +77,7 @@ export class ConfigurationHandler {
                 .then((collected) => {
                     if (collected.first().content.toLocaleLowerCase() == 'yes') {
                         configChannel.send(`Configuration is in alpha is not yet available. Sorry if this was misleading...\r\nPlease try again later!`);
+
                     } else {
                         configChannel.send(`That's okay! Maybe later. You may be prompted with this option again the next time the bot starts up.`);
                     }
@@ -79,11 +91,18 @@ export class ConfigurationHandler {
                 });
         };
     };
+
+    private beginInitialConfiguration = () => {
+            
+    }
+
+    public configurationCommand = () => {
+        
+    }
 }
 
 module.exports = {ConfigurationHandler};
 // initial configuration
-    // check if initial config has happened
     // If not, create spotbot-config text channel
         // admin only
         // start asking config questions
