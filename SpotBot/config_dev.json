@@ -1,6 +1,8 @@
 {
     "initial_configuration": false,
     "config_last_modified_dts": "",
+    "notify_on_server_leave": false,
+    "configured_for_pkmn_go": false,
     "channels": {
         "pkmn_go_specific_channels": {
             "main_raid_channel": {

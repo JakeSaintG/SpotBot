@@ -1,6 +1,6 @@
-import * as Discord from 'discord.js'
-import { TextChannel } from 'discord.js';
+import * as Discord from 'discord.js';
 import { IConfig } from '../interfaces/IConfig';
+import * as Configuration from './individualConfigurations';
 const fs = require('fs');
 
 
@@ -8,6 +8,7 @@ export class ConfigurationHandler {
     //todo: use IConfig interface
     public config: IConfig;
     private client: Discord.Client;
+    private affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
     
     public constructor(client: Discord.Client) {
         this.loadConfig();
@@ -16,6 +17,11 @@ export class ConfigurationHandler {
 
     public loadConfig = (): void => {
         this.config = JSON.parse(fs.readFileSync('./config_dev.json', 'utf8'));
+    };
+
+    public updateConfig = (): void => {
+        console.log(this.config);
+        fs.writeFileSync('./config_dev.json', JSON.stringify(this.config, null, 2));
     };
 
     public loadConfigAsync = async (): Promise<void> => {
@@ -71,13 +77,13 @@ export class ConfigurationHandler {
 
             configChannel.send(`Hey, ${adminRole}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".\r\n\r\nDO NOT DELETE THIS CHANNEL MANUALLY.`);
             
-            const filter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
             
-            configChannel.awaitMessages(filter, { max: 1, time: 300000, errors: ['time'] })
+            
+            configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time'] })
                 .then((collected) => {
                     if (collected.first().content.toLocaleLowerCase() == 'yes') {
                         configChannel.send(`Configuration is in alpha is not yet available. Sorry if this was misleading...\r\nPlease try again later!`);
-
+                        this.beginInitialConfiguration(configChannel);
                     } else {
                         configChannel.send(`That's okay! Maybe later. You may be prompted with this option again the next time the bot starts up.`);
                     }
@@ -92,22 +98,45 @@ export class ConfigurationHandler {
         };
     };
 
-    private beginInitialConfiguration = () => {
-            
+    // TODO: handle "stop" command
+    private beginInitialConfiguration = (configChannel: Discord.TextChannel) => {
+        
+        configChannel.send("SpotBot is a general-use Discord bot by default but has Pokémon GO-specific functionality.\r\nWould you like to configure it for use with Pokémon GO?");
+        configChannel.awaitMessages(this.affrimFilter, { max: 1 })
+            .then((collected) => {
+                if (collected.first().content.toLocaleLowerCase() == 'yes') {
+                    configChannel.send("Sounds good! I will show Pokémon GO configurations as well.");
+                    this.config.configured_for_pkmn_go = true;
+                } else {
+                    configChannel.send("That's okay! Setting up for general use. You can change this later if you want.");
+                }
+        })
+
+        Configuration.configureWelcomeChannel(configChannel)
+            .then((r: any) => {
+                console.log(r);
+            });
+
+        this.updateConfigLastModifiedDts();
     }
 
+    private updateConfigLastModifiedDts = () => {
+        this.config.initial_configuration = true;
+        this.config.config_last_modified_dts = new Date();
+        this.updateConfig();
+        this.loadConfigAsync();
+    };
+
     public configurationCommand = () => {
-        
+        // allow for rerunning initial configuration
+        // allow for configuring welcome message
     }
 }
 
 module.exports = {ConfigurationHandler};
 // initial configuration
     // If not, create spotbot-config text channel
-        // admin only
-        // start asking config questions
-            // Is this server for Pokemon GO or General Use?
-                // if go, ask go questions in addition to general
+
             //Do you have a "{{EXAMPLE_SERVER}}" channel? If yes, type "yes" and tag the channel. If no, type either "no" or "no generate" for Spotbot to create a default one.
                 // Yes: save channel name and ID to config.json, updates "configured" to true
                 // No: updates "configured" to false
