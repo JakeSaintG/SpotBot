@@ -41,34 +41,45 @@ export const configurePkmnGoFeatures = async (configChannel: Discord.TextChannel
 
 export const configureWelcomeChannel = async (configChannel: Discord.TextChannel): Promise<string> => {
     let existingChannel = false;
+    let exitWelcomeConfig = false;
 
     configChannel.send(
-        `Would you like to configure a welcome channel?
-        SpotBot can send welcome messages to new server members using this channel.
-        Respond "yes" or "no".`
+    `Would you like to configure a welcome channel?
+    SpotBot can send welcome messages to new server members using this channel.
+    Respond "yes" or "no".`
     );
 
-    // configChannel.awaitMessages(affrimFilter, { max: 1})
-    // .then((collected) => {
-    //     if (collected.first().content.toLowerCase() == 'yes') {
-    //         configChannel.send("test");
-    //     }
-    //     configChannel.send(`Skipping welcome channel setup.`);
-    //     return;
-    // })
-    // .catch(() => {
-    //     configChannel.send(`Error in configuration. Stopping.`);
-    // });
+    await configChannel.awaitMessages(affrimFilter, { max: 1, time: 300000, errors: ['time']})
+        .then((collected) => {
+            if (collected.first().content.toLowerCase() == 'no') {
+                configChannel.send(`Skipping welcome channel setup.`);
+                exitWelcomeConfig = true;
+            }
+        })
+        .catch(() => {
+            configChannel.send(`Error in configuration. Stopping.`);
+            exitWelcomeConfig = true;
+        });
 
-    configChannel.send(`Does a channel already exist that you would like to use as the welcome channel?`);
+    if (!existingChannel) {
+        configChannel.send(
+        `Does a channel already exist that you would like to use as the welcome channel?
+        Answer "no" to have one created for you.
+        To link an existing channel, answer "yes" and tag the channel after. Ex: "yes #member-welcome"
+        `);
+        
+        console.log("Returning yes");
+        return 'yes welcome';
+    }
 
     /*
     channel.send (configured. 
         Would you like to set up the welcome message now? 
         If not, and you want to set it up after everything else, use "";;configure welcome-message" later to  )
     */
-
-    return 'testsssssss'
+    
+    console.log("Returning no");
+    return 'no welcome';
 }
 
 export const configureWelcomeMessage = async (): Promise<string> => {

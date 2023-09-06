@@ -1,143 +1,143 @@
 {
-    "initial_configuration": false,
-    "config_last_modified_dts": "",
-    "notify_on_server_leave": false,
-    "configured_for_pkmn_go": false,
-    "channels": {
-        "pkmn_go_specific_channels": {
-            "main_raid_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "main_raid_info_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "flex_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "trade_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "friend_code_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "roster_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "community_day_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            }
-        },
-        "discord_general_channels": {
-            "main_admin_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "main_announcement_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "rules_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "welcome_channel": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            },
-            "bot_logs": {
-                "configured": false,
-                "name": "",
-                "id": "",
-                "default_channel_topic": "",
-                "custom_channel_topic": "",
-                "slow_mode": false,
-                "age_restricted_channel": false,
-                "roles": []
-            }
-        }
+  "initial_configuration": false,
+  "config_last_modified_dts": "",
+  "notify_on_server_leave": false,
+  "configured_for_pkmn_go": false,
+  "channels": {
+    "pkmn_go_specific_channels": {
+      "main_raid_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "main_raid_info_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "flex_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "trade_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "friend_code_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "roster_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "community_day_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      }
     },
-    "roles": {
-        "pkmn_go_specific_roles": {
-            "valor": "",
-            "mystic": "",
-            "instinct": ""
-        },
-        "discord_general_channels": {
-            "admin_role": "",
-            "mod_role": ""
-        }
+    "discord_general_channels": {
+      "main_admin_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "main_announcement_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "rules_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "welcome_channel": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      },
+      "bot_logs": {
+        "configured": false,
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "age_restricted_channel": false,
+        "roles": []
+      }
     }
+  },
+  "roles": {
+    "pkmn_go_specific_roles": {
+      "valor": "",
+      "mystic": "",
+      "instinct": ""
+    },
+    "discord_general_channels": {
+      "admin_role": "",
+      "mod_role": ""
+    }
+  }
 }
