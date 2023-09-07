@@ -64,6 +64,7 @@ export class ConfigurationHandler {
         {
             console.log("Initial configuration not set. Launching config text channel.");
             
+            let allowConfig = false;
             this.guild = this.client.guilds.cache.first();
             const configChannelNameString = `bot_config_${new Date().toISOString()}`;
             const adminRole = this.guild.roles.highest; 
@@ -92,18 +93,20 @@ export class ConfigurationHandler {
                     } else {
                         configChannel.send(`That's okay! Maybe later. You may be prompted with this option again the next time the bot starts up.`);
                         configChannel.send(`This channel will be auto-deleted in 1 minute. Feel free to delete this channel manually now if you wish.`);
+                        console.log(`Configuration postponed by ${collected.first().author.tag}.`);
                         this.deleteConfigChannelWithTimeout(configChannel, 60000);
-                        return;
                     }
                 })
                 .then(() => {
-                    this.beginInitialConfiguration(configChannel);
+                    allowConfig = true;
                 })
                 .catch(() => {
                     console.log("Configuration timed out...");
                     configChannel.send(`${adminRole} No answer after 5 minutes, operation canceled.\r\nThis channel will be auto-deleted in 1 minute.`);
-                    this.deleteConfigChannelWithTimeout(configChannel, 300000);
+                    this.deleteConfigChannelWithTimeout(configChannel, 60000);
                 });
+
+            if (allowConfig) this.beginInitialConfiguration(configChannel);
         };
     };
 
@@ -118,7 +121,6 @@ export class ConfigurationHandler {
         
         await configChannel.send("Ending configuration...");
         // this.updateConfigLastModifiedDts();
-        return;
     }
 
     private updateConfigLastModifiedDts = () => {
