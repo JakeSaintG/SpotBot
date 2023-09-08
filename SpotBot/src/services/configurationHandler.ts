@@ -86,10 +86,11 @@ export class ConfigurationHandler {
 
             configChannel.send(`Hey, ${adminRole}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".\r\n\r\nDO NOT DELETE THIS CHANNEL MANUALLY.`);
             
-            configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
+            await configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
                 .then((collected) => {
-                    if (collected.first().content.toLowerCase() == 'yes') {
-                        configChannel.send(`Beginning configuration...`);
+                    if (collected.first().content.toLowerCase().includes('yes')) {
+                        configChannel.send(`Beginning configuration...\r\n`);
+                        allowConfig = true;
                     } else {
                         configChannel.send(`That's okay! Maybe later. You may be prompted with this option again the next time the bot starts up.`);
                         configChannel.send(`This channel will be auto-deleted in 1 minute. Feel free to delete this channel manually now if you wish.`);
@@ -97,12 +98,9 @@ export class ConfigurationHandler {
                         this.deleteConfigChannelWithTimeout(configChannel, 60000);
                     }
                 })
-                .then(() => {
-                    allowConfig = true;
-                })
                 .catch(() => {
-                    console.log("Configuration timed out...");
-                    configChannel.send(`${adminRole} No answer after 5 minutes, operation canceled.\r\nThis channel will be auto-deleted in 1 minute.`);
+                    console.log(`Configuration timed out...`);
+                    configChannel.send(`${adminRole}. No answer after 5 minutes, operation canceled.\r\nThis channel will be auto-deleted in 1 minute.`);
                     this.deleteConfigChannelWithTimeout(configChannel, 60000);
                 });
 

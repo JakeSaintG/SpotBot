@@ -24,7 +24,7 @@ export const configurePkmnGoFeatures = async (configChannel: Discord.TextChannel
     configChannel.send("SpotBot is a general-use Discord bot by default but has Pokémon GO-specific functionality.\r\nWould you like to configure it for use with Pokémon GO?")
     await configChannel.awaitMessages(affrimFilter, { max: 1, time: 300000, errors: ['time']})
         .then((collected) => {
-            if (collected.first().content.toLocaleLowerCase() == 'yes') {
+            if (collected.first().content.toLocaleLowerCase().includes('yes')) {
                 configChannel.send("Sounds good! I will show Pokémon GO configurations as well.");
                 goFeaturesEnabled = true;
             } else {
@@ -40,18 +40,17 @@ export const configurePkmnGoFeatures = async (configChannel: Discord.TextChannel
 }
 
 export const configureWelcomeChannel = async (configChannel: Discord.TextChannel): Promise<string> => {
-    let existingChannel = false;
     let exitWelcomeConfig = false;
 
     configChannel.send(
-    `Would you like to configure a welcome channel?
-    SpotBot can send welcome messages to new server members using this channel.
-    Respond "yes" or "no".`
+        `Would you like to configure a welcome channel?\r\n`+
+        `SpotBot can send welcome messages to new server members using this channel.\r\n`+
+        `Respond "yes" or "no".`
     );
 
     await configChannel.awaitMessages(affrimFilter, { max: 1, time: 300000, errors: ['time']})
         .then((collected) => {
-            if (collected.first().content.toLowerCase() == 'no') {
+            if (collected.first().content.toLowerCase().includes('no')) {
                 configChannel.send(`Skipping welcome channel setup.`);
                 exitWelcomeConfig = true;
             }
@@ -61,14 +60,32 @@ export const configureWelcomeChannel = async (configChannel: Discord.TextChannel
             exitWelcomeConfig = true;
         });
 
-    if (!existingChannel) {
+    if (!exitWelcomeConfig) {
         configChannel.send(
-        `Does a channel already exist that you would like to use as the welcome channel?
-        Answer "no" to have one created for you.
-        To link an existing channel, answer "yes" and tag the channel after. Ex: "yes #member-welcome"
-        `);
+            `Does a channel already exist that you would like to use as the welcome channel?\r\n` +
+            `Answer "no" to have one created for you.\r\n` +
+            `To link an existing channel, answer "yes" and tag the channel after. Ex: "yes #member-welcome"`
+        );
         
-        console.log("Returning yes");
+        await configChannel.awaitMessages(affrimFilter, { max: 1, time: 300000, errors: ['time']})
+        .then((collected) => {
+            if (collected.first().content.toLowerCase().includes('no')) {
+                // Create one
+                console.log(`Creating welcome channel...`);
+            } else {
+                const possibleWelcomeChannelId = collected.first().content.substring(
+                    collected.first().content.indexOf("<"), 
+                    collected.first().content.lastIndexOf(">") + 1
+                )
+                // Check that input is valid and that the channel exists before saving it.
+                configChannel.send(`Success! Assigned ${possibleWelcomeChannelId} to welcome channel features.`);
+            }
+        })
+        .catch(() => {
+            configChannel.send(`Error in configuration. Stopping.`);
+            exitWelcomeConfig = true;
+        });
+
         return 'yes welcome';
     }
 
