@@ -110,15 +110,46 @@ export class ConfigurationHandler {
 
     private beginInitialConfiguration = async (configChannel: Discord.TextChannel) => {
 
+        /*
+        Check channel for "spotbot" category, if not exist then generate it
+        Check config, if log channel not saved, generate log channel, save to config
+        Check config, if command channel not saved, generate command channel, save to config
+        */
+        
         await Configuration.configurePkmnGoFeatures(configChannel).then((r: any) =>{
             this.config.configured_for_pkmn_go = r;
             this.updateConfigAsync(); 
         });
-
+        
         await Configuration.configureWelcomeChannel(configChannel);
         
         await configChannel.send("Ending configuration...");
+        
         // this.updateConfigLastModifiedDts();
+    }
+
+    private generateSpotBotCategory = () => {
+        // admin view only
+    }
+
+    private generateLogChannel = () => {
+        // admin view only
+    }
+
+    public ensureLogChannelExists = () => {
+        //Run before logging to the channel
+        //check for log channel that is saved to config.json
+        //If not exist, generateLogChannel(), save it to json
+    }
+
+    private generateCommandChannel = () => {
+        // admin view only
+    }
+
+    public ensureCommandChannelExists = () => {
+        //Run on start up. No need to be as strict as the log channel...the commands can be done from most everywhere.
+        //check for command channel that is saved to config.json
+        //If not exist, generateCommandChannel(), save it to json
     }
 
     private updateConfigLastModifiedDts = () => {
