@@ -28,7 +28,6 @@ export class ConfigurationHandler {
             }
             this.config = JSON.parse(data);
         })
-        return;
     };
 
     public updateConfig = (): void => {
@@ -47,9 +46,9 @@ export class ConfigurationHandler {
 
     private deleteConfigChannelWithTimeout = (configChannel: Discord.TextChannel, timeout: number) => {
         setTimeout(() => {
+            console.log("Checking if channel exists...");
             const checkForConfigChannel = this.guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === configChannel.id);
             
-            console.log("Checking if channel exists...");
             if(checkForConfigChannel) {
                 console.log("Deleteing config channel.");
                 configChannel.delete('Deleting bot configuration channel.');
@@ -122,10 +121,18 @@ export class ConfigurationHandler {
         });
         
         await Configuration.configureWelcomeChannel(configChannel);
-        
         await configChannel.send("Ending configuration...");
         
         // this.updateConfigLastModifiedDts();
+    }
+
+    private createGenericTextChannel = async (channelName: string, permissions: any[] ) => {
+        //May need to alter what I'm returning
+        
+        return await this.guild.channels.create(channelName, { 
+            reason: 'For bot configuration',   
+            permissionOverwrites: []
+        }).catch(console.error) as Discord.TextChannel;
     }
 
     private generateSpotBotCategory = () => {

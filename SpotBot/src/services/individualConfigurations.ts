@@ -72,13 +72,15 @@ export const configureWelcomeChannel = async (configChannel: Discord.TextChannel
             if (collected.first().content.toLowerCase().includes('no')) {
                 // Create one
                 console.log(`Creating welcome channel...`);
+                return "create";
             } else {
                 const possibleWelcomeChannelId = collected.first().content.substring(
                     collected.first().content.indexOf("<"), 
                     collected.first().content.lastIndexOf(">") + 1
                 )
                 // Check that input is valid and that the channel exists before saving it.
-                configChannel.send(`Success! Assigned ${possibleWelcomeChannelId} to welcome channel features.`);
+                configChannel.send(`Understood. Assigning ${possibleWelcomeChannelId} to welcome channel features.`);
+                return `assign`;
             }
         })
         .catch(() => {
@@ -88,13 +90,6 @@ export const configureWelcomeChannel = async (configChannel: Discord.TextChannel
 
         return 'yes welcome';
     }
-
-    /*
-    channel.send (configured. 
-        Would you like to set up the welcome message now? 
-        If not, and you want to set it up after everything else, use "";;configure welcome-message" later to  )
-    */
-    
     console.log("Returning no");
     return 'no welcome';
 }
