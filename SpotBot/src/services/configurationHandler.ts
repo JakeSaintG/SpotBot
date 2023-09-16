@@ -12,8 +12,8 @@ export class ConfigurationHandler {
     private affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
     
     public constructor(client: Discord.Client) {
-        this.loadConfig();
         this.client = client;
+        this.loadConfig();
     };
 
     public loadConfig = (): void => {
@@ -59,31 +59,35 @@ export class ConfigurationHandler {
     }
 
     public checkForInitialConfiguration = async () => {
+        /*
+        Check config, if log channel not saved, generate log channel, save to config
+        Check config, if command channel not saved, generate command channel, save to config
+        */
+        
         if(!this.config.initial_configuration)
         {
             console.log("Initial configuration not set. Launching config text channel.");
-            
+
             let allowConfig = false;
             this.guild = this.client.guilds.cache.first();
             const configChannelNameString = `bot_config_${new Date().toISOString()}`;
-            const adminRole = this.guild.roles.highest; 
-            const everyoneRole = this.guild.roles.everyone;
+            this.generateSpotBotCategory();
 
             const configChannel = await this.guild.channels.create(configChannelNameString, { 
                 reason: 'For bot configuration',   
                 permissionOverwrites: [
                     {
-                        id: adminRole.id,
+                        id: this.guild.roles.highest,
                         allow: ['VIEW_CHANNEL']
                     },
                     {
-                        id: everyoneRole.id,
+                        id: this.guild.roles.everyone,
                         deny: ['VIEW_CHANNEL']
                     }
                 ], })
                 .catch(console.error) as Discord.TextChannel;
 
-            configChannel.send(`Hey, ${adminRole}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".\r\n\r\nDO NOT DELETE THIS CHANNEL MANUALLY.`);
+            configChannel.send(`Hey, ${this.guild.roles.highest}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".\r\n\r\nDO NOT DELETE THIS CHANNEL MANUALLY.`);
             
             await configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
                 .then((collected) => {
@@ -99,7 +103,7 @@ export class ConfigurationHandler {
                 })
                 .catch(() => {
                     console.log(`Configuration timed out...`);
-                    configChannel.send(`${adminRole}. No answer after 5 minutes, operation canceled.\r\nThis channel will be auto-deleted in 1 minute.`);
+                    configChannel.send(`${this.guild.roles.highest}. No answer after 5 minutes, operation canceled.\r\nThis channel will be auto-deleted in 1 minute.`);
                     this.deleteConfigChannelWithTimeout(configChannel, 60000);
                 });
 
@@ -109,12 +113,6 @@ export class ConfigurationHandler {
 
     private beginInitialConfiguration = async (configChannel: Discord.TextChannel) => {
 
-        /*
-        Check channel for "spotbot" category, if not exist then generate it
-        Check config, if log channel not saved, generate log channel, save to config
-        Check config, if command channel not saved, generate command channel, save to config
-        */
-        
         await Configuration.configurePkmnGoFeatures(configChannel).then((r: any) =>{
             this.config.configured_for_pkmn_go = r;
             this.updateConfigAsync(); 
@@ -135,8 +133,24 @@ export class ConfigurationHandler {
         }).catch(console.error) as Discord.TextChannel;
     }
 
-    private generateSpotBotCategory = () => {
-        // admin view only
+    private generateSpotBotCategory = async () => {
+        if (this.config.spotbot_category_id != null) {
+            return;
+        }
+
+        const spotbotCategory = await this.guild.channels.create("SpotBot", {type: "category", permissionOverwrites: [
+            {
+                id: this.guild.roles.highest.id,
+                allow: ['VIEW_CHANNEL']
+            },
+            {
+                id: this.guild.roles.everyone.id,
+                deny: ['VIEW_CHANNEL']
+            }
+        ]});
+
+        this.config.spotbot_category_id = spotbotCategory.id;
+        this.updateConfigAsync();
     }
 
     private generateLogChannel = () => {
