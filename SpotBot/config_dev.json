@@ -4,6 +4,7 @@
   "notify_on_server_leave": false,
   "configured_for_pkmn_go": false,
   "spotbot_category_id": null,
+  "guild_id": null,
   "channels": {
     "pkmn_go_specific_channels": {
       "main_raid_channel": {
