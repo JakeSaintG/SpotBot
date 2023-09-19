@@ -8,10 +8,21 @@ import { ConfigurationHandler } from './services/configurationHandler';
 
 dotenv.config();
 const CLIENT = new Discord.Client();
+let GUILD: Discord.Guild;
+let configHandler: ConfigurationHandler;
 const COMMAND_PREFIX: string = ';;';
 
-//TODO: This should be available via dependancy injection. Figure out how to do that in Node.
-const configHandler = new ConfigurationHandler(CLIENT);
+const app = async () => {
+
+    configHandler = new ConfigurationHandler(CLIENT); //TODO: This should be available via dependancy injection. Figure out how to do that in Node.
+
+    GUILD = await configHandler.loadGuild(CLIENT);
+
+    configHandler.checkForInitialConfiguration();
+}
+
+
+
 
 CLIENT.on('ready', () => {
     if (!(process.env.NODE_ENV || 'development')) {
@@ -20,8 +31,9 @@ CLIENT.on('ready', () => {
         )
     }
 
-    configHandler.checkForInitialConfiguration();
     console.log(`${CLIENT.user.username} has logged in.`)
+
+    app();
 })
 
 //Listening for commands

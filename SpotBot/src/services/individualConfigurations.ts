@@ -40,7 +40,8 @@ export const configurePkmnGoFeatures = async (configChannel: Discord.TextChannel
 }
 
 export const configureWelcomeChannel = async (configChannel: Discord.TextChannel): Promise<string> => {
-    let exitWelcomeConfig = false;
+    let exitWelcomeConfig: boolean = false;
+    let configurationMode: string;
 
     configChannel.send(
         `Would you like to configure a welcome channel?\r\n`+
@@ -72,26 +73,26 @@ export const configureWelcomeChannel = async (configChannel: Discord.TextChannel
             if (collected.first().content.toLowerCase().includes('no')) {
                 // Create one
                 console.log(`Creating welcome channel...`);
-                return "create";
+                configurationMode = "create";
             } else {
                 const possibleWelcomeChannelId = collected.first().content.substring(
                     collected.first().content.indexOf("<"), 
                     collected.first().content.lastIndexOf(">") + 1
                 )
-                // Check that input is valid and that the channel exists before saving it.
+                
+                // TODO: Check that input is valid and that the channel exists before saving it, loop back and try again if not.
                 configChannel.send(`Understood. Assigning ${possibleWelcomeChannelId} to welcome channel features.`);
-                return `assign`;
+                configurationMode = possibleWelcomeChannelId;
             }
         })
         .catch(() => {
             configChannel.send(`Error in configuration. Stopping.`);
             exitWelcomeConfig = true;
+            configurationMode = 'none';
         });
-
-        return 'yes welcome';
     }
-    console.log("Returning no");
-    return 'no welcome';
+
+    return configurationMode;
 }
 
 export const configureWelcomeMessage = async (): Promise<string> => {

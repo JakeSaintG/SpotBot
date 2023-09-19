@@ -58,20 +58,36 @@ export class ConfigurationHandler {
         }, timeout);
     }
 
+    public loadGuild = async (client: Discord.Client): Promise<Discord.Guild> => {
+        
+        if (this.config.guild_id == null) {
+            const guildId = client.guilds.cache.first().id;
+            console.log(`Saving guild ID: ${guildId} for easier retrieval later.`);
+            this.config.guild_id = guildId;
+            this.updateConfig();
+        }
+
+        this.guild = await client.guilds.fetch(this.config.guild_id);
+        return this.guild;
+    }
+
     public checkForInitialConfiguration = async () => {
+
         /*
         Check config, if log channel not saved, generate log channel, save to config
         Check config, if command channel not saved, generate command channel, save to config
         */
-        
+        console.log(`Loading guild with id: ${this.guild.id}`);
+
         if(!this.config.initial_configuration)
         {
             console.log("Initial configuration not set. Launching config text channel.");
 
             let allowConfig = false;
-            this.guild = this.client.guilds.cache.first();
+            
             const configChannelNameString = `bot_config_${new Date().toISOString()}`;
-            this.generateSpotBotCategory();
+
+            await this.generateSpotBotCategory();
 
             const configChannel = await this.guild.channels.create(configChannelNameString, { 
                 reason: 'For bot configuration',   
@@ -92,7 +108,7 @@ export class ConfigurationHandler {
             await configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
                 .then((collected) => {
                     if (collected.first().content.toLowerCase().includes('yes')) {
-                        configChannel.send(`Beginning configuration...\r\n`);
+                        configChannel.send(`Beginning configuration...\r\n\r\n`);
                         allowConfig = true;
                     } else {
                         configChannel.send(`That's okay! Maybe later. You may be prompted with this option again the next time the bot starts up.`);
@@ -118,19 +134,42 @@ export class ConfigurationHandler {
             this.updateConfigAsync(); 
         });
         
-        await Configuration.configureWelcomeChannel(configChannel);
+        // await setModeratorRole();
+
+        await Configuration.configureWelcomeChannel(configChannel).then((r: string) =>{
+             // r can be undefined....may need to think through what will happen if they bail early
+            if (r == 'create') {
+                console.log(`Creating welcome channel and saving it to config...`);
+                // defaults = pull welcome channel defaults from config, use below.
+
+            } else if (r.includes("<#")) {
+                // assume a channelId was returned.
+                // defaults = pull welcome channel defaults from config, assign channelId, name, etc to defaults
+                console.log(`Saving welcome channel to config using ${r} details.`);
+            } else {
+                return;
+            }
+            // createTextChannelFromDefaults(defaults)
+            // update this.config
+            // this.updateConfigAsync(); 
+        });
         await configChannel.send("Ending configuration...");
         
         // this.updateConfigLastModifiedDts();
     }
 
-    private createGenericTextChannel = async (channelName: string, permissions: any[] ) => {
+    private setModeratorRole = () => {
+        // text: Spotbot supports admin use by roles other than the highest (admin). 
+        // Do you have a moderator role that you would like to grant higher level SpotBot use?
+    }
+
+    private createTextChannelFromDefaults = async (defaults: any ) => {
         //May need to alter what I'm returning
         
-        return await this.guild.channels.create(channelName, { 
-            reason: 'For bot configuration',   
-            permissionOverwrites: []
-        }).catch(console.error) as Discord.TextChannel;
+        // return await this.guild.channels.create(channelName, { 
+        //     reason: 'For bot configuration',   
+        //     permissionOverwrites: []
+        // }).catch(console.error) as Discord.TextChannel;
     }
 
     private generateSpotBotCategory = async () => {
