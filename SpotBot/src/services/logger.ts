@@ -5,8 +5,6 @@ import * as Discord from 'discord.js'
         // Only admins can see it
         // Tag highest role and them know that the log channel was created, can be move, or reconfigured
 
-// TODO: Make this a static class if possible (I miss C#...)
-
 export const getLogChannelIdFromMessage = (message: Discord.Message): Discord.TextChannel => {
     //pull from config file eventually
     return message.guild.channels.cache.get(message.guild.channels.cache.find(

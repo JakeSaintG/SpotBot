@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js';
 import { IConfig } from '../interfaces/IConfig';
-import * as Configuration from './individualConfigurations';
+import * as Configuration from './configMessageHelpers';
 const fs = require('fs');
 
 

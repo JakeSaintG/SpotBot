@@ -17,12 +17,9 @@ const app = async () => {
     configHandler = new ConfigurationHandler(CLIENT); //TODO: This should be available via dependancy injection. Figure out how to do that in Node.
 
     GUILD = await configHandler.loadGuild(CLIENT);
-
+    configHandler.ensureLogChannelExists();
     configHandler.checkForInitialConfiguration();
 }
-
-
-
 
 CLIENT.on('ready', () => {
     if (!(process.env.NODE_ENV || 'development')) {
