@@ -7,11 +7,14 @@ export const messageCommand = (
 ) => {
     const authorId = structuredClone(message.author.id)
     message.delete()
-
+    
+    // TODO: There is an issue with sending an "empty" message with an attachment
     if (messageContent.length != 0) message.channel.send(messageContent)
 
-    if (message.attachments.size > 0)
-        message.attachments.forEach((a) => message.channel.send(a))
+    if (message.attachments.size > 0) {
+        message.attachments.forEach((a) => message.channel.send(a));
+        return;
+    }
 
     if (message.attachments.size == 0 && messageContent.length == 0) {
         getLogChannelIdFromMessage(message).send(
