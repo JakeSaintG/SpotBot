@@ -1,11 +1,10 @@
 import * as Discord from 'discord.js';
-import { IConfig } from '../interfaces/IConfig';
+import { IChannel, IConfig } from '../interfaces/IConfig';
 import * as Configuration from './configMessageHelpers';
 const fs = require('fs');
 
 
 export class ConfigurationHandler {
-    //todo: use IConfig interface
     public config: IConfig;
     private client: Discord.Client;
     private guild: Discord.Guild;
@@ -137,19 +136,23 @@ export class ConfigurationHandler {
         // await setModeratorRole();
 
         await Configuration.configureWelcomeChannel(configChannel).then((r: string) =>{
-             // r can be undefined....may need to think through what will happen if they bail early
+            let defaults: IChannel = this.config.channels.discord_general_channels.find(e => {e.purpose == "member-welcome"});
+            // r can be undefined....may need to think through what will happen if they bail early
             if (r == 'create') {
                 console.log(`Creating welcome channel and saving it to config...`);
-                // defaults = pull welcome channel defaults from config, use below.
 
             } else if (r.includes("<#")) {
                 // assume a channelId was returned.
                 // defaults = pull welcome channel defaults from config, assign channelId, name, etc to defaults
+                defaults.id = r;
+
                 console.log(`Saving welcome channel to config using ${r} details.`);
             } else {
                 return;
             }
-            // createTextChannelFromDefaults(defaults)
+
+            console.log(this.config.channels.discord_general_channels);
+            this.createTextChannelFromDefaults(defaults);
             // update this.config
             // this.updateConfigAsync(); 
         });
@@ -163,8 +166,9 @@ export class ConfigurationHandler {
         // Do you have a moderator role that you would like to grant higher level SpotBot use?
     }
 
-    private createTextChannelFromDefaults = async (defaults: any ) => {
+    private createTextChannelFromDefaults = async (defaults: IChannel ) => {
         //May need to alter what I'm returning
+
         
         // return await this.guild.channels.create(channelName, { 
         //     reason: 'For bot configuration',   
