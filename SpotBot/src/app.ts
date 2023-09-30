@@ -3,18 +3,21 @@ import * as dotenv from 'dotenv';
 
 import { commandHandler } from './hooks';
 import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
-import { getLogChannelIdFromClient } from './services/logger';
+import { LogService } from './services/logger';
 import { ConfigurationHandler } from './services/configurationHandler';
 
 dotenv.config();
 const CLIENT = new Discord.Client();
 let GUILD: Discord.Guild;
 let configHandler: ConfigurationHandler;
+let logger: LogService;
 const COMMAND_PREFIX: string = ';;';
 
 const app = async () => {
 
-    configHandler = new ConfigurationHandler(CLIENT); //TODO: This should be available via dependancy injection. Figure out how to do that in Node.
+    //TODO: These should be available via dependancy injection. Figure out how to do that in Node.
+    configHandler = new ConfigurationHandler(CLIENT); 
+    logger = new LogService();
 
     GUILD = await configHandler.loadGuild(CLIENT);
     configHandler.ensureLogChannelExists();
@@ -23,7 +26,7 @@ const app = async () => {
 
 CLIENT.on('ready', () => {
     if (!(process.env.NODE_ENV || 'development')) {
-        getLogChannelIdFromClient(CLIENT).send(
+        logger.getLogChannelIdFromClient(CLIENT).send(
             `${CLIENT.user.username} has logged in!`
         )
     }
@@ -73,7 +76,7 @@ CLIENT.on(
             .get(member.guild.id)
             .roles.cache.find((r) => r.name == 'Admin').id
 
-        getLogChannelIdFromClient(CLIENT).send(
+        logger.getLogChannelIdFromClient(CLIENT).send(
             constructLeaveMessage(member, adminRoleIdFromServer)
         )
     }

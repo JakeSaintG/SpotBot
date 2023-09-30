@@ -5,16 +5,27 @@ import * as Discord from 'discord.js'
         // Only admins can see it
         // Tag highest role and them know that the log channel was created, can be move, or reconfigured
 
-export const getLogChannelIdFromMessage = (message: Discord.Message): Discord.TextChannel => {
-    //pull from config file eventually
-    return message.guild.channels.cache.get(message.guild.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'bot-logs'
-    ).id) as Discord.TextChannel;
-};
+export class LogService {
+    /**
+     *
+     */
+    constructor() {
 
-export const getLogChannelIdFromClient = (client: Discord.Client): Discord.TextChannel => {
-    //pull from config file eventually
-    return client.channels.cache.get(client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'bot-logs'
-    ).id) as Discord.TextChannel
-};
+        
+    }
+
+    public getLogChannelIdFromMessage = (message: Discord.Message): Discord.TextChannel => {
+        //pull from config file eventually
+        return message.guild.channels.cache.get(message.guild.channels.cache.find(
+            (channel: Discord.TextChannel) => channel.name === 'bot-logs'
+        ).id) as Discord.TextChannel;
+    };
+    
+    public getLogChannelIdFromClient = (client: Discord.Client): Discord.TextChannel => {
+        //pull from config file eventually
+        return client.channels.cache.get(client.channels.cache.find(
+            (channel: Discord.TextChannel) => channel.name === 'bot-logs'
+        ).id) as Discord.TextChannel
+    };
+}
+
