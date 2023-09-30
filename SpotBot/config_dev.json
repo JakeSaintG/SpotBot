@@ -6,10 +6,11 @@
   "spotbot_category_id": null,
   "guild_id": null,
   "channels": {
-    "pkmn_go_specific_channels": {
-      "main_raid_channel": {
+    "pkmn_go_specific_channels": [
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "main_raid_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -17,9 +18,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "main_raid_info_channel": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "main_raid_info_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -27,9 +29,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "flex_channel": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "flex_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -37,9 +40,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "trade_channel": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "trade_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -47,9 +51,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "friend_code_channel": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "friend_code_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -57,9 +62,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "roster_channel": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "roster_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -67,9 +73,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "community_day_channel": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "community_day_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -77,11 +84,12 @@
         "slow_mode": false,
         "roles": []
       }
-    },
-    "discord_general_channels": {
-      "main_admin_channel": {
+    ],
+    "discord_general_channels": [
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "discord_general_channels",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -89,9 +97,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "main_announcement_channel": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "main_announcement_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -99,9 +108,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "rules_channel": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "rules_channel",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -109,9 +119,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "welcome_channel": {
+      {
         "configured": false,
-        "default-name": "member-welcome",
+        "purpose": "welcome_channel",
+        "default_name": "member-welcome",
         "name": "",
         "id": "",
         "default_channel_topic": "Hello and welcome! This channel serves to greet new additions to our community and potentially even point them to resouces within the server.",
@@ -119,9 +130,10 @@
         "slow_mode": false,
         "roles": []
       },
-      "bot_logs": {
+      {
         "configured": false,
-        "default-name": "",
+        "purpose": "bot_logs",
+        "default_name": "",
         "name": "",
         "id": "",
         "default_channel_topic": "",
@@ -129,7 +141,7 @@
         "slow_mode": false,
         "roles": []
       }
-    }
+    ]
   },
   "roles": {
     "pkmn_go_specific_roles": {

@@ -5,6 +5,23 @@ export interface IConfig {
     configured_for_pkmn_go: boolean,
     spotbot_category_id: null|string,
     guild_id: null|string,
-    channels: any,
+    channels: IChannels,
     roles: any
-} 
+}
+
+interface IChannels {
+    pkmn_go_specific_channels: IChannel[],
+    discord_general_channels: IChannel[],
+}
+
+export interface IChannel {
+    configured: boolean,
+    default_name: string,
+    purpose: string,
+    name: string,
+    id: string,
+    default_channel_topic: string,
+    custom_channel_topic: string,
+    slow_mode: boolean,
+    roles: any //Delete?
+}
