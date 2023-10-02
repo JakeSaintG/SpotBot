@@ -1,9 +1,11 @@
 import * as Discord from 'discord.js'
-import { getLogChannelIdFromMessage } from '../services/logger'
+import { LogService } from '../services/logger'
+
 
 export const messageCommand = (
     message: Discord.Message,
-    messageContent: string
+    messageContent: string,
+     logger: LogService
 ) => {
     const authorId = structuredClone(message.author.id)
     message.delete()
@@ -17,7 +19,7 @@ export const messageCommand = (
     }
 
     if (message.attachments.size == 0 && messageContent.length == 0) {
-        getLogChannelIdFromMessage(message).send(
+        logger.getLogChannelIdFromMessage(message).send(
             `Hey, <@${authorId}>. The ;;message command requires either a message or an attachment.`
         )
     }

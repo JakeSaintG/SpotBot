@@ -3,11 +3,13 @@ import { Client, Message } from 'discord.js'
 import { adminKeywords, routeAdminCommands } from './admin/routeAdminCommands'
 import { helloKeywords, userCommands } from './hello/commands'
 import { routeHelpCommands, helpKeywords } from './help/routeHelpCommands'
+import { LogService } from './services/logger'
 
 export async function commandHandler(
     COMMAND_PREFIX: string,
     client: Client,
-    message: Message
+    message: Message,
+    logger: LogService
 ) {
     const COMMAND_NAME = message.content
         .trim()
@@ -33,7 +35,7 @@ export async function commandHandler(
             message.member.roles.cache.some((role) => role.name === 'Admin')
         ) {
             console.log(`${message.member.user.tag} used admin command: ${COMMAND_NAME}`);
-            routeAdminCommands(message, COMMAND_NAME, messageContent, client)
+            routeAdminCommands(message, COMMAND_NAME, messageContent, client, logger)
         }
 
         //Handles help commands.

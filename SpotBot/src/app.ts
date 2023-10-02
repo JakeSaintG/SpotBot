@@ -15,12 +15,17 @@ const COMMAND_PREFIX: string = ';;';
 
 const app = async () => {
 
-    //TODO: These should be available via dependancy injection. Figure out how to do that in Node.
-    configHandler = new ConfigurationHandler(CLIENT); 
+    /*
+        TODO: These should be available via dependancy injection.
+            - Get tsyringe up and running. 
+            - chase down the passed-in logger and use DI instead (all the way down)
+    */
+    
     logger = new LogService();
+    configHandler = new ConfigurationHandler(CLIENT, logger); 
 
     GUILD = await configHandler.loadGuild(CLIENT);
-    configHandler.ensureLogChannelExists();
+    logger.ensureLogChannelExists();
     configHandler.checkForInitialConfiguration();
 }
 
@@ -43,7 +48,7 @@ CLIENT.on('message', async (message) => {
         return
 
     if (message.content.startsWith(COMMAND_PREFIX))
-        await commandHandler(COMMAND_PREFIX, CLIENT, message)
+        await commandHandler(COMMAND_PREFIX, CLIENT, message, logger)
 })
 
 // Hotfix requested by admins

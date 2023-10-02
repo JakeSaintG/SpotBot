@@ -14,6 +14,16 @@ export class LogService {
         
     }
 
+    private generateLogChannel = () => {
+        // admin view only
+    }
+
+    public ensureLogChannelExists = () => {
+        //Run before logging to the channel
+        //check for log channel that is saved to config.json
+        //If not exist, generateLogChannel(), save it to json
+    }
+
     public getLogChannelIdFromMessage = (message: Discord.Message): Discord.TextChannel => {
         //pull from config file eventually
         return message.guild.channels.cache.get(message.guild.channels.cache.find(

@@ -1,6 +1,8 @@
 import * as Discord from 'discord.js';
 import { IChannel, IConfig } from '../interfaces/IConfig';
 import * as Configuration from './configMessageHelpers';
+import { LogService } from './logger';
+import { GuildCreateChannelOptions } from 'discord.js';
 const fs = require('fs');
 
 
@@ -8,10 +10,12 @@ export class ConfigurationHandler {
     public config: IConfig;
     private client: Discord.Client;
     private guild: Discord.Guild;
+    private logger: LogService;
     private affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
     
-    public constructor(client: Discord.Client) {
+    public constructor(client: Discord.Client, logger: LogService) {
         this.client = client;
+        this.logger = logger;
         this.loadConfig();
     };
 
@@ -181,29 +185,14 @@ export class ConfigurationHandler {
             return;
         }
 
-        const spotbotCategory = await this.guild.channels.create("SpotBot", {type: "category", permissionOverwrites: [
+        const spotbotCategory = await this.guild.channels.create("SpotBot", 
             {
-                id: this.guild.roles.highest.id,
-                allow: ['VIEW_CHANNEL']
-            },
-            {
-                id: this.guild.roles.everyone.id,
-                deny: ['VIEW_CHANNEL']
-            }
-        ]});
+                type: "category", 
+                permissionOverwrites: this.returnAdminOnlyPermissions(this.guild)
+            });
 
         this.config.spotbot_category_id = spotbotCategory.id;
         this.updateConfigAsync();
-    }
-
-    private generateLogChannel = () => {
-        // admin view only
-    }
-
-    public ensureLogChannelExists = () => {
-        //Run before logging to the channel
-        //check for log channel that is saved to config.json
-        //If not exist, generateLogChannel(), save it to json
     }
 
     private generateCommandChannel = () => {
@@ -226,6 +215,41 @@ export class ConfigurationHandler {
     public configurationCommand = () => {
         // allow for rerunning initial configuration
         // allow for configuring welcome message
+    }
+
+    private returnAdminOnlyPermissions = (guild: Discord.Guild): GuildCreateChannelOptions["permissionOverwrites"] => {
+        return [
+            {
+                id: this.guild.roles.highest.id,
+                allow: ['VIEW_CHANNEL']
+            },
+            {
+                id: this.guild.roles.everyone.id,
+                deny: ['VIEW_CHANNEL']
+            }
+        ];
+    }
+
+    private returnEveryonePermissions = (guild: Discord.Guild): GuildCreateChannelOptions["permissionOverwrites"] => {
+        return [
+            {
+                id: this.guild.roles.highest.id,
+                allow: ['VIEW_CHANNEL', 'ATTACH_FILES', 'USE_EXTERNAL_EMOJIS', 'SEND_MESSAGES', 'ADD_REACTIONS' ,'READ_MESSAGE_HISTORY']
+            }
+        ];
+    }
+
+    private returnEveryoneViewPermissions = (guild: Discord.Guild): GuildCreateChannelOptions["permissionOverwrites"] => {
+        return [
+            {
+                id: this.guild.roles.highest.id,
+                allow: ['VIEW_CHANNEL', 'SEND_MESSAGES']
+            },
+            {
+                id: this.guild.roles.everyone.id,
+                deny: ['SEND_MESSAGES']
+            }
+        ];
     }
 }
 
