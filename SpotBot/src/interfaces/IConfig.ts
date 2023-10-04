@@ -1,3 +1,5 @@
+import { Permissions } from "discord.js"
+
 export interface IConfig {
     initial_configuration: boolean,
     config_last_modified_dts: Date,
@@ -23,5 +25,7 @@ export interface IChannel {
     default_channel_topic: string,
     custom_channel_topic: string,
     slow_mode: boolean,
-    roles: any //Delete?
+    roles: any,
+    everyone_role_allow: Readonly<Permissions>,
+    everyone_role_deny: Readonly<Permissions>
 }

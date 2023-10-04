@@ -16,7 +16,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       },
       {
         "configured": false,
@@ -27,7 +29,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       },
       {
         "configured": false,
@@ -38,7 +42,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       },
       {
         "configured": false,
@@ -49,7 +55,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       },
       {
         "configured": false,
@@ -60,7 +68,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       },
       {
         "configured": false,
@@ -71,7 +81,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       },
       {
         "configured": false,
@@ -82,7 +94,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       }
     ],
     "discord_general_channels": [
@@ -95,7 +109,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       },
       {
         "configured": false,
@@ -106,7 +122,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": []
       },
       {
         "configured": false,
@@ -117,7 +135,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": ["VIEW_CHANNEL", "ADD_REACTIONS", "READ_MESSAGE_HISTORY"],
+        "everyone-role-deny": ["SEND_MESSAGES", "USE_EXTERNAL_EMOJIS"]
       },
       {
         "configured": false,
@@ -128,7 +148,9 @@
         "default_channel_topic": "Hello and welcome! This channel serves to greet new additions to our community and potentially even point them to resouces within the server.",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": ["VIEW_CHANNEL", "ADD_REACTIONS", "READ_MESSAGE_HISTORY"],
+        "everyone-role-deny": ["SEND_MESSAGES", "USE_EXTERNAL_EMOJIS"]
       },
       {
         "configured": false,
@@ -139,7 +161,9 @@
         "default_channel_topic": "",
         "custom_channel_topic": "",
         "slow_mode": false,
-        "roles": []
+        "roles": [],
+        "everyone-role-allow": [],
+        "everyone-role-deny": ["VIEW_CHANNEL"]
       }
     ]
   },
