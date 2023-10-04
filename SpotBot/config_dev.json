@@ -17,8 +17,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       },
       {
         "configured": false,
@@ -30,8 +30,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       },
       {
         "configured": false,
@@ -43,8 +43,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       },
       {
         "configured": false,
@@ -56,8 +56,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       },
       {
         "configured": false,
@@ -69,8 +69,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       },
       {
         "configured": false,
@@ -82,8 +82,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       },
       {
         "configured": false,
@@ -95,8 +95,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       }
     ],
     "discord_general_channels": [
@@ -110,8 +110,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       },
       {
         "configured": false,
@@ -123,8 +123,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": []
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
       },
       {
         "configured": false,
@@ -136,8 +136,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": ["VIEW_CHANNEL", "ADD_REACTIONS", "READ_MESSAGE_HISTORY"],
-        "everyone-role-deny": ["SEND_MESSAGES", "USE_EXTERNAL_EMOJIS"]
+        "everyone_role_allow": ["VIEW_CHANNEL", "ADD_REACTIONS", "READ_MESSAGE_HISTORY"],
+        "everyone_role_deny": ["SEND_MESSAGES", "USE_EXTERNAL_EMOJIS"]
       },
       {
         "configured": false,
@@ -149,8 +149,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": ["VIEW_CHANNEL", "ADD_REACTIONS", "READ_MESSAGE_HISTORY"],
-        "everyone-role-deny": ["SEND_MESSAGES", "USE_EXTERNAL_EMOJIS"]
+        "everyone_role_allow": ["VIEW_CHANNEL", "ADD_REACTIONS", "READ_MESSAGE_HISTORY"],
+        "everyone_role_deny": ["SEND_MESSAGES", "USE_EXTERNAL_EMOJIS"]
       },
       {
         "configured": false,
@@ -162,8 +162,8 @@
         "custom_channel_topic": "",
         "slow_mode": false,
         "roles": [],
-        "everyone-role-allow": [],
-        "everyone-role-deny": ["VIEW_CHANNEL"]
+        "everyone_role_allow": [],
+        "everyone_role_deny": ["VIEW_CHANNEL"]
       }
     ]
   },
