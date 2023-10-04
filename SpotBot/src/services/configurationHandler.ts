@@ -111,7 +111,7 @@ export class ConfigurationHandler {
             await configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
                 .then((collected) => {
                     if (collected.first().content.toLowerCase().includes('yes')) {
-                        configChannel.send(`Beginning configuration...\r\n\r\n`);
+                        configChannel.send(`Beginning configuration...`);
                         allowConfig = true;
                     } else {
                         configChannel.send(`That's okay! Maybe later. You may be prompted with this option again the next time the bot starts up.`);
@@ -139,26 +139,23 @@ export class ConfigurationHandler {
         
         // await setModeratorRole();
 
-        await Configuration.configureWelcomeChannel(configChannel).then((r: string) =>{
-            let defaults: IChannel = this.config.channels.discord_general_channels.find(e => {e.purpose == "member-welcome"});
+        await Configuration.configureWelcomeChannel(configChannel).then((r: string) => {
+            let defaults: IChannel = this.config.channels.discord_general_channels.find(e => e.default_name == "member-welcome");
             // r can be undefined....may need to think through what will happen if they bail early
             if (r == 'create') {
                 console.log(`Creating welcome channel and saving it to config...`);
-
+                this.createTextChannelFromDefaults(defaults);
             } else if (r.includes("<#")) {
-                // assume a channelId was returned.
-                // defaults = pull welcome channel defaults from config, assign channelId, name, etc to defaults
-                defaults.id = r;
+                defaults.id = r.replace(/[^a-zA-Z0-9_-]/g,''); 
+                console.log(`Saving welcome channel to config using id: ${defaults.id}`);
 
-                console.log(`Saving welcome channel to config using ${r} details.`);
+                const specifiedChannel = this.guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === defaults.id);
+                defaults = this.assignChannelFromSpecified(defaults, specifiedChannel as Discord.TextChannel); 
             } else {
                 return;
             }
 
-            console.log(this.config.channels.discord_general_channels);
-            this.createTextChannelFromDefaults(defaults);
-            // update this.config
-            // this.updateConfigAsync(); 
+            this.updateConfigAsync(); 
         });
         await configChannel.send("Ending configuration...");
         
@@ -171,13 +168,48 @@ export class ConfigurationHandler {
     }
 
     private createTextChannelFromDefaults = async (defaults: IChannel ) => {
-        //May need to alter what I'm returning
+        return await this.guild.channels.create(defaults.default_name, {
+            type: "text",
+            reason: 'Bot configuration',
+            topic: defaults.default_channel_topic,
+            permissionOverwrites: [
+                {
+                    id: this.guild.roles.everyone.id,
+                    allow: defaults.everyone_role_allow
+                },
+                {
+                    id: this.guild.roles.everyone.id,
+                    deny: defaults.everyone_role_deny
+                }
+            ]
+        });
+    }
 
+    private assignChannelFromSpecified = (defaults: IChannel, specifiedChannel: Discord.TextChannel ): IChannel => {
+        defaults.id = specifiedChannel.id;
+        defaults.custom_channel_topic = specifiedChannel.topic;
+        defaults.name = specifiedChannel.name;
+
+        //TODO: Get clever with overwriting defaults.everyone_role_allow using specifiedChannel.permissionsFor(this.guild.roles.everyone)
+        defaults.everyone_role_allow = undefined;
+        defaults.everyone_role_deny = undefined;
+        return defaults;
+    }
+
+    private constructConfigFromDefault = () => {
+        // run on initial configuration
+        // make available via command
         
-        // return await this.guild.channels.create(channelName, { 
-        //     reason: 'For bot configuration',   
-        //     permissionOverwrites: []
-        // }).catch(console.error) as Discord.TextChannel;
+        /*
+            Go get config_default.json
+
+            if config.json exists
+                overwrite with defaults
+                run configuration
+            else
+                Assume this is being done as part of initial configuration
+                create config.json and populate with config_default.json
+        */
     }
 
     private generateSpotBotCategory = async () => {
@@ -226,28 +258,6 @@ export class ConfigurationHandler {
             {
                 id: this.guild.roles.everyone.id,
                 deny: ['VIEW_CHANNEL']
-            }
-        ];
-    }
-
-    private returnEveryonePermissions = (guild: Discord.Guild): GuildCreateChannelOptions["permissionOverwrites"] => {
-        return [
-            {
-                id: this.guild.roles.highest.id,
-                allow: ['VIEW_CHANNEL', 'ATTACH_FILES', 'USE_EXTERNAL_EMOJIS', 'SEND_MESSAGES', 'ADD_REACTIONS' ,'READ_MESSAGE_HISTORY']
-            }
-        ];
-    }
-
-    private returnEveryoneViewPermissions = (guild: Discord.Guild): GuildCreateChannelOptions["permissionOverwrites"] => {
-        return [
-            {
-                id: this.guild.roles.highest.id,
-                allow: ['VIEW_CHANNEL', 'SEND_MESSAGES']
-            },
-            {
-                id: this.guild.roles.everyone.id,
-                deny: ['SEND_MESSAGES']
             }
         ];
     }
