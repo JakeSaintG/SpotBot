@@ -19,6 +19,8 @@ export class LogService {
     }
 
     public ensureLogChannelExists = () => {
+        console.log("ensuring log channel exists..."); //Remove later
+        
         //Run before logging to the channel
         //check for log channel that is saved to config.json
         //If not exist, generateLogChannel(), save it to json

@@ -16,15 +16,16 @@ export class ConfigurationHandler {
     public constructor(client: Discord.Client, logger: LogService) {
         this.client = client;
         this.logger = logger;
+        this.ensureConfigExists(false);
         this.loadConfig();
     };
 
     public loadConfig = (): void => {
-        this.config = JSON.parse(fs.readFileSync('./config_dev.json', 'utf8'));
+        this.config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
     };
 
     public loadConfigAsync = async (): Promise<void> => {
-        await fs.readFile('./config_dev.json', 'utf8', (error: any, data: string) => {
+        await fs.readFile('./config.json', 'utf8', (error: any, data: string) => {
             if (error) {
                 console.log(error);
                 return;
@@ -34,11 +35,11 @@ export class ConfigurationHandler {
     };
 
     public updateConfig = (): void => {
-        fs.writeFileSync('./config_dev.json', JSON.stringify(this.config, null, 2));
+        fs.writeFileSync('./config.json', JSON.stringify(this.config, null, 2));
     };
 
     public updateConfigAsync = (): void => {
-        fs.writeFile('./config_dev.json', JSON.stringify(this.config, null, 2), (e: Error) => {
+        fs.writeFile('./config.json', JSON.stringify(this.config, null, 2), (e: Error) => {
             if (e)
                 console.log("Error updating config file.");
             else {
@@ -196,20 +197,15 @@ export class ConfigurationHandler {
         return defaults;
     }
 
-    private constructConfigFromDefault = () => {
-        // run on initial configuration
-        // make available via command
-        
-        /*
-            Go get config_default.json
+    public ensureConfigExists = (forceSetup: boolean) => {
+        // TODO: make available via ADMIN command (maybe)
 
-            if config.json exists
-                overwrite with defaults
-                run configuration
-            else
-                Assume this is being done as part of initial configuration
-                create config.json and populate with config_default.json
-        */
+        if (!fs.existsSync('./config.json') || forceSetup) {
+            const configTemplate = JSON.parse(fs.readFileSync('./src/services/config_template.json', 'utf8'));
+            
+            console.log("Creating or recreating config file from template.");
+            fs.writeFileSync('./config.json', JSON.stringify(configTemplate, null, 2));
+        }
     }
 
     private generateSpotBotCategory = async () => {
