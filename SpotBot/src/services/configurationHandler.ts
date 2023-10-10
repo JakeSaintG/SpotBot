@@ -5,7 +5,6 @@ import { LogService } from './logger';
 import { GuildCreateChannelOptions } from 'discord.js';
 const fs = require('fs');
 
-
 export class ConfigurationHandler {
     public config: IConfig;
     private client: Discord.Client;
@@ -72,16 +71,11 @@ export class ConfigurationHandler {
         }
 
         this.guild = await client.guilds.fetch(this.config.guild_id);
+        console.log(`Loading guild with id: ${this.guild.id}`);
         return this.guild;
     }
 
     public checkForInitialConfiguration = async () => {
-
-        /*
-        Check config, if log channel not saved, generate log channel, save to config
-        Check config, if command channel not saved, generate command channel, save to config
-        */
-        console.log(`Loading guild with id: ${this.guild.id}`);
 
         if(!this.config.initial_configuration)
         {
@@ -146,7 +140,7 @@ export class ConfigurationHandler {
 
         await Configuration.configureWelcomeChannel(configChannel).then(async (r: string) => {
             let defaults: IChannel = this.config.channels.discord_general_channels.find(e => e.default_name == "member-welcome");
-            // r can be undefined....may need to think through what will happen if they bail early
+            // TODO: r can be undefined....may need to think through what will happen if they bail early
             if (r == 'create') {
                 console.log(`Creating welcome channel and saving it to config...`);
                 await this.createTextChannelFromDefaults(defaults);
@@ -231,7 +225,16 @@ export class ConfigurationHandler {
         const spotbotCategory = await this.guild.channels.create("SpotBot", 
             {
                 type: "category", 
-                permissionOverwrites: this.returnAdminOnlyPermissions(this.guild)
+                permissionOverwrites: [
+                    {
+                        id: this.guild.roles.highest.id,
+                        allow: ['VIEW_CHANNEL']
+                    },
+                    {
+                        id: this.guild.roles.everyone.id,
+                        deny: ['VIEW_CHANNEL']
+                    }
+                ]
             });
 
         this.config.spotbot_category_id = spotbotCategory.id;
@@ -259,45 +262,20 @@ export class ConfigurationHandler {
         // allow for rerunning initial configuration
         // allow for configuring welcome message
     }
-
-    private returnAdminOnlyPermissions = (guild: Discord.Guild): GuildCreateChannelOptions["permissionOverwrites"] => {
-        return [
-            {
-                id: this.guild.roles.highest.id,
-                allow: ['VIEW_CHANNEL']
-            },
-            {
-                id: this.guild.roles.everyone.id,
-                deny: ['VIEW_CHANNEL']
-            }
-        ];
-    }
 }
 
-module.exports = {ConfigurationHandler};
-// initial configuration
-    // If not, create spotbot-config text channel
+/*
+    Roles:
+        if GO server, ask go questions in addition to general
+        Check for team roles
+            ex: check roles if contain "valor", save it in config
+            "No team-specific roles were found. Would you like to create them?
+        create
 
-            //Do you have a "{{EXAMPLE_SERVER}}" channel? If yes, type "yes" and tag the channel. If no, type either "no" or "no generate" for Spotbot to create a default one.
-                // Yes: save channel name and ID to config.json, updates "configured" to true
-                // No: updates "configured" to false
-                // No generate
-            // Roles:
-                // if go, ask go questions in addition to general
-                // Check for team roles
-                    // ex: check roles if contain "valor", save it in config
-                    // "No team-specific roles were found. Would you like to create them?
-                // create
-//update channel details
-    // ex: add maid rain channel, main announcements channel, etc.
+    be able to migrate config.json
+        use the config-last-modified-dts in config.json to determine if a migration is needed
 
-    
-//generate config file if not exist
-
-//be able to migrate config.json
-    // use the config-last-modified-dts in config.json to determine if a migration is needed
-
-// be able to update configuration
-    // What would you like to configure? Type: "channels", "roles"
-        // channel: Which channel would you like to configure? (Show two lists. Already configured channels will be listed under "Update". Not yet configured channels will be under "Add") 
-        
+    be able to update configuration
+        What would you like to configure? Type: "channels", "roles"
+            channel: Which channel would you like to configure? (Show two lists. Already configured channels will be listed under "Update". Not yet configured channels will be under "Add")
+*/
