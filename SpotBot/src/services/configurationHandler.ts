@@ -91,7 +91,7 @@ export class ConfigurationHandler {
             
             const configChannelNameString = `bot_config_${new Date().toISOString()}`;
 
-            await this.generateSpotBotCategory();
+            //await this.generateSpotBotCategory();
 
             const configChannel = await this.guild.channels.create(configChannelNameString, { 
                 reason: 'For bot configuration',   
@@ -107,7 +107,11 @@ export class ConfigurationHandler {
                 ], })
                 .catch(console.error) as Discord.TextChannel;
 
-            configChannel.send(`Hey, ${this.guild.roles.highest}, the SpotBot initial configuration has not set.\r\nWould you like to start setup?\r\nRespond "yes" or "no".\r\n\r\nDO NOT DELETE THIS CHANNEL MANUALLY.`);
+            configChannel.send(
+            `Hey, ${this.guild.roles.highest}, the SpotBot initial configuration has not set. SpotBot is ready for use but some functionality may be limited until configuration is done.
+            \r\nWould you like to start setup?\r\nRespond "yes" or "no".
+            \r\nDO NOT DELETE THIS CHANNEL MANUALLY.`
+            );
             
             await configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
                 .then((collected) => {
@@ -135,32 +139,37 @@ export class ConfigurationHandler {
 
         await Configuration.configurePkmnGoFeatures(configChannel).then((r: any) =>{
             this.config.configured_for_pkmn_go = r;
-            this.updateConfigAsync(); 
+            this.updateConfigAsync();
         });
         
         // await setModeratorRole();
 
-        await Configuration.configureWelcomeChannel(configChannel).then((r: string) => {
+        await Configuration.configureWelcomeChannel(configChannel).then(async (r: string) => {
             let defaults: IChannel = this.config.channels.discord_general_channels.find(e => e.default_name == "member-welcome");
             // r can be undefined....may need to think through what will happen if they bail early
             if (r == 'create') {
                 console.log(`Creating welcome channel and saving it to config...`);
-                this.createTextChannelFromDefaults(defaults);
+                await this.createTextChannelFromDefaults(defaults);
             } else if (r.includes("<#")) {
                 defaults.id = r.replace(/[^a-zA-Z0-9_-]/g,''); 
                 console.log(`Saving welcome channel to config using id: ${defaults.id}`);
 
                 const specifiedChannel = this.guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === defaults.id);
-                defaults = this.assignChannelFromSpecified(defaults, specifiedChannel as Discord.TextChannel); 
+                this.assignChannelFromSpecified(defaults, specifiedChannel as Discord.TextChannel);
             } else {
                 return;
             }
 
             this.updateConfigAsync(); 
         });
-        await configChannel.send("Ending configuration...");
         
-        // this.updateConfigLastModifiedDts();
+        await configChannel.send("Thank you!");
+        await configChannel.send("Ending configuration for now. SpotBot will become more configurable and come with new features in the future.");
+        
+        this.updateConfigLastModifiedDts();
+
+        configChannel.send(`This channel will be auto-deleted in 1 minute.`);
+        this.deleteConfigChannelWithTimeout(configChannel, 60000);
     }
 
     private setModeratorRole = () => {
@@ -169,7 +178,7 @@ export class ConfigurationHandler {
     }
 
     private createTextChannelFromDefaults = async (defaults: IChannel ) => {
-        return await this.guild.channels.create(defaults.default_name, {
+        const newChannel = await this.guild.channels.create(defaults.default_name, {
             type: "text",
             reason: 'Bot configuration',
             topic: defaults.default_channel_topic,
@@ -184,6 +193,12 @@ export class ConfigurationHandler {
                 }
             ]
         });
+
+        defaults.id = newChannel.id;
+        defaults.custom_channel_topic = defaults.default_channel_topic;
+        defaults.name = newChannel.name;
+
+        return defaults;
     }
 
     private assignChannelFromSpecified = (defaults: IChannel, specifiedChannel: Discord.TextChannel ): IChannel => {

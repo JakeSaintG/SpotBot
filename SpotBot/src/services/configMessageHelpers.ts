@@ -72,7 +72,6 @@ export const configureWelcomeChannel = async (configChannel: Discord.TextChannel
         .then((collected) => {
             if (collected.first().content.toLowerCase().includes('no')) {
                 // Create one
-                console.log(`Creating welcome channel...`);
                 configurationMode = "create";
             } else {
                 const possibleWelcomeChannelId = collected.first().content.substring(
@@ -94,17 +93,6 @@ export const configureWelcomeChannel = async (configChannel: Discord.TextChannel
 
     return configurationMode;
 }
-
-export const configureWelcomeMessage = async (): Promise<string> => {
-    // channel.send (configured. please use "";;configure welcome-message" to )
-
-    return 'testsssssss'
-}
-
-export const configureLeaveMessage = async (): Promise<string> => {
-    return 'testsssssss'
-}
-
 
 export const checkResponse = (): boolean => {
     
