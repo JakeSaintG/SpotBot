@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js';
 import { IChannel, IConfig } from '../interfaces/IConfig';
-import * as Configuration from './configMessageHelpers';
+import * as ConfigMessageHelpers from './configMessageHelpers';
 import { LogService } from './logger';
-import { GuildCreateChannelOptions } from 'discord.js';
+
 const fs = require('fs');
 
 export class ConfigurationHandler {
@@ -131,14 +131,14 @@ export class ConfigurationHandler {
 
     private beginInitialConfiguration = async (configChannel: Discord.TextChannel) => {
 
-        await Configuration.configurePkmnGoFeatures(configChannel).then((r: any) =>{
+        await ConfigMessageHelpers.configurePkmnGoFeatures(configChannel).then((r: any) =>{
             this.config.configured_for_pkmn_go = r;
             this.updateConfigAsync();
         });
         
         // await setModeratorRole();
 
-        await Configuration.configureWelcomeChannel(configChannel).then(async (r: string) => {
+        await ConfigMessageHelpers.configureWelcomeChannel(configChannel).then(async (r: string) => {
             let defaults: IChannel = this.config.channels.discord_general_channels.find(e => e.default_name == "member-welcome");
             // TODO: r can be undefined....may need to think through what will happen if they bail early
             if (r == 'create') {

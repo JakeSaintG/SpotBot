@@ -21,34 +21,39 @@ const app = async () => {
             - chase down the passed-in logger and use DI instead (all the way down)
     */
     
+
     logger = new LogService();
     configHandler = new ConfigurationHandler(CLIENT, logger); 
 
     GUILD = await configHandler.loadGuild(CLIENT);
-    logger.ensureLogChannelExists();
-    configHandler.checkForInitialConfiguration();
+
+    //FEATURE TOGGLE
+    if (process.env.ALLOW_BETA_FEATURES) {
+        logger.ensureLogChannelExists();
+        configHandler.checkForInitialConfiguration();
+    }
 }
 
-CLIENT.on('ready', () => {
+CLIENT.on('ready', async () => {
+    await app();
+    
     if (!(process.env.NODE_ENV || 'development')) {
         logger.getLogChannelIdFromClient(CLIENT).send(
             `${CLIENT.user.username} has logged in!`
         )
     }
 
-    console.log(`${CLIENT.user.username} has logged in.`)
-
-    app();
+    console.log(`${CLIENT.user.username} has logged in.`);
 })
 
 //Listening for commands
 CLIENT.on('message', async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
-        return
+        return;
 
     if (message.content.startsWith(COMMAND_PREFIX))
-        await commandHandler(COMMAND_PREFIX, CLIENT, message, logger)
+        await commandHandler(COMMAND_PREFIX, CLIENT, message, logger);
 })
 
 // Hotfix requested by admins
@@ -63,12 +68,12 @@ CLIENT.on(
                 (channel: Discord.TextChannel) =>
                     channel.name === 'member-welcome'
             ).id
-        ) as Discord.TextChannel
+        ) as Discord.TextChannel;
 
         // TODO: Allow welcome message to be set via config
-        let welcomeMessage = constructWelcomeMessage(member, CLIENT)
+        let welcomeMessage = constructWelcomeMessage(member, CLIENT);
 
-        welcomeChannel.send(welcomeMessage)
+        welcomeChannel.send(welcomeMessage);
     }
 )
 
@@ -79,7 +84,7 @@ CLIENT.on(
     (member: Discord.GuildMember | Discord.PartialGuildMember) => {
         const adminRoleIdFromServer = CLIENT.guilds.cache
             .get(member.guild.id)
-            .roles.cache.find((r) => r.name == 'Admin').id
+            .roles.cache.find((r) => r.name == 'Admin').id;
 
         logger.getLogChannelIdFromClient(CLIENT).send(
             constructLeaveMessage(member, adminRoleIdFromServer)
@@ -87,4 +92,4 @@ CLIENT.on(
     }
 )
 
-CLIENT.login(process.env.SPOTBOT_TOKEN)
+CLIENT.login(process.env.SPOTBOT_TOKEN);
