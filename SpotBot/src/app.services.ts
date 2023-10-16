@@ -9,6 +9,7 @@ export const constructWelcomeMessage = (
     client: Discord.Client
 ) => {
 
+    // TODO: check if configured. if not, do nothinig.
     const welcomeUser = `Hey <@${member.user.id}>, welcome to ${client.guilds.cache.first().name}!`;
     //In the future, this will be assigned to a welcome message that the user can configure
     const customWelcome = hardCodedWelcome(client);

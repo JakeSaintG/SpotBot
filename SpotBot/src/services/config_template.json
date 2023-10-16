@@ -1,0 +1,181 @@
+{
+  "initial_configuration": false,
+  "config_last_modified_dts": "",
+  "notify_on_server_leave": false,
+  "configured_for_pkmn_go": false,
+  "spotbot_category_id": null,
+  "guild_id": null,
+  "channels": {
+    "pkmn_go_specific_channels": [
+      {
+        "configured": false,
+        "purpose": "main_raid_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      },
+      {
+        "configured": false,
+        "purpose": "main_raid_info_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      },
+      {
+        "configured": false,
+        "purpose": "flex_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      },
+      {
+        "configured": false,
+        "purpose": "trade_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      },
+      {
+        "configured": false,
+        "purpose": "friend_code_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      },
+      {
+        "configured": false,
+        "purpose": "roster_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      },
+      {
+        "configured": false,
+        "purpose": "community_day_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      }
+    ],
+    "discord_general_channels": [
+      {
+        "configured": false,
+        "purpose": "discord_general_channels",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      },
+      {
+        "configured": false,
+        "purpose": "main_announcement_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": []
+      },
+      {
+        "configured": false,
+        "purpose": "rules_channel",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": ["VIEW_CHANNEL", "ADD_REACTIONS", "READ_MESSAGE_HISTORY"],
+        "everyone_role_deny": ["SEND_MESSAGES", "USE_EXTERNAL_EMOJIS"]
+      },
+      {
+        "configured": false,
+        "purpose": "welcome_channel",
+        "default_name": "member-welcome",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "Hello and welcome! This channel serves to greet new additions to our community and potentially even point them to resouces within the server.",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": ["VIEW_CHANNEL", "ADD_REACTIONS", "READ_MESSAGE_HISTORY"],
+        "everyone_role_deny": ["SEND_MESSAGES", "USE_EXTERNAL_EMOJIS"]
+      },
+      {
+        "configured": false,
+        "purpose": "bot_logs",
+        "default_name": "",
+        "name": "",
+        "id": "",
+        "default_channel_topic": "",
+        "custom_channel_topic": "",
+        "slow_mode": false,
+        "roles": [],
+        "everyone_role_allow": [],
+        "everyone_role_deny": ["VIEW_CHANNEL"]
+      }
+    ]
+  },
+  "roles": {
+    "pkmn_go_specific_roles": {
+      "valor": "",
+      "mystic": "",
+      "instinct": ""
+    },
+    "discord_general_channels": {
+      "admin_role": "",
+      "mod_role": ""
+    }
+  }
+}

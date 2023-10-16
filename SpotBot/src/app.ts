@@ -3,48 +3,93 @@ import * as dotenv from 'dotenv';
 
 import { commandHandler } from './hooks';
 import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
-import { getLogChannelIdFromClient } from './services/logger';
+import { LogService } from './services/logger';
+import { ConfigurationHandler } from './services/configurationHandler';
 
 dotenv.config();
-const client = new Discord.Client();
+const CLIENT = new Discord.Client();
+let GUILD: Discord.Guild;
+let configHandler: ConfigurationHandler;
+let logger: LogService;
+const COMMAND_PREFIX: string = ';;';
 
-//Messages will use ";;" to indicate a command. ex: ";;message" or "";;raid"
-const COMMAND_PREFIX: string = ';;'
+const app = async () => {
 
-client.on('ready', () => {
-    getLogChannelIdFromClient(client).send(`${client.user.username} has logged in!`);
-    console.log(`${client.user.username} has logged in.`);
+    /*
+        TODO: These should be available via dependancy injection.
+            - Get tsyringe up and running. 
+            - chase down the passed-in logger and use DI instead (all the way down)
+    */
+    
+
+    logger = new LogService();
+    configHandler = new ConfigurationHandler(CLIENT, logger); 
+
+    GUILD = await configHandler.loadGuild(CLIENT);
+
+    //FEATURE TOGGLE
+    if (process.env.ALLOW_BETA_FEATURES) {
+        logger.ensureLogChannelExists();
+        configHandler.checkForInitialConfiguration();
+    }
+}
+
+CLIENT.on('ready', async () => {
+    await app();
+    
+    if (!(process.env.NODE_ENV || 'development')) {
+        logger.getLogChannelIdFromClient(CLIENT).send(
+            `${CLIENT.user.username} has logged in!`
+        )
+    }
+
+    console.log(`${CLIENT.user.username} has logged in.`);
 })
 
 //Listening for commands
-client.on('message', async (message) => {
+CLIENT.on('message', async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
-        return
-    if (message.content.startsWith(COMMAND_PREFIX)) {
-        await commandHandler(COMMAND_PREFIX, client, message)
+        return;
+
+    if (message.content.startsWith(COMMAND_PREFIX))
+        await commandHandler(COMMAND_PREFIX, CLIENT, message, logger);
+})
+
+// Hotfix requested by admins
+// TODO: add tests, clean up
+CLIENT.on(
+    'guildMemberAdd',
+    (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+        
+        //TODO: Allow admin to set welcome channel via command
+        const welcomeChannel = CLIENT.channels.cache.get(
+            CLIENT.channels.cache.find(
+                (channel: Discord.TextChannel) =>
+                    channel.name === 'member-welcome'
+            ).id
+        ) as Discord.TextChannel;
+
+        // TODO: Allow welcome message to be set via config
+        let welcomeMessage = constructWelcomeMessage(member, CLIENT);
+
+        welcomeChannel.send(welcomeMessage);
     }
-})
+)
 
 // Hotfix requested by admins
 // TODO: add tests, clean up
-client.on('guildMemberAdd', (member) => {
-    //TODO: Allow admin to set welcome channel via command
-    const welcomeChannel = client.channels.cache.get(client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'member-welcome'
-    ).id) as Discord.TextChannel;
+CLIENT.on(
+    'guildMemberRemove',
+    (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+        const adminRoleIdFromServer = CLIENT.guilds.cache
+            .get(member.guild.id)
+            .roles.cache.find((r) => r.name == 'Admin').id;
 
-    // TODO: Allow welcome message to be set via config
-    let welcomeMessage = constructWelcomeMessage(member, client);
-    
-    welcomeChannel.send(welcomeMessage);
-})
+        logger.getLogChannelIdFromClient(CLIENT).send(
+            constructLeaveMessage(member, adminRoleIdFromServer)
+        )
+    }
+)
 
-// Hotfix requested by admins
-// TODO: add tests, clean up
-client.on('guildMemberRemove', (member) => {
-    const adminRoleIdFromServer = client.guilds.cache.get(member.guild.id).roles.cache.find((r) => r.name == 'Admin').id;
-    getLogChannelIdFromClient(client).send(constructLeaveMessage(member, adminRoleIdFromServer));
-})
-
-client.login(process.env.SPOTBOT_TOKEN);
+CLIENT.login(process.env.SPOTBOT_TOKEN);
