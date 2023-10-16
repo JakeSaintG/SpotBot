@@ -144,6 +144,7 @@ export class ConfigurationHandler {
             if (r == 'create') {
                 console.log(`Creating welcome channel and saving it to config...`);
                 await this.createTextChannelFromDefaults(defaults);
+                await configChannel.send("A welcome channel has been created! Feel free organize it into a category later.");
             } else if (r.includes("<#")) {
                 defaults.id = r.replace(/[^a-zA-Z0-9_-]/g,''); 
                 console.log(`Saving welcome channel to config using id: ${defaults.id}`);
@@ -154,7 +155,7 @@ export class ConfigurationHandler {
                 return;
             }
 
-            this.updateConfigAsync(); 
+            this.updateConfigAsync();
         });
         
         await configChannel.send("Thank you!");
