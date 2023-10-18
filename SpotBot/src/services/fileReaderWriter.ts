@@ -1,3 +1,6 @@
+import { autoInjectable } from "tsyringe"
+
+@autoInjectable()
 class FileReaderWriter {
     private fileName: string
 

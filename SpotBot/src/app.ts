@@ -1,6 +1,8 @@
 import * as Discord from 'discord.js';
 import * as dotenv from 'dotenv';
 
+import 'reflect-metadata';
+import { container } from 'tsyringe';
 import { commandHandler } from './hooks';
 import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
 import { LogService } from './services/logger';
@@ -16,14 +18,13 @@ const COMMAND_PREFIX: string = ';;';
 const app = async () => {
 
     /*
-        TODO: These should be available via dependancy injection.
-            - Get tsyringe up and running. 
-            - chase down the passed-in logger and use DI instead (all the way down)
+        TODO: chase down the passed-in logger and use DI instead (all the way down)
+            - commandHandler is available from './hooks'
+            - Maybe make it a class 'commandService' to allow for DI of logger and a few other things
     */
-    
 
-    logger = new LogService();
-    configHandler = new ConfigurationHandler(CLIENT, logger); 
+    logger = container.resolve(LogService);
+    configHandler = container.resolve(ConfigurationHandler);
 
     GUILD = await configHandler.loadGuild(CLIENT);
 
