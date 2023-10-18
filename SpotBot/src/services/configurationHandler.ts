@@ -2,9 +2,10 @@ import * as Discord from 'discord.js';
 import { IChannel, IConfig } from '../interfaces/IConfig';
 import * as ConfigMessageHelpers from './configMessageHelpers';
 import { LogService } from './logger';
-
+import { autoInjectable } from 'tsyringe';
 const fs = require('fs');
 
+@autoInjectable()
 export class ConfigurationHandler {
     public config: IConfig;
     private client: Discord.Client;

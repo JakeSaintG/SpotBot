@@ -1,10 +1,11 @@
 import * as Discord from 'discord.js'
+import { autoInjectable } from 'tsyringe';
 
 //TODO: save log channel id to file as part of configuration 
     // If there's no channel name that contains "logs" and one has not been configured; CREATE IT!
         // Only admins can see it
         // Tag highest role and them know that the log channel was created, can be move, or reconfigured
-
+@autoInjectable()
 export class LogService {
     /**
      *
