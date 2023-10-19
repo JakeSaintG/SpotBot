@@ -1,14 +1,13 @@
 import * as Discord from 'discord.js'
 import { LogService } from '../services/logger'
 
-
 export const messageCommand = (
     message: Discord.Message,
     messageContent: string,
-     logger: LogService
+    logger: LogService
 ) => {
-    const authorId = structuredClone(message.author.id)
-    message.delete()
+    const authorId = structuredClone(message.author.id);
+    message.delete();
     
     // TODO: There is an issue with sending an "empty" message with an attachment
     if (messageContent.length != 0) message.channel.send(messageContent)

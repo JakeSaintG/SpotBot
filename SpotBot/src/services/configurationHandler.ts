@@ -141,8 +141,11 @@ export class ConfigurationHandler {
 
         await ConfigMessageHelpers.configureWelcomeChannel(configChannel).then(async (r: string) => {
             let defaults: IChannel = this.config.channels.discord_general_channels.find(e => e.default_name == "member-welcome");
-            // TODO: r can be undefined....may need to think through what will happen if they bail early
-            if (r == 'create') {
+
+            if (r === undefined) {
+                //todo: handle "no" a little better...
+                await configChannel.send("Understood. Skipping welcome channel set up.");
+            } else if (r == 'create') {
                 console.log(`Creating welcome channel and saving it to config...`);
                 await this.createTextChannelFromDefaults(defaults);
                 await configChannel.send("A welcome channel has been created! Feel free organize it into a category later.");
@@ -212,8 +215,7 @@ export class ConfigurationHandler {
         // TODO: make available via ADMIN command (maybe)
 
         if (!fs.existsSync('./config.json') || forceSetup) {
-            const configTemplate = JSON.parse(fs.readFileSync('./src/services/config_template.json', 'utf8'));
-            
+            const configTemplate = JSON.parse(fs.readFileSync('./src/files/config_template.json', 'utf8'));
             console.log("Creating or recreating config file from template.");
             fs.writeFileSync('./config.json', JSON.stringify(configTemplate, null, 2));
         }

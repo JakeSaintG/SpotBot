@@ -1,6 +1,5 @@
 import * as Discord from 'discord.js';
 import * as dotenv from 'dotenv';
-
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { commandHandler } from './hooks';
@@ -9,23 +8,20 @@ import { LogService } from './services/logger';
 import { ConfigurationHandler } from './services/configurationHandler';
 
 dotenv.config();
-const CLIENT = new Discord.Client();
-let GUILD: Discord.Guild;
-let configHandler: ConfigurationHandler;
-let logger: LogService;
+const CLIENT = container.resolve(Discord.Client);
+const configHandler = container.resolve(ConfigurationHandler);
+const logger = container.resolve(LogService);
 const COMMAND_PREFIX: string = ';;';
 
-const app = async () => {
+let GUILD: Discord.Guild;
+/*
+    TODO: chase down the passed-in logger and use DI instead (all the way down)
+        - commandHandler is available from './hooks'
+        - Maybe make it a class 'commandService' to allow for DI of logger and a few other things
+*/
 
-    /*
-        TODO: chase down the passed-in logger and use DI instead (all the way down)
-            - commandHandler is available from './hooks'
-            - Maybe make it a class 'commandService' to allow for DI of logger and a few other things
-    */
-
-    logger = container.resolve(LogService);
-    configHandler = container.resolve(ConfigurationHandler);
-
+// MAIN APP ENTRY POINT. 
+CLIENT.on('ready', async () => {
     GUILD = await configHandler.loadGuild(CLIENT);
 
     //FEATURE TOGGLE
@@ -33,10 +29,6 @@ const app = async () => {
         logger.ensureLogChannelExists();
         configHandler.checkForInitialConfiguration();
     }
-}
-
-CLIENT.on('ready', async () => {
-    await app();
     
     if (!(process.env.NODE_ENV || 'development')) {
         logger.getLogChannelIdFromClient(CLIENT).send(
@@ -47,7 +39,7 @@ CLIENT.on('ready', async () => {
     console.log(`${CLIENT.user.username} has logged in.`);
 })
 
-//Listening for commands
+// LISTENING FOR COMMANDS
 CLIENT.on('message', async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
@@ -57,7 +49,7 @@ CLIENT.on('message', async (message) => {
         await commandHandler(COMMAND_PREFIX, CLIENT, message, logger);
 })
 
-// Hotfix requested by admins
+// Hotfix requested by admins..tech debt
 // TODO: add tests, clean up
 CLIENT.on(
     'guildMemberAdd',
@@ -78,7 +70,7 @@ CLIENT.on(
     }
 )
 
-// Hotfix requested by admins
+// Hotfix requested by admins..tech debt
 // TODO: add tests, clean up
 CLIENT.on(
     'guildMemberRemove',

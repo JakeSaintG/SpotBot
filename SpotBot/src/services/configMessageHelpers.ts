@@ -1,20 +1,6 @@
 import * as Discord from 'discord.js';
 
 const affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
-/*
-    defaults
-
-    Would you like to configure a {{channel}}? {{elaborate}}
-        yes no
-    
-    Does a channel already exist that you would like to use as the {{channel}}?
-        yes no
-
-    Yes: Please tag the channel you would like to use with the #channel format
-
-    No: Creating {{channel}} and saving...
-
-*/
 
 export const configureBotLogsChannel = () => {}
 
