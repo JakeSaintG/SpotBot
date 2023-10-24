@@ -1,5 +1,5 @@
 import * as Discord from 'discord.js'
-import { LogService } from '../services/logger'
+import { LogService } from '../services/log.service'
 
 export const messageCommand = (
     message: Discord.Message,

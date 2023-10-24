@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import { contestWinnerCommand } from './contestCommands'
 import { messageCommand } from './messageCommand'
-import { LogService } from '../services/logger'
+import { LogService } from '../services/log.service'
 
 //Keywords for using admin commands
 export const adminKeywords: Array<String> = ['message', 'contest-winner']
