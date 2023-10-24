@@ -1,7 +1,7 @@
 import { autoInjectable } from "tsyringe"
 
 @autoInjectable()
-class FileReaderWriter {
+class FileService {
     private fileName: string
 
     public constructor(name: string) {

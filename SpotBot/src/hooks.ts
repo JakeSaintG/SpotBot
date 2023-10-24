@@ -3,7 +3,7 @@ import { Client, Message } from 'discord.js'
 import { adminKeywords, routeAdminCommands } from './admin/routeAdminCommands'
 import { helloKeywords, userCommands } from './hello/commands'
 import { routeHelpCommands, helpKeywords } from './help/routeHelpCommands'
-import { LogService } from './services/logger'
+import { LogService } from './services/log.service'
 
 export async function commandHandler(
     COMMAND_PREFIX: string,

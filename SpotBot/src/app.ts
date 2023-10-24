@@ -4,12 +4,12 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { commandHandler } from './hooks';
 import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
-import { LogService } from './services/logger';
-import { ConfigurationHandler } from './services/configurationHandler';
+import { LogService } from './services/log.service';
+import { ConfigurationService } from './services/configuration.service';
 
 dotenv.config();
 const CLIENT = container.resolve(Discord.Client);
-const configHandler = container.resolve(ConfigurationHandler);
+const configHandler = container.resolve(ConfigurationService);
 const logger = container.resolve(LogService);
 const COMMAND_PREFIX: string = ';;';
 
