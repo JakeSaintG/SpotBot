@@ -1,9 +1,6 @@
 import * as Discord from 'discord.js'
 import { getRandomTipCommand } from './tipCommand'
 
-//Keywords for using admin commands
-export const adminKeywords: Array<String> = ['message', 'contest-winner']
-
 export const helpKeywords: Array<String> = [
     'help',
     'tip',
