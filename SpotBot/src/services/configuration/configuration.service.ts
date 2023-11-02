@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js';
-import { IChannel, IConfig } from '../interfaces/IConfig';
+import { IChannel, IConfig } from '../../interfaces/IConfig';
 import * as ConfigMessageHelpers from './configMessageHelpers';
-import { LogService } from './log.service';
+import { LogService } from '../log.service';
 import { autoInjectable } from 'tsyringe';
 const fs = require('fs');
 

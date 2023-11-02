@@ -3,14 +3,18 @@ import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { commandHandler } from './hooks';
-import { constructLeaveMessage, constructWelcomeMessage } from './app.services';
+import { AppService, constructLeaveMessage, constructWelcomeMessage } from './app.service';
 import { LogService } from './services/log.service';
-import { ConfigurationService } from './services/configuration.service';
+import { ConfigurationService } from './services/configuration/configuration.service';
+import { MessageService } from './services/message/messageCommand';
 
 dotenv.config();
 const CLIENT = container.resolve(Discord.Client);
 const configHandler = container.resolve(ConfigurationService);
 const logger = container.resolve(LogService);
+const messageService = container.resolve(MessageService);
+const appService = container.resolve(AppService);
+
 const COMMAND_PREFIX: string = ';;';
 
 let GUILD: Discord.Guild;
@@ -46,7 +50,17 @@ CLIENT.on('message', async (message) => {
         return;
 
     if (message.content.startsWith(COMMAND_PREFIX))
-        await commandHandler(COMMAND_PREFIX, CLIENT, message, logger);
+    {
+        const [command, messageConent] = appService.extractCommand(message, COMMAND_PREFIX);
+
+        if (command == 'message' && message.member.roles.cache.some((role) => role.name === GUILD.roles.highest.name)) {
+            console.log(`${message.member.user.tag} used command: ${command}`);
+            messageService.handleMessageCommand(message, messageConent);
+            return;
+        }
+
+        await commandHandler( CLIENT, message, command, messageConent );
+    }
 })
 
 // Hotfix requested by admins..tech debt
@@ -64,9 +78,7 @@ CLIENT.on(
         ) as Discord.TextChannel;
 
         // TODO: Allow welcome message to be set via config
-        let welcomeMessage = constructWelcomeMessage(member, CLIENT);
-
-        welcomeChannel.send(welcomeMessage);
+        welcomeChannel.send(constructWelcomeMessage(member, CLIENT));
     }
 )
 
