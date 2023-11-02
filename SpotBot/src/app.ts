@@ -2,7 +2,6 @@ import * as Discord from 'discord.js';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { commandHandler } from './hooks';
 import {
     AppService,
     constructLeaveMessage,
@@ -12,29 +11,26 @@ import { LogService } from './services/log.service';
 import { ConfigurationService } from './services/configuration/configuration.service';
 import { MessageService } from './services/message/message.service';
 import { PingService } from './services/ping/ping.service';
+import { HelpService } from './services/help/help.service';
 
 dotenv.config();
 const CLIENT = container.resolve(Discord.Client);
 const appService = container.resolve(AppService);
 const configHandler = container.resolve(ConfigurationService);
 const logger = container.resolve(LogService);
+const helpService = container.resolve(HelpService);
 const messageService = container.resolve(MessageService);
 const pingService = container.resolve(PingService);
 
 const COMMAND_PREFIX: string = ';;';
 
 let GUILD: Discord.Guild;
-/*
-    TODO: chase down the passed-in logger and use DI instead (all the way down)
-        - commandHandler is available from './hooks'
-        - Maybe make it a class 'commandService' to allow for DI of logger and a few other things
-*/
 
 // MAIN APP ENTRY POINT.
 CLIENT.on('ready', async () => {
     GUILD = await configHandler.loadGuild(CLIENT);
 
-    //FEATURE TOGGLE
+    //FEATURE TOGGLED FOR NOW
     if (process.env.ALLOW_BETA_FEATURES) {
         logger.ensureLogChannelExists();
         configHandler.checkForInitialConfiguration();
@@ -73,12 +69,18 @@ CLIENT.on('message', async (message) => {
         }
 
         if (pingService.pingKeywords.includes(command)) {
-            
             pingService.handlePing(command, message, messageConent);
             return;
         }
 
-        await commandHandler(CLIENT, message, command, messageConent);
+        if (helpService.helpKeywords.includes(command)) {
+            helpService.handleHelpCommand(command, message, messageConent);
+            return;
+        }
+
+        /*
+            handle a non-found command
+        */
     }
 });
 
