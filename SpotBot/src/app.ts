@@ -16,28 +16,27 @@ import { HelpService } from './services/help/help.service';
 dotenv.config();
 const CLIENT = container.resolve(Discord.Client);
 const appService = container.resolve(AppService);
-const configHandler = container.resolve(ConfigurationService);
-const logger = container.resolve(LogService);
+const configService = container.resolve(ConfigurationService);
+const logService = container.resolve(LogService);
 const helpService = container.resolve(HelpService);
 const messageService = container.resolve(MessageService);
 const pingService = container.resolve(PingService);
 
 const COMMAND_PREFIX: string = ';;';
-
 let GUILD: Discord.Guild;
 
 // MAIN APP ENTRY POINT.
 CLIENT.on('ready', async () => {
-    GUILD = await configHandler.loadGuild(CLIENT);
+    GUILD = await configService.loadGuild(CLIENT);
 
     //FEATURE TOGGLED FOR NOW
     if (process.env.ALLOW_BETA_FEATURES) {
-        logger.ensureLogChannelExists();
-        configHandler.checkForInitialConfiguration();
+        logService.ensureLogChannelExists();
+        configService.checkForInitialConfiguration();
     }
 
     if (!(process.env.NODE_ENV || 'development')) {
-        logger
+        logService
             .getLogChannelIdFromClient(CLIENT)
             .send(`${CLIENT.user.username} has logged in!`);
     }
@@ -78,9 +77,7 @@ CLIENT.on('message', async (message) => {
             return;
         }
 
-        /*
-            handle a non-found command
-        */
+        console.log(`User ${message.author.tag} attempted to use an unknown command.`);
     }
 });
 
@@ -111,7 +108,7 @@ CLIENT.on(
             .get(member.guild.id)
             .roles.cache.find((r) => r.name == 'Admin').id;
 
-        logger
+        logService
             .getLogChannelIdFromClient(CLIENT)
             .send(constructLeaveMessage(member, adminRoleIdFromServer));
     }
