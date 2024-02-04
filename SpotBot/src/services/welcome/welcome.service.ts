@@ -1,16 +1,29 @@
 import * as Discord from 'discord.js'
 import { LogService } from '../log.service'
 import { autoInjectable } from 'tsyringe'
+import { ConfigurationService } from '../configuration/configuration.service';
+import { IChannel } from '../../interfaces/IConfig';
 
 @autoInjectable()
 export class WelcomeService {
 
+    private configService: ConfigurationService;
     // Getter? Setter?
-    welcomeChannelId: string;
+    welcomeChannel: IChannel;
     welcomeMessage: string;
 
-    constructor() {
-        this.checkForWelcomeFile();
+    constructor(configService: ConfigurationService) {
+        this.configService = configService;
+    }
+
+    public startUpWelcomeService = async () => {
+        this.getWelcomeChannel();
+
+        if (this.welcomeChannel.configured) {
+            this.checkForWelcomeFile();
+        } else {
+            console.log("Welcome Channel functionality not configured. Skipping.")
+        }
     }
 
     private checkForWelcomeChannel = () => {
@@ -21,8 +34,8 @@ export class WelcomeService {
 
     }
 
-    private getWelcomeChannelId = () => {
-        
+    private getWelcomeChannel = () => {
+        this.welcomeChannel = this.configService.returnConfiguredGeneralChannel("welcome_channel");
     }
 
     //Char length, etc
