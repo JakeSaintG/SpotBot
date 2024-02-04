@@ -1,5 +1,28 @@
 import * as Discord from 'discord.js'
 
+export class AppService {
+
+    constructor() {}
+
+    extractCommand = (message: Discord.Message, commandPrefix: string) => {
+        const command = message.content
+            .trim()
+            .substring(commandPrefix.length)
+            .split(/\s+/)[0];
+
+        const messageContent = message.content.substring(
+            commandPrefix.length +
+                message.content.indexOf(`;;${command}`) +
+                command.length +
+                1
+        );
+
+        return [command, messageContent]
+    }
+}
+
+
+
 // This is SUPER TEMPORARY!
 // TODO: Remove hard coded welcome message
 // TODO: Allow admin to set welcome image via ;;configure -welcome arg
