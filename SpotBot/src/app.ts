@@ -12,6 +12,7 @@ import { ConfigurationService } from './services/configuration/configuration.ser
 import { MessageService } from './services/message/message.service';
 import { PingService } from './services/ping/ping.service';
 import { HelpService } from './services/help/help.service';
+import { WelcomeService } from './services/welcome/welcome.service';
 
 dotenv.config();
 const CLIENT = container.resolve(Discord.Client);
@@ -21,6 +22,7 @@ const logService = container.resolve(LogService);
 const helpService = container.resolve(HelpService);
 const messageService = container.resolve(MessageService);
 const pingService = container.resolve(PingService);
+const welcomeService = container.resolve(WelcomeService);
 
 const COMMAND_PREFIX: string = ';;';
 let GUILD: Discord.Guild;
@@ -28,11 +30,14 @@ let GUILD: Discord.Guild;
 // MAIN APP ENTRY POINT.
 CLIENT.on('ready', async () => {
     GUILD = await configService.loadGuild(CLIENT);
-
+    
     //FEATURE TOGGLED FOR NOW
     if (process.env.ALLOW_BETA_FEATURES) {
-        logService.ensureLogChannelExists();
-        configService.checkForInitialConfiguration();
+        
+        await configService.checkForInitialConfiguration();
+            // TODO: Need to figure out how to re-run the welcome service start up after config or chain this better...
+        await welcomeService.startUpWelcomeService();
+        await logService.ensureLogChannelExists();
     }
 
     if (!(process.env.NODE_ENV || 'development')) {

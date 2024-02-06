@@ -17,12 +17,13 @@ export class WelcomeService {
     }
 
     public startUpWelcomeService = async () => {
-        this.getWelcomeChannel();
+        await this.getWelcomeChannel();
 
         if (this.welcomeChannel.configured) {
             this.checkForWelcomeFile();
+            console.log(`UNNEEDED LOG REMOVE LATER; Returned welcome channel with id: ${this.welcomeChannel.id}`);
         } else {
-            console.log("Welcome Channel functionality not configured. Skipping.")
+            console.log("UNNEEDED LOG REMOVE LATER; Welcome Channel functionality not configured. Skipping.");
         }
     }
 
@@ -34,12 +35,12 @@ export class WelcomeService {
 
     }
 
-    private getWelcomeChannel = () => {
-        this.welcomeChannel = this.configService.returnConfiguredGeneralChannel("welcome_channel");
+    private getWelcomeChannel = async () => {
+        this.welcomeChannel = await this.configService.returnConfiguredGeneralChannel("welcome_channel");
     }
 
     //Char length, etc
-    private verifyWelcomeMessage = () => {
+    private validateWelcomeMessage = () => {
         /*
             pass in string to verify
             check char length

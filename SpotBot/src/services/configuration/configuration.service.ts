@@ -38,7 +38,7 @@ export class ConfigurationService {
         fs.writeFileSync('./config.json', JSON.stringify(this.config, null, 2));
     };
 
-    public updateConfigAsync = (): void => {
+    public updateConfigAsync = async (): Promise<void> => {
         fs.writeFile('./config.json', JSON.stringify(this.config, null, 2), (e: Error) => {
             if (e)
                 console.log("Error updating config file.");
@@ -126,9 +126,14 @@ export class ConfigurationService {
                     this.deleteConfigChannelWithTimeout(configChannel, 60000);
                 });
 
-            if (allowConfig) this.beginInitialConfiguration(configChannel);
+            if (allowConfig) await this.beginInitialConfiguration(configChannel);
         };
     };
+
+    public returnConfiguredGeneralChannel = async (channelPurpose: string) => {
+        this.loadConfig();
+        return this.config.channels.discord_general_channels.find(c => c.purpose == channelPurpose);
+    }
 
     private beginInitialConfiguration = async (configChannel: Discord.TextChannel) => {
 
@@ -159,10 +164,9 @@ export class ConfigurationService {
                 return;
             }
 
-            this.updateConfigAsync();
+            await this.updateConfigAsync();
         });
         
-        await configChannel.send("Thank you!");
         await configChannel.send("Ending configuration for now. SpotBot will become more configurable and come with new features in the future.");
         
         this.updateConfigLastModifiedDts();
@@ -196,6 +200,7 @@ export class ConfigurationService {
         defaults.id = newChannel.id;
         defaults.custom_channel_topic = defaults.default_channel_topic;
         defaults.name = newChannel.name;
+        defaults.configured = true;
 
         return defaults;
     }
@@ -204,6 +209,7 @@ export class ConfigurationService {
         defaults.id = specifiedChannel.id;
         defaults.custom_channel_topic = specifiedChannel.topic;
         defaults.name = specifiedChannel.name;
+        defaults.configured = true;
 
         //TODO: Get clever with overwriting defaults.everyone_role_allow using specifiedChannel.permissionsFor(this.guild.roles.everyone)
         defaults.everyone_role_allow = undefined;
