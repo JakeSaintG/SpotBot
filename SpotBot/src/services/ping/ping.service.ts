@@ -21,8 +21,6 @@ export class PingService {
     }
 
     handlePing = (command: string, message: Discord.Message, messageContent: string) => {
-        console.log("pinged");
-
         if (command == 'ping') {
             this.ping(message);
         } else {
