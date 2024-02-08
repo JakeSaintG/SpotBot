@@ -20,7 +20,7 @@ export class PingService {
         this.logger = logService;
     }
 
-    handlePing = (command: string, message: Discord.Message, messageContent: string) => {
+    public handlePing = (command: string, message: Discord.Message, messageContent: string) => {
         if (command == 'ping') {
             this.ping(message);
         } else {

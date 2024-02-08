@@ -2,30 +2,34 @@ import * as Discord from 'discord.js';
 import { IChannel, IConfig } from '../../interfaces/IConfig';
 import * as ConfigMessageHelpers from './configMessageHelpers';
 import { LogService } from '../log.service';
-import { autoInjectable } from 'tsyringe';
+import { autoInjectable, singleton } from 'tsyringe';
+import { FileService } from '../file.service';
 const fs = require('fs');
 
-@autoInjectable()
+@singleton()
 export class ConfigurationService {
     public config: IConfig;
+    public configExist: boolean;
     private client: Discord.Client;
     private guild: Discord.Guild;
     private logger: LogService;
+    private fileService: FileService;
     private affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
     
-    public constructor(client: Discord.Client, logger: LogService) {
+    public constructor(client: Discord.Client, logger: LogService, fileService: FileService) {
         this.client = client;
         this.logger = logger;
+        this.fileService = fileService;
         this.ensureConfigExists(false);
         this.loadConfig();
     };
 
     public loadConfig = (): void => {
-        this.config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+        this.config = JSON.parse(fs.readFileSync('./bot_files/config.json', 'utf8'));
     };
 
     public loadConfigAsync = async (): Promise<void> => {
-        await fs.readFile('./config.json', 'utf8', (error: any, data: string) => {
+        await fs.readFile('./bot_files/config.json', 'utf8', (error: any, data: string) => {
             if (error) {
                 console.log(error);
                 return;
@@ -35,11 +39,11 @@ export class ConfigurationService {
     };
 
     public updateConfig = (): void => {
-        fs.writeFileSync('./config.json', JSON.stringify(this.config, null, 2));
+        fs.writeFileSync('./bot_files/config.json', JSON.stringify(this.config, null, 2));
     };
 
     public updateConfigAsync = async (): Promise<void> => {
-        fs.writeFile('./config.json', JSON.stringify(this.config, null, 2), (e: Error) => {
+        fs.writeFile('./bot_files/config.json', JSON.stringify(this.config, null, 2), (e: Error) => {
             if (e)
                 console.log("Error updating config file.");
             else {
@@ -131,7 +135,6 @@ export class ConfigurationService {
     };
 
     public returnConfiguredGeneralChannel = async (channelPurpose: string) => {
-        this.loadConfig();
         return this.config.channels.discord_general_channels.find(c => c.purpose == channelPurpose);
     }
 
@@ -218,12 +221,9 @@ export class ConfigurationService {
     }
 
     public ensureConfigExists = (forceSetup: boolean) => {
-        // TODO: make available via ADMIN command (maybe)
-
-        if (!fs.existsSync('./config.json') || forceSetup) {
-            const configTemplate = JSON.parse(fs.readFileSync('./src/files/config_template.json', 'utf8'));
-            console.log("Creating or recreating config file from template.");
-            fs.writeFileSync('./config.json', JSON.stringify(configTemplate, null, 2));
+        if (this.configExist == undefined) {
+            this.fileService.ensureTemplatedJsonFileExists('config', forceSetup);
+            this.configExist = true;
         }
     }
 

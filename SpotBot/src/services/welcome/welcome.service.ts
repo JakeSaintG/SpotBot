@@ -3,24 +3,27 @@ import { LogService } from '../log.service'
 import { autoInjectable } from 'tsyringe'
 import { ConfigurationService } from '../configuration/configuration.service';
 import { IChannel } from '../../interfaces/IConfig';
+import { FileService } from '../file.service';
+const fs = require('fs');
 
 @autoInjectable()
 export class WelcomeService {
-
+    private fileService: FileService;
     private configService: ConfigurationService;
     // Getter? Setter?
     welcomeChannel: IChannel;
     welcomeMessage: string;
 
-    constructor(configService: ConfigurationService) {
+    constructor(configService: ConfigurationService, fileService: FileService) {
         this.configService = configService;
+        this.fileService = fileService;
     }
 
     public startUpWelcomeService = async () => {
         await this.getWelcomeChannel();
 
         if (this.welcomeChannel.configured) {
-            this.checkForWelcomeFile();
+            this.ensureWelcomeFileExists(false);
             console.log(`UNNEEDED LOG REMOVE LATER; Returned welcome channel with id: ${this.welcomeChannel.id}`);
         } else {
             console.log("UNNEEDED LOG REMOVE LATER; Welcome Channel functionality not configured. Skipping.");
@@ -31,8 +34,8 @@ export class WelcomeService {
 
     }
 
-    private checkForWelcomeFile = () => {
-
+    private ensureWelcomeFileExists = (forceSetup: boolean) => {
+        this.fileService.ensureTemplatedJsonFileExists('welcome_message', forceSetup);
     }
 
     private getWelcomeChannel = async () => {

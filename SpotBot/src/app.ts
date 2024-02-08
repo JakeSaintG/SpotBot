@@ -1,13 +1,14 @@
 import * as Discord from 'discord.js';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
-import { container } from 'tsyringe';
+import { Lifecycle, container } from 'tsyringe';
 import {
     AppService,
     constructLeaveMessage,
     constructWelcomeMessage,
 } from './app.service';
 import { LogService } from './services/log.service';
+import { FileService } from './services/file.service';
 import { ConfigurationService } from './services/configuration/configuration.service';
 import { MessageService } from './services/message/message.service';
 import { PingService } from './services/ping/ping.service';
@@ -23,19 +24,19 @@ const helpService = container.resolve(HelpService);
 const messageService = container.resolve(MessageService);
 const pingService = container.resolve(PingService);
 const welcomeService = container.resolve(WelcomeService);
+const fileService = container.resolve(FileService);
 
 const COMMAND_PREFIX: string = ';;';
 let GUILD: Discord.Guild;
 
 // MAIN APP ENTRY POINT.
 CLIENT.on('ready', async () => {
-    GUILD = await configService.loadGuild(CLIENT);
+    GUILD = await configService.loadGuild(CLIENT);    
     
     //FEATURE TOGGLED FOR NOW
     if (process.env.ALLOW_BETA_FEATURES) {
         
         await configService.checkForInitialConfiguration();
-            // TODO: Need to figure out how to re-run the welcome service start up after config or chain this better...
         await welcomeService.startUpWelcomeService();
         await logService.ensureLogChannelExists();
     }
