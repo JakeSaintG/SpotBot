@@ -4,41 +4,51 @@ import { autoInjectable } from 'tsyringe'
 import { ConfigurationService } from '../configuration/configuration.service';
 import { IChannel } from '../../interfaces/IConfig';
 import { FileService } from '../file.service';
+import { channel } from 'diagnostics_channel';
+import { AppService } from '../../app.service';
 const fs = require('fs');
 
 @autoInjectable()
 export class WelcomeService {
     private fileService: FileService;
     private configService: ConfigurationService;
-    // Getter? Setter?
-    welcomeChannel: IChannel;
-    welcomeMessage: string;
+    private appService: AppService;
 
-    constructor(configService: ConfigurationService, fileService: FileService) {
+    // Getter? Setter?
+    private welcomeChannel: IChannel;
+    private welcomeMessage: string;
+
+    constructor(configService: ConfigurationService, fileService: FileService, appService: AppService) {
         this.configService = configService;
         this.fileService = fileService;
+        this.appService = appService;
     }
 
     public startUpWelcomeService = async () => {
-        await this.getWelcomeChannel();
+        await this.getWelcomeChannelFromConfig();
 
-        if (this.welcomeChannel.configured) {
+        if (this.welcomeChannel.configured && this.checkForServerWelcomeChannel()) {
             this.ensureWelcomeFileExists(false);
-            console.log(`UNNEEDED LOG REMOVE LATER; Returned welcome channel with id: ${this.welcomeChannel.id}`);
         } else {
-            console.log("UNNEEDED LOG REMOVE LATER; Welcome Channel functionality not configured. Skipping.");
+            console.log("Welcome Channel functionality was either not configured or the server channel was removed. Skipping.");
         }
     }
 
-    private checkForWelcomeChannel = () => {
+    private checkForServerWelcomeChannel = () => {
+        let serverWelcomeChannel = this.appService.guild.channels.cache.find(
+            channel => channel.id === this.welcomeChannel.id
+        )
 
+        if(serverWelcomeChannel) return true;
+
+        return false;
     }
 
     private ensureWelcomeFileExists = (forceSetup: boolean) => {
         this.fileService.ensureTemplatedJsonFileExists('welcome_message', forceSetup);
     }
 
-    private getWelcomeChannel = async () => {
+    private getWelcomeChannelFromConfig = async () => {
         this.welcomeChannel = await this.configService.returnConfiguredGeneralChannel("welcome_channel");
     }
 
