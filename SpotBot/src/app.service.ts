@@ -1,10 +1,21 @@
-import * as Discord from 'discord.js'
+import {Guild, Message, Client, GuildMember, PartialGuildMember, TextChannel} from 'discord.js'
+import { singleton } from 'tsyringe';
 
+@singleton()
 export class AppService {
 
     constructor() {}
 
-    extractCommand = (message: Discord.Message, commandPrefix: string) => {
+    private _guild: Guild;
+
+    get guild(): Guild {
+        return this._guild;
+    }
+    set guild(value: Guild) {
+        this._guild = value;
+    }
+
+    extractCommand = (message: Message, commandPrefix: string) => {
         const command = message.content
             .trim()
             .substring(commandPrefix.length)
@@ -28,8 +39,8 @@ export class AppService {
 // TODO: Allow admin to set welcome image via ;;configure -welcome arg
 // TODO: Allow stored configurations to be stored as a file
 export const constructWelcomeMessage = (
-    member: Discord.GuildMember | Discord.PartialGuildMember,
-    client: Discord.Client
+    member: GuildMember | PartialGuildMember,
+    client: Client
 ) => {
 
     // TODO: check if configured. if not, do nothinig.
@@ -44,47 +55,47 @@ ${customWelcome}`
 
 }
 
-const hardCodedWelcome = (client: Discord.Client): string => {
+const hardCodedWelcome = (client: Client): string => {
 
     // These fields are super hacked together and are delicate...this is temporary
     const rules = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'rules'
+        (channel: TextChannel) => channel.name === 'rules'
     ).id;
 
     const roster = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'roster'
+        (channel: TextChannel) => channel.name === 'roster'
     ).id;
 
     const friendCodes = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'friend-codes'
+        (channel: TextChannel) => channel.name === 'friend-codes'
     ).id;
 
     const questions = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'questions'
+        (channel: TextChannel) => channel.name === 'questions'
     ).id;
 
     const events = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'events'
+        (channel: TextChannel) => channel.name === 'events'
     ).id;
 
     const flex = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'flex-📷'
+        (channel: TextChannel) => channel.name === 'flex-📷'
     ).id;
 
     const trades = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'trades'
+        (channel: TextChannel) => channel.name === 'trades'
     ).id;
 
     const communityDay = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'community-day'
+        (channel: TextChannel) => channel.name === 'community-day'
     ).id;
 
     const research = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'research'
+        (channel: TextChannel) => channel.name === 'research'
     ).id;
 
     const chat = client.channels.cache.find(
-        (channel: Discord.TextChannel) => channel.name === 'chat'
+        (channel: TextChannel) => channel.name === 'chat'
     ).id;
 
     return `Thanks for joining us! We are so happy you are here!
@@ -107,7 +118,7 @@ ENJOY!!!`
 };
 
 export const constructLeaveMessage = (
-    member: Discord.GuildMember | Discord.PartialGuildMember,
+    member: GuildMember | PartialGuildMember,
     adminRoleId: string
 ): string => {
     let nickname = ''

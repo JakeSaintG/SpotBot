@@ -27,11 +27,11 @@ const welcomeService = container.resolve(WelcomeService);
 const fileService = container.resolve(FileService);
 
 const COMMAND_PREFIX: string = ';;';
-let GUILD: Discord.Guild;
 
 // MAIN APP ENTRY POINT.
 CLIENT.on('ready', async () => {
-    GUILD = await configService.loadGuild(CLIENT);    
+    console.log(`${CLIENT.user.username} has logged in to Discord.`);
+    appService.guild = await configService.loadGuild(CLIENT); 
     
     //FEATURE TOGGLED FOR NOW
     if (process.env.ALLOW_BETA_FEATURES) {
@@ -47,7 +47,7 @@ CLIENT.on('ready', async () => {
             .send(`${CLIENT.user.username} has logged in!`);
     }
 
-    console.log(`${CLIENT.user.username} has logged in.`);
+    console.log(`${CLIENT.user.username} successfully started!`);
 });
 
 // LISTENING FOR COMMANDS
@@ -65,7 +65,7 @@ CLIENT.on('message', async (message) => {
         if (
             command == 'message' &&
             message.member.roles.cache.some(
-                (role) => role.name === GUILD.roles.highest.name
+                (role) => role.name === appService.guild.roles.highest.name
             )
         ) {
             console.log(`${message.member.user.tag} used command: ${command}`);
