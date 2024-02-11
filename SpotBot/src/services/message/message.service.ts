@@ -1,4 +1,4 @@
-import * as Discord from 'discord.js';
+import {Message} from 'discord.js';
 import { LogService } from '../log.service';
 import { autoInjectable } from 'tsyringe';
 
@@ -11,7 +11,7 @@ export class MessageService {
     }
 
     handleMessageCommand = (
-        message: Discord.Message,
+        message: Message,
         messageContent: string
     ) => {
         // TODO: Get message TO channel up an running if the message string starts with a channel ID
@@ -21,7 +21,7 @@ export class MessageService {
     };
 
     private messageFromChannel = (
-        message: Discord.Message,
+        message: Message,
         messageContent: string
     ) => {
         const authorId = structuredClone(message.author.id);

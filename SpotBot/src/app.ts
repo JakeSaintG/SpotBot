@@ -1,7 +1,7 @@
-import * as Discord from 'discord.js';
+import {Client, GuildMember, PartialGuildMember, TextChannel} from 'discord.js';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
-import { Lifecycle, container } from 'tsyringe';
+import { container } from 'tsyringe';
 import {
     AppService,
     constructLeaveMessage,
@@ -16,7 +16,7 @@ import { HelpService } from './services/help/help.service';
 import { WelcomeService } from './services/welcome/welcome.service';
 
 dotenv.config();
-const CLIENT = container.resolve(Discord.Client);
+const CLIENT = container.resolve(Client);
 const appService = container.resolve(AppService);
 const configService = container.resolve(ConfigurationService);
 const logService = container.resolve(LogService);
@@ -91,14 +91,14 @@ CLIENT.on('message', async (message) => {
 // TODO: add tests, clean up
 CLIENT.on(
     'guildMemberAdd',
-    (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+    (member: GuildMember | PartialGuildMember) => {
         //TODO: Allow admin to set welcome channel via command
         const welcomeChannel = CLIENT.channels.cache.get(
             CLIENT.channels.cache.find(
-                (channel: Discord.TextChannel) =>
+                (channel: TextChannel) =>
                     channel.name === 'member-welcome'
             ).id
-        ) as Discord.TextChannel;
+        ) as TextChannel;
 
         // TODO: Allow welcome message to be set via config
         welcomeChannel.send(constructWelcomeMessage(member, CLIENT));
@@ -109,7 +109,7 @@ CLIENT.on(
 // TODO: add tests, clean up
 CLIENT.on(
     'guildMemberRemove',
-    (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+    (member: GuildMember | PartialGuildMember) => {
         const adminRoleIdFromServer = CLIENT.guilds.cache
             .get(member.guild.id)
             .roles.cache.find((r) => r.name == 'Admin').id;

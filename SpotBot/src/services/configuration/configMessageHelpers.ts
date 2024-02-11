@@ -1,10 +1,10 @@
-import * as Discord from 'discord.js';
+import { TextChannel } from 'discord.js';
 
 const affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
 
 export const configureBotLogsChannel = () => {}
 
-export const configurePkmnGoFeatures = async (configChannel: Discord.TextChannel): Promise<boolean> => {
+export const configurePkmnGoFeatures = async (configChannel: TextChannel): Promise<boolean> => {
     let goFeaturesEnabled = false;
     
     configChannel.send("SpotBot is a general-use Discord bot by default but has Pokémon GO-specific functionality.\r\nWould you like to configure it for use with Pokémon GO?")
@@ -25,7 +25,7 @@ export const configurePkmnGoFeatures = async (configChannel: Discord.TextChannel
     return goFeaturesEnabled;
 }
 
-export const configureWelcomeChannel = async (configChannel: Discord.TextChannel): Promise<string> => {
+export const configureWelcomeChannel = async (configChannel: TextChannel): Promise<string> => {
     let exitWelcomeConfig: boolean = false;
     let configurationMode: string;
 

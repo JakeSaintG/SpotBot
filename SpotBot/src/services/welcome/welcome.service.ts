@@ -1,12 +1,9 @@
-import * as Discord from 'discord.js'
 import { LogService } from '../log.service'
 import { autoInjectable } from 'tsyringe'
 import { ConfigurationService } from '../configuration/configuration.service';
 import { IChannel } from '../../interfaces/IConfig';
 import { FileService } from '../file.service';
-import { channel } from 'diagnostics_channel';
 import { AppService } from '../../app.service';
-const fs = require('fs');
 
 @autoInjectable()
 export class WelcomeService {
@@ -67,6 +64,8 @@ export class WelcomeService {
             use file service (maybe) to read welcome message
             store in this.welcomeMessage
         */
+
+
     }
 
     saveWelcomeMessage = () => {

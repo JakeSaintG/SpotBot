@@ -1,4 +1,4 @@
-import * as Discord from 'discord.js';
+import { Guild, TextChannel, Client } from 'discord.js';
 import { IChannel, IConfig } from '../../interfaces/IConfig';
 import * as ConfigMessageHelpers from './configMessageHelpers';
 import { LogService } from '../log.service';
@@ -10,14 +10,12 @@ const fs = require('fs');
 export class ConfigurationService {
     public config: IConfig;
     public configExist: boolean;
-    private client: Discord.Client;
-    private guild: Discord.Guild;
+    private guild: Guild;
     private logger: LogService;
     private fileService: FileService;
     private affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
     
-    public constructor(client: Discord.Client, logger: LogService, fileService: FileService) {
-        this.client = client;
+    public constructor(logger: LogService, fileService: FileService) {
         this.logger = logger;
         this.fileService = fileService;
         this.ensureConfigExists(false);
@@ -52,10 +50,10 @@ export class ConfigurationService {
         });
     };
 
-    private deleteConfigChannelWithTimeout = (configChannel: Discord.TextChannel, timeout: number) => {
+    private deleteConfigChannelWithTimeout = (configChannel: TextChannel, timeout: number) => {
         setTimeout(() => {
             console.log("Checking if channel exists...");
-            const checkForConfigChannel = this.guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === configChannel.id);
+            const checkForConfigChannel = this.guild.channels.cache.find((channel: TextChannel) => channel.id === configChannel.id);
             
             if(checkForConfigChannel) {
                 console.log("Deleteing config channel.");
@@ -66,7 +64,7 @@ export class ConfigurationService {
         }, timeout);
     }
 
-    public loadGuild = async (client: Discord.Client): Promise<Discord.Guild> => {
+    public loadGuild = async (client: Client): Promise<Guild> => {
         
         if (this.config.guild_id == null) {
             const guildId = client.guilds.cache.first().id;
@@ -104,7 +102,7 @@ export class ConfigurationService {
                         deny: ['VIEW_CHANNEL']
                     }
                 ], })
-                .catch(console.error) as Discord.TextChannel;
+                .catch(console.error) as TextChannel;
 
             configChannel.send(
             `Hey, ${this.guild.roles.highest}, the SpotBot initial configuration has not set. SpotBot is ready for use but some functionality may be limited until configuration is done.
@@ -138,7 +136,7 @@ export class ConfigurationService {
         return this.config.channels.discord_general_channels.find(c => c.purpose == channelPurpose);
     }
 
-    private beginInitialConfiguration = async (configChannel: Discord.TextChannel) => {
+    private beginInitialConfiguration = async (configChannel: TextChannel) => {
 
         await ConfigMessageHelpers.configurePkmnGoFeatures(configChannel).then((r: any) =>{
             this.config.configured_for_pkmn_go = r;
@@ -161,8 +159,8 @@ export class ConfigurationService {
                 defaults.id = r.replace(/[^a-zA-Z0-9_-]/g,''); 
                 console.log(`Saving welcome channel to config using id: ${defaults.id}`);
 
-                const specifiedChannel = this.guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === defaults.id);
-                this.assignChannelFromSpecified(defaults, specifiedChannel as Discord.TextChannel);
+                const specifiedChannel = this.guild.channels.cache.find((channel: TextChannel) => channel.id === defaults.id);
+                this.assignChannelFromSpecified(defaults, specifiedChannel as TextChannel);
             } else {
                 return;
             }
@@ -208,7 +206,7 @@ export class ConfigurationService {
         return defaults;
     }
 
-    private assignChannelFromSpecified = (defaults: IChannel, specifiedChannel: Discord.TextChannel ): IChannel => {
+    private assignChannelFromSpecified = (defaults: IChannel, specifiedChannel: TextChannel ): IChannel => {
         defaults.id = specifiedChannel.id;
         defaults.custom_channel_topic = specifiedChannel.topic;
         defaults.name = specifiedChannel.name;

@@ -1,4 +1,4 @@
-import * as Discord from 'discord.js';
+import {Message} from 'discord.js';
 import { ITip } from "../../interfaces/ITip";
 
 export class HelpService {
@@ -19,13 +19,13 @@ export class HelpService {
         {tipNumber: 7, tip: "Don't forget. Pokemon GO can be enjoyed entirely free-to-play. Don't feel pressured to give Niantic your money!"}
     ]
 
-    handleHelpCommand = ( command: string, message: Discord.Message, messageContent: string ) => {
+    handleHelpCommand = ( command: string, message: Message, messageContent: string ) => {
         if (command == 'tip' || command == 'tips') {
             this.sendTip(message)
         }
     }
 
-    sendTip = (message: Discord.Message) => { 
+    sendTip = (message: Message) => { 
         const randomTip = this.tips[Math.floor(Math.random() * this.tips.length)];
         message.channel.send(`Tip No: ${randomTip.tipNumber}: ${randomTip.tip}.`);       
     }
