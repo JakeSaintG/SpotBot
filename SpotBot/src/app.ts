@@ -92,6 +92,8 @@ CLIENT.on('message', async (message) => {
 CLIENT.on(
     'guildMemberAdd',
     (member: GuildMember | PartialGuildMember) => {
+        welcomeService.postWelcomeMessage();
+        
         //TODO: Allow admin to set welcome channel via command
         const welcomeChannel = CLIENT.channels.cache.get(
             CLIENT.channels.cache.find(

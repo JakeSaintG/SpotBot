@@ -49,6 +49,13 @@ export class WelcomeService {
         this.welcomeChannel = await this.configService.returnConfiguredGeneralChannel("welcome_channel");
     }
 
+    public postWelcomeMessage = () => {
+        //TODO: strongly type this
+        const welcomeJson = this.fileService.getJsonFileContents('welcome_message');
+
+        
+    }
+
     //Char length, etc
     private validateWelcomeMessage = () => {
         /*
@@ -64,7 +71,6 @@ export class WelcomeService {
             use file service (maybe) to read welcome message
             store in this.welcomeMessage
         */
-
 
     }
 

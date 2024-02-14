@@ -20,6 +20,12 @@ export class FileService {
         }
     }
 
+    public getJsonFileContents = (fileName: string) => {
+        this.ensureDirectoryExists(fileName, false);
+
+        return JSON.parse(fs.readFileSync(`./bot_files/${fileName}.json`, 'utf8'));
+    }
+
     private ensureDirectoryExists = (path: string, forceSetup: boolean): void => {
         if (!fs.existsSync(path) || forceSetup) {
             console.log(`Creating directory at ${path}`);
