@@ -1,4 +1,4 @@
-import * as Discord from 'discord.js'
+import {TextChannel, Message, Client}from 'discord.js'
 import { autoInjectable } from 'tsyringe';
 
 //TODO: save log channel id to file as part of configuration 
@@ -27,18 +27,18 @@ export class LogService {
         //If not exist, generateLogChannel(), save it to json
     }
 
-    public getLogChannelIdFromMessage = (message: Discord.Message): Discord.TextChannel => {
+    public getLogChannelIdFromMessage = (message: Message): TextChannel => {
         //pull from config file eventually
         return message.guild.channels.cache.get(message.guild.channels.cache.find(
-            (channel: Discord.TextChannel) => channel.name === 'bot-logs'
-        ).id) as Discord.TextChannel;
+            (channel: TextChannel) => channel.name === 'bot-logs'
+        ).id) as TextChannel;
     };
     
-    public getLogChannelIdFromClient = (client: Discord.Client): Discord.TextChannel => {
+    public getLogChannelIdFromClient = (client: Client): TextChannel => {
         //pull from config file eventually
         return client.channels.cache.get(client.channels.cache.find(
-            (channel: Discord.TextChannel) => channel.name === 'bot-logs'
-        ).id) as Discord.TextChannel
+            (channel: TextChannel) => channel.name === 'bot-logs'
+        ).id) as TextChannel
     };
 }
 
