@@ -1,4 +1,4 @@
-import {Client, GuildMember, PartialGuildMember, TextChannel} from 'discord.js';
+import {Client, Guild, GuildMember, PartialGuildMember} from 'discord.js';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
@@ -57,7 +57,7 @@ CLIENT.on('message', async (message) => {
         return;
 
     if (message.content.startsWith(COMMAND_PREFIX)) {
-        const [command, messageConent] = appService.extractCommand(
+        const [command, messageContent] = appService.extractCommand(
             message,
             COMMAND_PREFIX
         );
@@ -69,17 +69,32 @@ CLIENT.on('message', async (message) => {
             )
         ) {
             console.log(`${message.member.user.tag} used command: ${command}`);
-            messageService.handleMessageCommand(message, messageConent);
+            messageService.handleMessageCommand(message, messageContent );
             return;
         }
 
         if (pingService.pingKeywords.includes(command)) {
-            pingService.handlePing(command, message, messageConent);
+            pingService.handlePing(command, message, messageContent);
+            return;
+        }
+
+        // TODO: handle this better
+        if (
+            configService.configKeywords.includes(command) && 
+            message.member.roles.cache.some(
+                (role) => role.name === appService.guild.roles.highest.name
+            )
+        ) {
+            if (messageContent === 'welcome') {
+                welcomeService.setWelcomeMessage(message);
+            } else {
+                console.log("Configuration command not properly used");
+            }
             return;
         }
 
         if (helpService.helpKeywords.includes(command)) {
-            helpService.handleHelpCommand(command, message, messageConent);
+            helpService.handleHelpCommand(command, message, messageContent);
             return;
         }
 
@@ -87,23 +102,11 @@ CLIENT.on('message', async (message) => {
     }
 });
 
-// Hotfix requested by admins..tech debt
-// TODO: add tests, clean up
 CLIENT.on(
     'guildMemberAdd',
-    (member: GuildMember | PartialGuildMember) => {
-        welcomeService.postWelcomeMessage();
-        
-        //TODO: Allow admin to set welcome channel via command
-        const welcomeChannel = CLIENT.channels.cache.get(
-            CLIENT.channels.cache.find(
-                (channel: TextChannel) =>
-                    channel.name === 'member-welcome'
-            ).id
-        ) as TextChannel;
-
-        // TODO: Allow welcome message to be set via config
-        welcomeChannel.send(constructWelcomeMessage(member, CLIENT));
+    (member: GuildMember ) => {
+        // todo: remove the ability for temp members to get pinged
+        welcomeService.postWelcomeMessage(member);
     }
 );
 

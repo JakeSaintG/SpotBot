@@ -1,24 +1,28 @@
 import { LogService } from '../log.service'
-import { autoInjectable } from 'tsyringe'
+import { singleton } from 'tsyringe'
 import { ConfigurationService } from '../configuration/configuration.service';
 import { IChannel } from '../../interfaces/IConfig';
 import { FileService } from '../file.service';
 import { AppService } from '../../app.service';
+import { IWelcomes } from '../../interfaces/IWelcomes';
+import { GuildMember, Message, TextChannel } from 'discord.js';
 
-@autoInjectable()
+@singleton()
 export class WelcomeService {
     private fileService: FileService;
     private configService: ConfigurationService;
     private appService: AppService;
 
+    private welcomeJson: IWelcomes;
+
     // Getter? Setter?
     private welcomeChannel: IChannel;
-    private welcomeMessage: string;
 
     constructor(configService: ConfigurationService, fileService: FileService, appService: AppService) {
         this.configService = configService;
         this.fileService = fileService;
         this.appService = appService;
+        this.getWelcomeJson();
     }
 
     public startUpWelcomeService = async () => {
@@ -41,6 +45,10 @@ export class WelcomeService {
         return false;
     }
 
+    private getWelcomeJson = () => {
+        this.welcomeJson = this.fileService.getJsonFileContents('welcome_message');
+    }
+
     private ensureWelcomeFileExists = (forceSetup: boolean) => {
         this.fileService.ensureTemplatedJsonFileExists('welcome_message', forceSetup);
     }
@@ -49,11 +57,19 @@ export class WelcomeService {
         this.welcomeChannel = await this.configService.returnConfiguredGeneralChannel("welcome_channel");
     }
 
-    public postWelcomeMessage = () => {
-        //TODO: strongly type this
-        const welcomeJson = this.fileService.getJsonFileContents('welcome_message');
+    public postWelcomeMessage = ( member: GuildMember  ) => {
+        if (this.welcomeJson.custom_channel_welcome_message === null || this.welcomeJson.custom_channel_welcome_message === undefined) {
+            
+            (this.appService.guild.channels.cache.get(
+                this.appService.guild.channels.cache.find(c => c.id === this.welcomeChannel.id).id
+            ) as TextChannel).send(`Hey <@${member.id}>!\r\n\r\n${this.welcomeJson.default_channel_welcome_message}`);
 
-        
+            return;
+        }
+
+        (this.appService.guild.channels.cache.get(
+            this.appService.guild.channels.cache.find(c => c.id === this.welcomeChannel.id).id
+        ) as TextChannel).send(`Hey <@${member.id}>, welcome to ${this.appService.guild.name}!\r\n\r\n${this.welcomeJson.custom_channel_welcome_message}`);
     }
 
     //Char length, etc
@@ -66,30 +82,41 @@ export class WelcomeService {
         */
     }
 
-    getWelcomeMessage = () => {
-        /*
-            use file service (maybe) to read welcome message
-            store in this.welcomeMessage
-        */
+    setWelcomeMessage = (message: Message) => {
+        const prompt1 = message.channel.send("Please supply the message you would like to use when welcoming new members.");
+        const prompt2 = message.channel.send("The next message entered by the command issuer will be saved as the welcome message.");
+        let prompt3: Promise<Message>;
 
-    }
+        const msg_filter = (m: Message) => m.author.id === message.author.id;
 
-    saveWelcomeMessage = () => {
-        /*
-            get this.welcomeMessage
-            use file service (maybe) to write to json
-        */
-    }
-
-    handleWelcomeMessageUpdate = () => {
-
-        /*
-            receive user command
-            prompt for message
-            listen for next message
-            this.verifyWelcomeMessage
-            save next message
-            Thanks!
-        */
+        message.channel.awaitMessages(msg_filter, { max: 1, time: 300000, errors: ['time']})
+            .then((collected) => {
+                // TODO: Validate welcome message
+                this.welcomeJson.custom_channel_welcome_message = collected.first().content;
+                this.fileService.updateWelcomeJson(this.welcomeJson);
+                prompt3 = message.channel.send("Saved welcome message! Now to clean up all these messages....");
+                
+                message.channel.messages.delete(collected.first());
+            })
+            .catch(() => {
+                prompt3 = message.channel.send("An error occurred. Likely a timeout.");
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    prompt1.then( m => {
+                        m.delete();
+                    })
+    
+                    prompt2.then( m => {
+                        m.delete();
+                    })
+    
+                    prompt3.then( m => {
+                        m.delete();
+                    })
+    
+                    message.delete();
+                }, 5000);
+            });
     }
 }
