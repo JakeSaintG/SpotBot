@@ -1,18 +1,25 @@
-import { Guild, TextChannel, Client } from 'discord.js';
+import { Guild, TextChannel, Client, Message } from 'discord.js';
 import { IChannel, IConfig } from '../../interfaces/IConfig';
 import * as ConfigMessageHelpers from './configMessageHelpers';
 import { LogService } from '../log.service';
 import { autoInjectable, singleton } from 'tsyringe';
 import { FileService } from '../file.service';
+import { WelcomeService } from '../welcome/welcome.service';
 const fs = require('fs');
 
 @singleton()
 export class ConfigurationService {
+    public configKeywords =  [
+        'configure',
+        'config'
+    ]
+    
     public config: IConfig;
     public configExist: boolean;
     private guild: Guild;
     private logger: LogService;
     private fileService: FileService;
+
     private affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
     
     public constructor(logger: LogService, fileService: FileService) {
@@ -155,10 +162,11 @@ export class ConfigurationService {
                 console.log(`Creating welcome channel and saving it to config...`);
                 await this.createTextChannelFromDefaults(defaults);
                 await configChannel.send("A welcome channel has been created! Feel free organize it into a category later.");
+                await configChannel.send("Use command `;;configure welcome` later to set a custom welcome message if you would like.");
             } else if (r.includes("<#")) {
                 defaults.id = r.replace(/[^a-zA-Z0-9_-]/g,''); 
                 console.log(`Saving welcome channel to config using id: ${defaults.id}`);
-
+                await configChannel.send("Saved! Use command `;;configure welcome` later to set a custom welcome message if you would like.");
                 const specifiedChannel = this.guild.channels.cache.find((channel: TextChannel) => channel.id === defaults.id);
                 this.assignChannelFromSpecified(defaults, specifiedChannel as TextChannel);
             } else {
