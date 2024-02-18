@@ -1,31 +1,40 @@
-import * as Discord from 'discord.js';
-import { IChannel, IConfig } from '../interfaces/IConfig';
+import { Guild, TextChannel, Client, Message } from 'discord.js';
+import { IChannel, IConfig } from '../../interfaces/IConfig';
 import * as ConfigMessageHelpers from './configMessageHelpers';
-import { LogService } from './log.service';
-import { autoInjectable } from 'tsyringe';
+import { LogService } from '../log.service';
+import { autoInjectable, singleton } from 'tsyringe';
+import { FileService } from '../file.service';
+import { WelcomeService } from '../welcome/welcome.service';
 const fs = require('fs');
 
-@autoInjectable()
+@singleton()
 export class ConfigurationService {
+    public configKeywords =  [
+        'configure',
+        'config'
+    ]
+    
     public config: IConfig;
-    private client: Discord.Client;
-    private guild: Discord.Guild;
+    public configExist: boolean;
+    private guild: Guild;
     private logger: LogService;
+    private fileService: FileService;
+
     private affrimFilter = (m: any) => m.content.toLowerCase().startsWith('yes') || m.content.toLowerCase().startsWith('no');
     
-    public constructor(client: Discord.Client, logger: LogService) {
-        this.client = client;
+    public constructor(logger: LogService, fileService: FileService) {
         this.logger = logger;
+        this.fileService = fileService;
         this.ensureConfigExists(false);
         this.loadConfig();
     };
 
     public loadConfig = (): void => {
-        this.config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+        this.config = JSON.parse(fs.readFileSync('./bot_files/config.json', 'utf8'));
     };
 
     public loadConfigAsync = async (): Promise<void> => {
-        await fs.readFile('./config.json', 'utf8', (error: any, data: string) => {
+        await fs.readFile('./bot_files/config.json', 'utf8', (error: any, data: string) => {
             if (error) {
                 console.log(error);
                 return;
@@ -35,11 +44,11 @@ export class ConfigurationService {
     };
 
     public updateConfig = (): void => {
-        fs.writeFileSync('./config.json', JSON.stringify(this.config, null, 2));
+        fs.writeFileSync('./bot_files/config.json', JSON.stringify(this.config, null, 2));
     };
 
-    public updateConfigAsync = (): void => {
-        fs.writeFile('./config.json', JSON.stringify(this.config, null, 2), (e: Error) => {
+    public updateConfigAsync = async (): Promise<void> => {
+        fs.writeFile('./bot_files/config.json', JSON.stringify(this.config, null, 2), (e: Error) => {
             if (e)
                 console.log("Error updating config file.");
             else {
@@ -48,10 +57,10 @@ export class ConfigurationService {
         });
     };
 
-    private deleteConfigChannelWithTimeout = (configChannel: Discord.TextChannel, timeout: number) => {
+    private deleteConfigChannelWithTimeout = (configChannel: TextChannel, timeout: number) => {
         setTimeout(() => {
             console.log("Checking if channel exists...");
-            const checkForConfigChannel = this.guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === configChannel.id);
+            const checkForConfigChannel = this.guild.channels.cache.find((channel: TextChannel) => channel.id === configChannel.id);
             
             if(checkForConfigChannel) {
                 console.log("Deleteing config channel.");
@@ -62,7 +71,7 @@ export class ConfigurationService {
         }, timeout);
     }
 
-    public loadGuild = async (client: Discord.Client): Promise<Discord.Guild> => {
+    public loadGuild = async (client: Client): Promise<Guild> => {
         
         if (this.config.guild_id == null) {
             const guildId = client.guilds.cache.first().id;
@@ -100,7 +109,7 @@ export class ConfigurationService {
                         deny: ['VIEW_CHANNEL']
                     }
                 ], })
-                .catch(console.error) as Discord.TextChannel;
+                .catch(console.error) as TextChannel;
 
             configChannel.send(
             `Hey, ${this.guild.roles.highest}, the SpotBot initial configuration has not set. SpotBot is ready for use but some functionality may be limited until configuration is done.
@@ -126,11 +135,15 @@ export class ConfigurationService {
                     this.deleteConfigChannelWithTimeout(configChannel, 60000);
                 });
 
-            if (allowConfig) this.beginInitialConfiguration(configChannel);
+            if (allowConfig) await this.beginInitialConfiguration(configChannel);
         };
     };
 
-    private beginInitialConfiguration = async (configChannel: Discord.TextChannel) => {
+    public returnConfiguredGeneralChannel = async (channelPurpose: string) => {
+        return this.config.channels.discord_general_channels.find(c => c.purpose == channelPurpose);
+    }
+
+    private beginInitialConfiguration = async (configChannel: TextChannel) => {
 
         await ConfigMessageHelpers.configurePkmnGoFeatures(configChannel).then((r: any) =>{
             this.config.configured_for_pkmn_go = r;
@@ -149,20 +162,20 @@ export class ConfigurationService {
                 console.log(`Creating welcome channel and saving it to config...`);
                 await this.createTextChannelFromDefaults(defaults);
                 await configChannel.send("A welcome channel has been created! Feel free organize it into a category later.");
+                await configChannel.send("Use command `;;configure welcome` later to set a custom welcome message if you would like.");
             } else if (r.includes("<#")) {
                 defaults.id = r.replace(/[^a-zA-Z0-9_-]/g,''); 
                 console.log(`Saving welcome channel to config using id: ${defaults.id}`);
-
-                const specifiedChannel = this.guild.channels.cache.find((channel: Discord.TextChannel) => channel.id === defaults.id);
-                this.assignChannelFromSpecified(defaults, specifiedChannel as Discord.TextChannel);
+                await configChannel.send("Saved! Use command `;;configure welcome` later to set a custom welcome message if you would like.");
+                const specifiedChannel = this.guild.channels.cache.find((channel: TextChannel) => channel.id === defaults.id);
+                this.assignChannelFromSpecified(defaults, specifiedChannel as TextChannel);
             } else {
                 return;
             }
 
-            this.updateConfigAsync();
+            await this.updateConfigAsync();
         });
         
-        await configChannel.send("Thank you!");
         await configChannel.send("Ending configuration for now. SpotBot will become more configurable and come with new features in the future.");
         
         this.updateConfigLastModifiedDts();
@@ -196,14 +209,16 @@ export class ConfigurationService {
         defaults.id = newChannel.id;
         defaults.custom_channel_topic = defaults.default_channel_topic;
         defaults.name = newChannel.name;
+        defaults.configured = true;
 
         return defaults;
     }
 
-    private assignChannelFromSpecified = (defaults: IChannel, specifiedChannel: Discord.TextChannel ): IChannel => {
+    private assignChannelFromSpecified = (defaults: IChannel, specifiedChannel: TextChannel ): IChannel => {
         defaults.id = specifiedChannel.id;
         defaults.custom_channel_topic = specifiedChannel.topic;
         defaults.name = specifiedChannel.name;
+        defaults.configured = true;
 
         //TODO: Get clever with overwriting defaults.everyone_role_allow using specifiedChannel.permissionsFor(this.guild.roles.everyone)
         defaults.everyone_role_allow = undefined;
@@ -212,12 +227,9 @@ export class ConfigurationService {
     }
 
     public ensureConfigExists = (forceSetup: boolean) => {
-        // TODO: make available via ADMIN command (maybe)
-
-        if (!fs.existsSync('./config.json') || forceSetup) {
-            const configTemplate = JSON.parse(fs.readFileSync('./src/files/config_template.json', 'utf8'));
-            console.log("Creating or recreating config file from template.");
-            fs.writeFileSync('./config.json', JSON.stringify(configTemplate, null, 2));
+        if (this.configExist == undefined) {
+            this.fileService.ensureTemplatedJsonFileExists('config', forceSetup);
+            this.configExist = true;
         }
     }
 

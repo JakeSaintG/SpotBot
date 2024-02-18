@@ -14,5 +14,5 @@ dist/
 npm-debug.log
 testem.log
 /typings
-config.json
+bot_files/
 server_assets/*
