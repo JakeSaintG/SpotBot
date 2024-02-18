@@ -2,11 +2,7 @@ import {Client, Guild, GuildMember, PartialGuildMember} from 'discord.js';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import {
-    AppService,
-    constructLeaveMessage,
-    constructWelcomeMessage,
-} from './app.service';
+import { AppService, constructLeaveMessage } from './app.service';
 import { LogService } from './services/log.service';
 import { FileService } from './services/file.service';
 import { ConfigurationService } from './services/configuration/configuration.service';
@@ -85,8 +81,8 @@ CLIENT.on('message', async (message) => {
                 (role) => role.name === appService.guild.roles.highest.name
             )
         ) {
-            if (messageContent === 'welcome') {
-                welcomeService.setWelcomeMessage(message);
+            if (messageContent.toLowerCase().includes('set-welcome')) {
+                welcomeService.setWelcomeMessage(message, messageContent);
             } else {
                 console.log("Configuration command not properly used");
             }
@@ -105,12 +101,12 @@ CLIENT.on('message', async (message) => {
 CLIENT.on(
     'guildMemberAdd',
     (member: GuildMember ) => {
-        // todo: remove the ability for temp members to get pinged
+        // todo: remove temp members from temp invites getting pings
         welcomeService.postWelcomeMessage(member);
     }
 );
 
-// Hotfix requested by admins..tech debt
+// Requested by admins...hard coded tech debt
 // TODO: add tests, clean up
 CLIENT.on(
     'guildMemberRemove',

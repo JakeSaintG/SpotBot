@@ -77,15 +77,26 @@ export class WelcomeService {
         /*
             pass in string to verify
             check char length
+            check for emoji that Bot may not have access to.
             misc other checks?
             return true if good
         */
     }
 
-    setWelcomeMessage = (message: Message) => {
+    setWelcomeMessage = (message: Message, messageContent: string) => {
         const prompt1 = message.channel.send("Please supply the message you would like to use when welcoming new members.");
         const prompt2 = message.channel.send("The next message entered by the command issuer will be saved as the welcome message.");
-        let prompt3: Promise<Message>;
+        
+        /*
+        TODO: 
+            - Check if message author is premium/Nitro. If so, do prompt3
+            - Add a welcome message preview and confirmation
+        
+        const prompt3 = "It looks like you may have Discord Nitro. Be mindful not to use any emoji's that SpotBot may not have access to.";
+
+        */
+
+        let prompt4: Promise<Message>;
 
         const msg_filter = (m: Message) => m.author.id === message.author.id;
 
@@ -94,29 +105,39 @@ export class WelcomeService {
                 // TODO: Validate welcome message
                 this.welcomeJson.custom_channel_welcome_message = collected.first().content;
                 this.fileService.updateWelcomeJson(this.welcomeJson);
-                prompt3 = message.channel.send("Saved welcome message! Now to clean up all these messages....");
+
+                prompt4 = message.channel.send("Saved welcome message!");
                 
-                message.channel.messages.delete(collected.first());
+                if (!messageContent.includes('no-delete')) {
+                    prompt4 = message.channel.send("Now to clean up all these messages....");
+
+                    setTimeout(() => {
+                        message.channel.messages.delete(collected.first());
+                    }, 5000);
+                }
+
             })
             .catch(() => {
-                prompt3 = message.channel.send("An error occurred. Likely a timeout.");
+                prompt4 = message.channel.send("An error occurred. Likely a timeout.");
             })
             .finally(() => {
-                setTimeout(() => {
-                    prompt1.then( m => {
-                        m.delete();
-                    })
-    
-                    prompt2.then( m => {
-                        m.delete();
-                    })
-    
-                    prompt3.then( m => {
-                        m.delete();
-                    })
-    
-                    message.delete();
-                }, 5000);
+                if (!messageContent.includes('no-delete')) {
+                    setTimeout(() => {
+                        prompt1.then( m => {
+                            m.delete();
+                        })
+        
+                        prompt2.then( m => {
+                            m.delete();
+                        })
+        
+                        prompt4.then( m => {
+                            m.delete();
+                        })
+        
+                        message.delete();
+                    }, 5000);
+                }
             });
     }
 }
