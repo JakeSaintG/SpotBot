@@ -70,6 +70,11 @@ CLIENT.on('message', async (message) => {
             return;
         }
 
+        if (appService.commandKeywords.includes(command)) {
+            appService.handleAppCommand(command, message, messageContent);
+            return;
+        }
+
         // TODO: handle this better
         if (
             configService.configKeywords.includes(command) && 

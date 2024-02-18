@@ -164,7 +164,9 @@ export class ConfigurationService {
                 await configChannel.send("A welcome channel has been created! Feel free organize it into a category later.");
                 await configChannel.send("Use command `;;configure welcome` later to set a custom welcome message if you would like.");
             } else if (r.includes("<#")) {
-                defaults.id = r.replace(/[^a-zA-Z0-9_-]/g,''); 
+                
+                //TODO: handle cases like "yes #member-welcome 2323423423423"
+                defaults.id = r.replace(/[^0-9]/g,''); 
                 console.log(`Saving welcome channel to config using id: ${defaults.id}`);
                 await configChannel.send("Saved! Use command `;;configure welcome` later to set a custom welcome message if you would like.");
                 const specifiedChannel = this.guild.channels.cache.find((channel: TextChannel) => channel.id === defaults.id);
