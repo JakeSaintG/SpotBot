@@ -22,6 +22,7 @@ export class WelcomeService {
         this.configService = configService;
         this.fileService = fileService;
         this.appService = appService;
+        this.ensureWelcomeFileExists(false);
         this.getWelcomeJson();
     }
 
@@ -97,6 +98,7 @@ export class WelcomeService {
         */
 
         let prompt4: Promise<Message>;
+        let prompt5: Promise<Message>;
 
         const msg_filter = (m: Message) => m.author.id === message.author.id;
 
@@ -109,7 +111,7 @@ export class WelcomeService {
                 prompt4 = message.channel.send("Saved welcome message!");
                 
                 if (!messageContent.includes('no-delete')) {
-                    prompt4 = message.channel.send("Now to clean up all these messages....");
+                    prompt5 = message.channel.send("Now to clean up all these messages....");
 
                     setTimeout(() => {
                         message.channel.messages.delete(collected.first());
@@ -132,6 +134,10 @@ export class WelcomeService {
                         })
         
                         prompt4.then( m => {
+                            m.delete();
+                        })
+
+                        prompt5.then( m => {
                             m.delete();
                         })
         

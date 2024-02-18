@@ -29,13 +29,9 @@ CLIENT.on('ready', async () => {
     console.log(`${CLIENT.user.username} has logged in to Discord.`);
     appService.guild = await configService.loadGuild(CLIENT); 
     
-    //FEATURE TOGGLED FOR NOW
-    if (process.env.ALLOW_BETA_FEATURES) {
-        
-        await configService.checkForInitialConfiguration();
-        await welcomeService.startUpWelcomeService();
-        await logService.ensureLogChannelExists();
-    }
+    await configService.checkForInitialConfiguration();
+    await welcomeService.startUpWelcomeService();
+    await logService.ensureLogChannelExists();
 
     if (!(process.env.NODE_ENV || 'development')) {
         logService
