@@ -1,11 +1,16 @@
 import {Guild, Message, GuildMember, PartialGuildMember } from 'discord.js'
 import { singleton } from 'tsyringe';
 import { Poll } from './appCommands/poll';
+import { LogService } from './services/log.service';
 
 @singleton()
 export class AppService {
 
-    constructor() {}
+    private logger: LogService;
+
+    constructor(logger: LogService) {
+        this.logger = logger;
+    }
 
     private _guild: Guild;
 
@@ -38,7 +43,7 @@ export class AppService {
 
     public handleAppCommand = (command: string, message: Message, messageContent: string) => {
         if (command.includes('poll')) {
-            const poll = new Poll();
+            const poll = new Poll(this.logger, this.guild);
 
             poll.startPoll(message, messageContent);
         }

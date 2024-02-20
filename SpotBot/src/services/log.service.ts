@@ -1,4 +1,4 @@
-import {TextChannel, Message, Client}from 'discord.js'
+import {TextChannel, Message, Client, Guild}from 'discord.js'
 import { autoInjectable } from 'tsyringe';
 
 //TODO: save log channel id to file as part of configuration 
@@ -12,7 +12,14 @@ export class LogService {
      */
     constructor() {
 
-        
+    }
+
+    public logToLogsChannel = (guild: Guild, logMessage: string) => {
+        // Remove hard coded 'bot-logs' and get it from config
+
+        (guild.channels.cache.get(guild.channels.cache.find(
+            (channel: TextChannel) => channel.name === 'bot-logs'
+        ).id) as TextChannel).send(logMessage);
     }
 
     private generateLogChannel = () => {
