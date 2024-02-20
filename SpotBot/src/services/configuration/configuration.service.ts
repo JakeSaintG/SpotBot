@@ -162,7 +162,7 @@ export class ConfigurationService {
                 console.log(`Creating welcome channel and saving it to config...`);
                 await this.createTextChannelFromDefaults(defaults);
                 await configChannel.send("A welcome channel has been created! Feel free organize it into a category later.");
-                await configChannel.send("Use command `;;configure welcome` later to set a custom welcome message if you would like.");
+                await configChannel.send("Use command `;;configure set-welcome` later to set a custom welcome message if you would like.");
             } else if (r.includes("<#")) {
                 
                 //TODO: handle cases like "yes #member-welcome 2323423423423"
