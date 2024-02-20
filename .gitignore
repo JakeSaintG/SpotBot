@@ -14,5 +14,5 @@ dist/
 npm-debug.log
 testem.log
 /typings
-bot_files/
+bot_files
 server_assets/*

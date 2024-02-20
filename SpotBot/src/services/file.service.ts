@@ -12,22 +12,22 @@ export class FileService {
     }
 
     public ensureTemplatedJsonFileExists = (fileName: string, forceSetup: boolean): void => {
-        this.ensureDirectoryExists('./bot_files', false);
+        this.ensureDirectoryExists('./src/bot_files', false);
 
-        if (!fs.existsSync(`./bot_files/${fileName}.json`) || forceSetup) {
+        if (!fs.existsSync(`./src/bot_files/${fileName}.json`) || forceSetup) {
             const fileTemplate = JSON.parse(fs.readFileSync(`./src/template_files/${fileName}_template.json`, 'utf8'));
             console.log(`Creating or recreating file, ${fileName}, from template.`);
-            fs.writeFileSync(`./bot_files/${fileName}.json`, JSON.stringify(fileTemplate, null, 2));
+            fs.writeFileSync(`./src/bot_files/${fileName}.json`, JSON.stringify(fileTemplate, null, 2));
         }
     }
 
     public getJsonFileContents = (fileName: string) => {
         this.ensureDirectoryExists(fileName, false);
-        return JSON.parse(fs.readFileSync(`./bot_files/${fileName}.json`, 'utf8'));
+        return JSON.parse(fs.readFileSync(`./src/bot_files/${fileName}.json`, 'utf8'));
     }
 
     public updateWelcomeJson = (welcomeJson: IWelcomes) => {
-        fs.writeFileSync(`./bot_files/welcome_message.json`, JSON.stringify(welcomeJson, null, 2));
+        fs.writeFileSync(`./src/bot_files/welcome_message.json`, JSON.stringify(welcomeJson, null, 2));
     }
 
     private ensureDirectoryExists = (path: string, forceSetup: boolean): void => {

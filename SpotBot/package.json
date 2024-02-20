@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tsc && mocha './build/tests/*/*.spec.*' --recursive --timeout 60000 --exit",
     "start": "node ./build/src/app.js",
-    "dev": "nodemon src/app.ts --ignore ./bot_files"
+    "dev": "nodemon src/app.ts --ignore ./src/bot_files"
   },
   "author": "JakeSaintG",
   "license": "ISC",

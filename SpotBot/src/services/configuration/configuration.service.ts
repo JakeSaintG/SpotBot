@@ -30,11 +30,11 @@ export class ConfigurationService {
     };
 
     public loadConfig = (): void => {
-        this.config = JSON.parse(fs.readFileSync('./bot_files/config.json', 'utf8'));
+        this.config = JSON.parse(fs.readFileSync('./src/bot_files/config.json', 'utf8'));
     };
 
     public loadConfigAsync = async (): Promise<void> => {
-        await fs.readFile('./bot_files/config.json', 'utf8', (error: any, data: string) => {
+        await fs.readFile('./src/bot_files/config.json', 'utf8', (error: any, data: string) => {
             if (error) {
                 console.log(error);
                 return;
@@ -44,11 +44,11 @@ export class ConfigurationService {
     };
 
     public updateConfig = (): void => {
-        fs.writeFileSync('./bot_files/config.json', JSON.stringify(this.config, null, 2));
+        fs.writeFileSync('./src/bot_files/config.json', JSON.stringify(this.config, null, 2));
     };
 
     public updateConfigAsync = async (): Promise<void> => {
-        fs.writeFile('./bot_files/config.json', JSON.stringify(this.config, null, 2), (e: Error) => {
+        fs.writeFile('./src/bot_files/config.json', JSON.stringify(this.config, null, 2), (e: Error) => {
             if (e)
                 console.log("Error updating config file.");
             else {
