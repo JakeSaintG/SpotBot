@@ -1,10 +1,16 @@
-import {Guild, Message, Client, GuildMember, PartialGuildMember, TextChannel} from 'discord.js'
+import {Guild, Message, GuildMember, PartialGuildMember } from 'discord.js'
 import { singleton } from 'tsyringe';
+import { Poll } from './appCommands/poll';
+import { LogService } from './services/log.service';
 
 @singleton()
 export class AppService {
 
-    constructor() {}
+    private logger: LogService;
+
+    constructor(logger: LogService) {
+        this.logger = logger;
+    }
 
     private _guild: Guild;
 
@@ -15,7 +21,11 @@ export class AppService {
         this._guild = value;
     }
 
-    extractCommand = (message: Message, commandPrefix: string) => {
+    commandKeywords =  [
+        'poll'
+    ]
+
+    public extractCommand = (message: Message, commandPrefix: string) => {
         const command = message.content
             .trim()
             .substring(commandPrefix.length)
@@ -29,6 +39,14 @@ export class AppService {
         );
 
         return [command, messageContent]
+    }
+
+    public handleAppCommand = (command: string, message: Message, messageContent: string) => {
+        if (command.includes('poll')) {
+            const poll = new Poll(this.logger, this.guild);
+
+            poll.startPoll(message, messageContent);
+        }
     }
 }
 

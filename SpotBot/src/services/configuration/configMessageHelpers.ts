@@ -32,7 +32,7 @@ export const configureWelcomeChannel = async (configChannel: TextChannel): Promi
     configChannel.send(
         `Would you like to configure a welcome channel?\r\n`+
         `SpotBot can send welcome messages to new server members using this channel.\r\n`+
-        `Note, all welcome messages start with "Hey, @USER!" and then a custom or default message.`+
+        `Note, all welcome messages start with "Hey, @USER!" and then a custom or default message.\r\n`+
         `Respond "yes" or "no" to enable SpotBot welcoming.`
     );
 
