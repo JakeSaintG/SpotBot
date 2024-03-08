@@ -127,7 +127,7 @@ CLIENT.on(
 
         logService
             .getLogChannelIdFromClient(CLIENT)
-            .send(constructLeaveMessage(member, adminRoleIdFromServer));
+            .send(constructLeaveMessage(member, adminRoleIdFromServer, appService.guild));
     }
 );
 
