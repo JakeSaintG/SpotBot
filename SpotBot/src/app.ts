@@ -1,4 +1,4 @@
-import {Client, Guild, GuildMember, PartialGuildMember} from 'discord.js';
+import { Client, Intents, GuildMember, PartialGuildMember, Role } from 'discord.js';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
@@ -12,7 +12,16 @@ import { HelpService } from './services/help/help.service';
 import { WelcomeService } from './services/welcome/welcome.service';
 
 dotenv.config();
-const CLIENT = container.resolve(Client);
+const CLIENT = new Client({
+    intents: [
+		Intents.FLAGS.GUILDS,
+		Intents.FLAGS.GUILD_MESSAGES,
+		Intents.FLAGS.MESSAGE_CONTENT,
+		Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS
+	],
+});
+
 const appService = container.resolve(AppService);
 const configService = container.resolve(ConfigurationService);
 const logService = container.resolve(LogService);
@@ -43,7 +52,7 @@ CLIENT.on('ready', async () => {
 });
 
 // LISTENING FOR COMMANDS
-CLIENT.on('message', async (message) => {
+CLIENT.on('message' /*messageCreate for djs 14*/, async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
         return;
@@ -57,7 +66,7 @@ CLIENT.on('message', async (message) => {
         if (
             command == 'message' &&
             message.member.roles.cache.some(
-                (role) => role.name === appService.guild.roles.highest.name
+                (role: Role) => role.name === appService.guild.roles.highest.name
             )
         ) {
             console.log(`${message.member.user.tag} used command: ${command}`);
@@ -79,7 +88,7 @@ CLIENT.on('message', async (message) => {
         if (
             configService.configKeywords.includes(command) && 
             message.member.roles.cache.some(
-                (role) => role.name === appService.guild.roles.highest.name
+                (role: Role) => role.name === appService.guild.roles.highest.name
             )
         ) {
             if (messageContent.toLowerCase().includes('set-welcome')) {

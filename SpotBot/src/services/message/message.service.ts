@@ -1,4 +1,4 @@
-import {Message} from 'discord.js';
+import {Message, MessageAttachment} from 'discord.js';
 import { LogService } from '../log.service';
 import { autoInjectable } from 'tsyringe';
 
@@ -27,9 +27,13 @@ export class MessageService {
         const authorId = structuredClone(message.author.id);
         message.delete();
 
-        if (messageContent.length != 0) message.channel.send(messageContent);
+        let attach: MessageAttachment[] = []
 
-        if (message.attachments.size > 0) message.attachments.forEach((a) => message.channel.send(a));
+        message.attachments.forEach(a => attach.push(a))
+
+        if (messageContent.length != 0) message.channel.send({content: messageContent, attachments: attach});
+
+        // if (message.attachments.size > 0) message.attachments.forEach((a) => message.channel.send(a));
 
         if (message.attachments.size == 0 && messageContent.length == 0) {
             this.logger
