@@ -1,4 +1,4 @@
-import { Client, Intents, GuildMember, PartialGuildMember, Role } from 'discord.js';
+import { Client, GuildMember, PartialGuildMember, Role, GatewayIntentBits } from 'discord.js';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
@@ -14,11 +14,11 @@ import { WelcomeService } from './services/welcome/welcome.service';
 dotenv.config();
 const CLIENT = new Client({
     intents: [
-		Intents.FLAGS.GUILDS,
-		Intents.FLAGS.GUILD_MESSAGES,
-		Intents.FLAGS.MESSAGE_CONTENT,
-		Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessageReactions
 	],
 });
 
@@ -52,7 +52,7 @@ CLIENT.on('ready', async () => {
 });
 
 // LISTENING FOR COMMANDS
-CLIENT.on('message' /*messageCreate for djs 14*/, async (message) => {
+CLIENT.on('messageCreate', async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
         return;
