@@ -117,7 +117,7 @@ export class ConfigurationService {
             \r\nDO NOT DELETE THIS CHANNEL MANUALLY.`
             );
             
-            await configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
+            await configChannel.awaitMessages({ filter: this.affrimFilter, max: 1, time: 300000, errors: ['time']})
                 .then((collected) => {
                     if (collected.first().content.toLowerCase().includes('yes')) {
                         configChannel.send(`Beginning configuration...`);
@@ -193,7 +193,7 @@ export class ConfigurationService {
 
     private createTextChannelFromDefaults = async (defaults: IChannel ) => {
         const newChannel = await this.guild.channels.create(defaults.default_name, {
-            type: "text",
+            type: "GUILD_TEXT",
             reason: 'Bot configuration',
             topic: defaults.default_channel_topic,
             permissionOverwrites: [
@@ -242,7 +242,7 @@ export class ConfigurationService {
 
         const spotbotCategory = await this.guild.channels.create("SpotBot", 
             {
-                type: "category", 
+                type: "GUILD_CATEGORY", 
                 permissionOverwrites: [
                     {
                         id: this.guild.roles.highest.id,
