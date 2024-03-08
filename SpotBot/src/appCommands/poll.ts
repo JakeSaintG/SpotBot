@@ -1,4 +1,4 @@
-import { Collection, Guild, Message, TextChannel } from "discord.js";
+import { Collection, Guild, Message, MessageReaction, TextChannel, User } from "discord.js";
 import { LogService } from "../services/log.service";
 
 export class Poll {
@@ -75,9 +75,9 @@ export class Poll {
                 this.botMessagesToDelete.push(m);
             });
 
-        const msg_filter = (m: Message) => m.author.id === message.author.id;
+        const msgFilter = (m: Message) => m.author.id === message.author.id;
 
-        await message.channel.awaitMessages(msg_filter, { max: 1, time: 300000, errors: ['time']})
+        await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time']})
             .then(async (collected) => {
                 this.userMessagesToDelete.push(collected);
                 
@@ -132,8 +132,8 @@ export class Poll {
                 this.botMessagesToDelete.push(m);
             });
 
-        const msg_filter = (m: Message) => m.author.id === message.author.id;
-        await message.channel.awaitMessages(msg_filter, { max: 1, time: 300000, errors: ['time']})
+        const msgFilter = (m: Message) => m.author.id === message.author.id;
+        await message.channel.awaitMessages( {filter: msgFilter, max: 1, time: 300000, errors: ['time']})
             .then(async (collected) => {
                 this.userMessagesToDelete.push(collected);
 
@@ -186,9 +186,10 @@ export class Poll {
 
                 this.botMessagesToDelete.push(m);
 
+                const filter = (reaction: MessageReaction, user: User) => user.id == message.author.id && (reaction.emoji.name == '✅' || reaction.emoji.name == '❌');
+
                 await m.awaitReactions(
-                    (reaction, user) => user.id == message.author.id && (reaction.emoji.name == '✅' || reaction.emoji.name == '❌'),
-                    { max: 1, time: 50000, errors: ['time'] }
+                    { filter, max: 1, time: 50000, errors: ['time'] }
                 )
                     .then(async (collected) => { 
                         if (collected.first().emoji.name === '✅') {
