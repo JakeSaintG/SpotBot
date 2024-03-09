@@ -7,7 +7,7 @@ import { LogService } from './services/log.service';
 export class AppService {
     private logger: LogService;
 
-    test = 't'
+    pollSetupActive = false;
 
     constructor(logger: LogService) {
         this.logger = logger;
@@ -40,7 +40,7 @@ export class AppService {
         return [command, messageContent];
     };
 
-    public handleAppCommand = (
+    public handleAppCommand = async (
         command: string,
         message: Message,
         messageContent: string
@@ -48,7 +48,11 @@ export class AppService {
         if (command.includes('poll')) {
             const poll = new Poll(this.logger, this.guild);
 
-            poll.startPoll(message, messageContent);
+            if(!this.pollSetupActive) {
+                this.pollSetupActive = true;
+                await poll.startPoll(message, messageContent)
+                    .then(() => this.pollSetupActive = false);
+            }
         }
     };
 }
