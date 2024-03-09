@@ -50,4 +50,8 @@ export class MessageService {
         (message.guild.channels.cache.find(c => c.id === msgChannelId) as TextBasedChannel)
             .send({content: messageContent, files: message.attachments.map(a => a)});
     };
+
+    private replyToMessage = () => {
+        // REPLY TO A USER'S MESSAGE 
+    }
 }
