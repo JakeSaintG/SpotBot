@@ -1,4 +1,4 @@
-import {Message, Attachment} from 'discord.js';
+import {Message, Attachment, TextBasedChannel} from 'discord.js';
 import { LogService } from '../log.service';
 import { autoInjectable } from 'tsyringe';
 
@@ -14,10 +14,7 @@ export class MessageService {
         message: Message,
         messageContent: string
     ) => {
-        // TODO: Get message TO channel up an running if the message string starts with a channel ID
-        if (true /*channel id*/) {
-            this.messageFromChannel(message, messageContent);
-        }
+        this.messageFromChannel(message, messageContent);
     };
 
     private messageFromChannel = (
@@ -26,6 +23,20 @@ export class MessageService {
     ) => {
         const authorId = structuredClone(message.author.id);
         message.delete();
+        
+        let msgChannelId: string;
+        
+        if(!messageContent.includes('<#') && !messageContent.includes('>')) {
+            msgChannelId = message.channel.id;
+        } else {
+            msgChannelId = messageContent.replace(/[^0-9]/g,''); 
+            messageContent = messageContent.substring((`<#${msgChannelId}>`).length + 1);
+
+            if (message.guild.channels.cache.find(c => c.id === msgChannelId) === undefined) {
+                message.channel.send("Unable to find a channel that matches. Please try again.");
+                return;
+            }
+        }
 
         if (message.attachments.size == 0 && messageContent.length == 0) {
             this.logger
@@ -33,12 +44,10 @@ export class MessageService {
                 .send(
                     `Hey, <@${authorId}>. The \`;;message\` command requires either a message or an attachment.`
                 );
-
             return;
         }
 
-        message.channel.send({content: messageContent, files: message.attachments.map(a => a)});
+        (message.guild.channels.cache.find(c => c.id === msgChannelId) as TextBasedChannel)
+            .send({content: messageContent, files: message.attachments.map(a => a)});
     };
-
-    messageToChannel = () => {};
 }
