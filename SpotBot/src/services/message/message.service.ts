@@ -27,8 +27,6 @@ export class MessageService {
         const authorId = structuredClone(message.author.id);
         message.delete();
 
-        
-
         if (message.attachments.size == 0 && messageContent.length == 0) {
             this.logger
                 .getLogChannelIdFromMessage(message)

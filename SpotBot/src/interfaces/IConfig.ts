@@ -1,4 +1,4 @@
-import { Permissions } from "discord.js"
+import { PermissionsBitField } from "discord.js"
 
 export interface IConfig {
     initial_configuration: boolean,
@@ -26,6 +26,6 @@ export interface IChannel {
     custom_channel_topic: string,
     slow_mode: boolean,
     roles: any,
-    everyone_role_allow: Readonly<Permissions>,
-    everyone_role_deny: Readonly<Permissions>
+    everyone_role_allow: Readonly<PermissionsBitField>,
+    everyone_role_deny: Readonly<PermissionsBitField>
 }

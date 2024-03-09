@@ -49,6 +49,10 @@ CLIENT.on('ready', async () => {
     }
 
     console.log(`${CLIENT.user.username} successfully started!`);
+    console.log(`\r\n==================NOTICE==================`);
+    console.log(`The configuration template has changed a\r\nlittle in this alpha version of SpotBot.`);
+    console.log(`If you updated recently, please consider\r\ndoing configuration again by deleting the\r\nbot-files folder in SpotBot=>src.`)
+    console.log(`==================NOTICE==================`);
 });
 
 // LISTENING FOR COMMANDS
@@ -110,7 +114,7 @@ CLIENT.on('messageCreate', async (message) => {
 
 CLIENT.on(
     'guildMemberAdd',
-    (member: GuildMember ) => {
+    (member: GuildMember) => {
         // todo: remove temp members from temp invites getting pings
         welcomeService.postWelcomeMessage(member);
     }
