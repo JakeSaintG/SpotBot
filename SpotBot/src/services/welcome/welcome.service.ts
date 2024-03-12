@@ -100,9 +100,9 @@ export class WelcomeService {
         let prompt4: Promise<Message>;
         let prompt5: Promise<Message>;
 
-        const msg_filter = (m: Message) => m.author.id === message.author.id;
+        const msgFilter = (m: Message) => m.author.id === message.author.id;
 
-        message.channel.awaitMessages(msg_filter, { max: 1, time: 300000, errors: ['time']})
+        message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time']})
             .then((collected) => {
                 // TODO: Validate welcome message
                 this.welcomeJson.custom_channel_welcome_message = collected.first().content;

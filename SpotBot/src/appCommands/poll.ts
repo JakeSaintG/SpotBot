@@ -1,4 +1,4 @@
-import { Collection, Guild, Message, TextChannel } from "discord.js";
+import { Collection, Guild, Message, MessageReaction, TextChannel, User } from "discord.js";
 import { LogService } from "../services/log.service";
 
 export class Poll {
@@ -20,7 +20,6 @@ export class Poll {
 
     public startPoll = async (message: Message, messageContent: string) => {
         if(!messageContent.includes('<#') && !messageContent.includes('>')) {
-            console.log('No additional poll command params');
             this.pollChannelId = message.channel.id;
         } else {
             this.pollChannelId = messageContent.replace(/[^0-9]/g,''); 
@@ -31,12 +30,11 @@ export class Poll {
             }
         }
 
-        await message.channel.send(`On it! I'll use <#${this.pollChannelId}> for the poll.\r\nEnter 'quit-poll' to abandon this poll at any time.`)
-            .then(m => {
-                this.botMessagesToDelete.push(m);
-            });
-
-        await message.channel.send(`For the sake of clarity, here is what a SpotBot poll will look like:\r\n⁠`)
+        await message.channel.send(
+`On it! I'll use <#${this.pollChannelId}> for the poll.
+Enter **'quit-poll'** to abandon this poll at any time.\r\n
+**Here is an exmaple of what a SpotBot poll will look like:**`
+            )
             .then(m => {
                 this.botMessagesToDelete.push(m);
             });
@@ -60,14 +58,14 @@ export class Poll {
         if (this.quit !== true) await this.verifyPoll(message);
         if (this.quit !== true) await this.postPoll(message);
         if (this.quit === true) await this.quitPoll(message);
-        await this.cleanUpPoll(message);
+        this.cleanUpPoll(message);
     }
 
     private getPollReactions = async (message: Message) => {
         //TODO: 30 emoji max
         
-        const prompt: string = '**What emoji or reactions would you like to use as responses for your poll?**\r\n\r\n'+
-        `Try to stick to server or common emoji. If you are a Discord Nitro subscriber, SpotBot may not have access to same emoji that you do.\r\n`+
+        const prompt: string = '**What emoji or reactions would you like to use as responses for your poll?**\r\n'+
+        `Stick to common or server-specific emoji. If you have Discord Nitro, know that SpotBot will not have access to emoji from other servers.\r\n`+
         `Submit emoji ALL AT ONCE, separated by spaces. Your next message to this channel will be used.`        
 
         await message.channel.send(prompt)
@@ -75,9 +73,9 @@ export class Poll {
                 this.botMessagesToDelete.push(m);
             });
 
-        const msg_filter = (m: Message) => m.author.id === message.author.id;
+        const msgFilter = (m: Message) => m.author.id === message.author.id;
 
-        await message.channel.awaitMessages(msg_filter, { max: 1, time: 300000, errors: ['time']})
+        await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time']})
             .then(async (collected) => {
                 this.userMessagesToDelete.push(collected);
                 
@@ -89,7 +87,7 @@ export class Poll {
                 this.pollReactions = collected.first().content.split(' ');
                 let failedReaction = false;
 
-                await message.channel.send(`Awesome! Testing them by reacting to this message...`)
+                await message.channel.send(`Testing submitted emoji by reacting to this message...`)
                     .then(async (m) => {
                         for await (const reaction of this.pollReactions) {
                             if (!failedReaction) {
@@ -123,7 +121,7 @@ export class Poll {
     }
 
     private getPollContent = async (message: Message) => {
-        const pollContentPrompt = `Almost done! What you would like the poll to say? Your next message will be used.\r\n\r\n` +
+        const pollContentPrompt = `⁠\r\n**What you would like the poll to say? Your next message will be used.**\r\n` +
         `**Don't forget the "reaction" = "reponse" explanation!\r\n**` +
         `Ex: \r\n🟡 = Pikachu`;
         
@@ -132,8 +130,8 @@ export class Poll {
                 this.botMessagesToDelete.push(m);
             });
 
-        const msg_filter = (m: Message) => m.author.id === message.author.id;
-        await message.channel.awaitMessages(msg_filter, { max: 1, time: 300000, errors: ['time']})
+        const msgFilter = (m: Message) => m.author.id === message.author.id;
+        await message.channel.awaitMessages( {filter: msgFilter, max: 1, time: 300000, errors: ['time']})
             .then(async (collected) => {
                 this.userMessagesToDelete.push(collected);
 
@@ -143,9 +141,6 @@ export class Poll {
                 };
                 
                 this.pollContent = collected.first().content;
-
-                // TODO: Validate poll?
-
             })
             .catch(() => {
                 console.log('Poll content collection error error occurred.');
@@ -156,7 +151,7 @@ export class Poll {
     }
 
     private verifyPoll = async (message: Message) => {
-        await message.channel.send(`Generating poll preview...\r\n\r\n⁠`)
+        await message.channel.send(`Generating poll preview...\r\n⁠`)
             .then(m => {
                 this.botMessagesToDelete.push(m);
             })
@@ -186,9 +181,10 @@ export class Poll {
 
                 this.botMessagesToDelete.push(m);
 
+                const filter = (reaction: MessageReaction, user: User) => user.id == message.author.id && (reaction.emoji.name == '✅' || reaction.emoji.name == '❌');
+
                 await m.awaitReactions(
-                    (reaction, user) => user.id == message.author.id && (reaction.emoji.name == '✅' || reaction.emoji.name == '❌'),
-                    { max: 1, time: 50000, errors: ['time'] }
+                    { filter, max: 1, time: 50000, errors: ['time'] }
                 )
                     .then(async (collected) => { 
                         if (collected.first().emoji.name === '✅') {
@@ -225,11 +221,6 @@ export class Poll {
                             await message.channel.send('An expected error occured. I deleted the half-made poll. My apologies.');
                         });
                 }
-            });
-        
-        await message.channel.send("Posted!")
-            .then(m => {
-                this.botMessagesToDelete.push(m);
             });
     }
 

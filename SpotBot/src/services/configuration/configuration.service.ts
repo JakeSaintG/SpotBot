@@ -1,4 +1,4 @@
-import { Guild, TextChannel, Client, Message } from 'discord.js';
+import { Guild, TextChannel, Client, Message, ChannelType } from 'discord.js';
 import { IChannel, IConfig } from '../../interfaces/IConfig';
 import * as ConfigMessageHelpers from './configMessageHelpers';
 import { LogService } from '../log.service';
@@ -97,16 +97,18 @@ export class ConfigurationService {
 
             //await this.generateSpotBotCategory();
 
-            const configChannel = await this.guild.channels.create(configChannelNameString, { 
+            const configChannel = await this.guild.channels.create({ 
+                name: configChannelNameString,
+                type: ChannelType.GuildText,
                 reason: 'For bot configuration',   
                 permissionOverwrites: [
                     {
                         id: this.guild.roles.highest,
-                        allow: ['VIEW_CHANNEL']
+                        allow: ['ViewChannel']
                     },
                     {
                         id: this.guild.roles.everyone,
-                        deny: ['VIEW_CHANNEL']
+                        deny: ['ViewChannel']
                     }
                 ], })
                 .catch(console.error) as TextChannel;
@@ -117,7 +119,7 @@ export class ConfigurationService {
             \r\nDO NOT DELETE THIS CHANNEL MANUALLY.`
             );
             
-            await configChannel.awaitMessages(this.affrimFilter, { max: 1, time: 300000, errors: ['time']})
+            await configChannel.awaitMessages({ filter: this.affrimFilter, max: 1, time: 300000, errors: ['time']})
                 .then((collected) => {
                     if (collected.first().content.toLowerCase().includes('yes')) {
                         configChannel.send(`Beginning configuration...`);
@@ -192,8 +194,9 @@ export class ConfigurationService {
     }
 
     private createTextChannelFromDefaults = async (defaults: IChannel ) => {
-        const newChannel = await this.guild.channels.create(defaults.default_name, {
-            type: "text",
+        const newChannel = await this.guild.channels.create({
+            name: defaults.default_name,
+            type: ChannelType.GuildText,
             reason: 'Bot configuration',
             topic: defaults.default_channel_topic,
             permissionOverwrites: [
@@ -223,8 +226,8 @@ export class ConfigurationService {
         defaults.configured = true;
 
         //TODO: Get clever with overwriting defaults.everyone_role_allow using specifiedChannel.permissionsFor(this.guild.roles.everyone)
-        defaults.everyone_role_allow = undefined;
-        defaults.everyone_role_deny = undefined;
+        defaults.everyone_role_allow = specifiedChannel.permissionsFor(this.guild.roles.everyone);
+        defaults.everyone_role_deny = specifiedChannel.permissionsFor(this.guild.roles.everyone);
         return defaults;
     }
 
@@ -240,17 +243,18 @@ export class ConfigurationService {
             return;
         }
 
-        const spotbotCategory = await this.guild.channels.create("SpotBot", 
+        const spotbotCategory = await this.guild.channels.create( 
             {
-                type: "category", 
+                name: "SpotBot",
+                type: ChannelType.GuildCategory, 
                 permissionOverwrites: [
                     {
                         id: this.guild.roles.highest.id,
-                        allow: ['VIEW_CHANNEL']
+                        // allow: ['VIEW_CHANNEL']
                     },
                     {
                         id: this.guild.roles.everyone.id,
-                        deny: ['VIEW_CHANNEL']
+                        // deny: ['VIEW_CHANNEL']
                     }
                 ]
             });

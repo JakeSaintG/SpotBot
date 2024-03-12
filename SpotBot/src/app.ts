@@ -1,4 +1,4 @@
-import {Client, Guild, GuildMember, PartialGuildMember} from 'discord.js';
+import { Client, GuildMember, PartialGuildMember, Role, GatewayIntentBits } from 'discord.js';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
@@ -12,7 +12,16 @@ import { HelpService } from './services/help/help.service';
 import { WelcomeService } from './services/welcome/welcome.service';
 
 dotenv.config();
-const CLIENT = container.resolve(Client);
+const CLIENT = new Client({
+    intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessageReactions
+	],
+});
+
 const appService = container.resolve(AppService);
 const configService = container.resolve(ConfigurationService);
 const logService = container.resolve(LogService);
@@ -40,10 +49,14 @@ CLIENT.on('ready', async () => {
     }
 
     console.log(`${CLIENT.user.username} successfully started!`);
+    console.log(`\r\n==================NOTICE==================`);
+    console.log(`The configuration template has changed a\r\nlittle in this alpha version of SpotBot.`);
+    console.log(`If you updated recently, please consider\r\ndoing configuration again by deleting the\r\nbot-files folder in SpotBot=>src.`)
+    console.log(`==================NOTICE==================`);
 });
 
 // LISTENING FOR COMMANDS
-CLIENT.on('message', async (message) => {
+CLIENT.on('messageCreate', async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
         return;
@@ -57,7 +70,7 @@ CLIENT.on('message', async (message) => {
         if (
             command == 'message' &&
             message.member.roles.cache.some(
-                (role) => role.name === appService.guild.roles.highest.name
+                (role: Role) => role.name === appService.guild.roles.highest.name
             )
         ) {
             console.log(`${message.member.user.tag} used command: ${command}`);
@@ -79,7 +92,7 @@ CLIENT.on('message', async (message) => {
         if (
             configService.configKeywords.includes(command) && 
             message.member.roles.cache.some(
-                (role) => role.name === appService.guild.roles.highest.name
+                (role: Role) => role.name === appService.guild.roles.highest.name
             )
         ) {
             if (messageContent.toLowerCase().includes('set-welcome')) {
@@ -101,7 +114,7 @@ CLIENT.on('message', async (message) => {
 
 CLIENT.on(
     'guildMemberAdd',
-    (member: GuildMember ) => {
+    (member: GuildMember) => {
         // todo: remove temp members from temp invites getting pings
         welcomeService.postWelcomeMessage(member);
     }
@@ -118,7 +131,7 @@ CLIENT.on(
 
         logService
             .getLogChannelIdFromClient(CLIENT)
-            .send(constructLeaveMessage(member, adminRoleIdFromServer));
+            .send(constructLeaveMessage(member, adminRoleIdFromServer, appService.guild));
     }
 );
 

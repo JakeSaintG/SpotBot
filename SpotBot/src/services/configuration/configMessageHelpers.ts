@@ -8,7 +8,7 @@ export const configurePkmnGoFeatures = async (configChannel: TextChannel): Promi
     let goFeaturesEnabled = false;
     
     configChannel.send("SpotBot is a general-use Discord bot by default but has Pokémon GO-specific functionality.\r\nWould you like to configure it for use with Pokémon GO?")
-    await configChannel.awaitMessages(affrimFilter, { max: 1, time: 300000, errors: ['time']})
+    await configChannel.awaitMessages({ filter: affrimFilter, max: 1, time: 300000, errors: ['time']})
         .then((collected) => {
             if (collected.first().content.toLocaleLowerCase().includes('yes')) {
                 configChannel.send("Sounds good! I will show Pokémon GO configurations as well.");
@@ -36,7 +36,7 @@ export const configureWelcomeChannel = async (configChannel: TextChannel): Promi
         `Respond "yes" or "no" to enable SpotBot welcoming.`
     );
 
-    await configChannel.awaitMessages(affrimFilter, { max: 1, time: 300000, errors: ['time']})
+    await configChannel.awaitMessages({ filter: affrimFilter, max: 1, time: 300000, errors: ['time']})
         .then((collected) => {
             if (collected.first().content.toLowerCase().includes('no')) {
                 configChannel.send(`Skipping welcome channel setup.`);
@@ -55,7 +55,7 @@ export const configureWelcomeChannel = async (configChannel: TextChannel): Promi
             `To link an existing channel, answer "yes" and tag the channel after. Ex: "yes #member-welcome"`
         );
         
-        await configChannel.awaitMessages(affrimFilter, { max: 1, time: 300000, errors: ['time']})
+        await configChannel.awaitMessages({ filter: affrimFilter, max: 1, time: 300000, errors: ['time']})
         .then((collected) => {
             if (collected.first().content.toLowerCase().includes('no')) {
                 // Create one

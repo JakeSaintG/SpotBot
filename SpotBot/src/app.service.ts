@@ -1,12 +1,13 @@
-import {Guild, Message, GuildMember, PartialGuildMember } from 'discord.js'
+import { Guild, Message, GuildMember, PartialGuildMember } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { Poll } from './appCommands/poll';
 import { LogService } from './services/log.service';
 
 @singleton()
 export class AppService {
-
     private logger: LogService;
+
+    pollSetupActive = false;
 
     constructor(logger: LogService) {
         this.logger = logger;
@@ -21,9 +22,7 @@ export class AppService {
         this._guild = value;
     }
 
-    commandKeywords =  [
-        'poll'
-    ]
+    commandKeywords = ['poll'];
 
     public extractCommand = (message: Message, commandPrefix: string) => {
         const command = message.content
@@ -38,43 +37,45 @@ export class AppService {
                 1
         );
 
-        return [command, messageContent]
-    }
+        return [command, messageContent];
+    };
 
-    public handleAppCommand = (command: string, message: Message, messageContent: string) => {
+    public handleAppCommand = async (
+        command: string,
+        message: Message,
+        messageContent: string
+    ) => {
         if (command.includes('poll')) {
             const poll = new Poll(this.logger, this.guild);
 
-            poll.startPoll(message, messageContent);
+            if(!this.pollSetupActive) {
+                this.pollSetupActive = true;
+                await poll.startPoll(message, messageContent)
+                    .then(() => this.pollSetupActive = false);
+            }
         }
-    }
+    };
 }
-
-
 
 export const constructLeaveMessage = (
     member: GuildMember | PartialGuildMember,
-    adminRoleId: string
+    adminRoleId: string,
+    guild: Guild
 ): string => {
-    let nickname = ''
-    let lastMessage = ''
-    let roles = ''
+    let nickname = '';
+    let lastMessage = '';
+    let roles = '';
+    const joinTime = `- Member since: ${member.joinedAt.toLocaleString()}\r`;
 
     if (member.nickname !== null) {
-        nickname = `Their server nickname at the time of leaving was: ${member.nickname} \r`
+        nickname = `- Their server nickname at the time of leaving was: ${member.nickname} \r`;
     }
 
-    if (member.lastMessage !== null) {
-        lastMessage = `Last message date: ${new Date(
-            member.lastMessage.createdTimestamp
-        ).toLocaleDateString()} in <#${member.lastMessage.channel.id}> \r`
-    }
-
-    roles = `Their roles: ${member.roles.cache
+    roles = `- Their roles: ${member.roles.cache
         .map((r) => `${r.name.replace('@', '')}`)
-        .join(', ')}`
+        .join(', ')}`;
 
     return `Heads up, <@&${adminRoleId}>! It looks like ${member.user.tag} is no longer a member of the server. \r\r
 Details: \r
-${lastMessage}${nickname}${roles}`
-}
+${joinTime}${nickname}${roles}`;
+};
