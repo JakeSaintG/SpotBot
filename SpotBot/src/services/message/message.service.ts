@@ -10,11 +10,15 @@ export class MessageService {
         this.logger = logService;
     }
 
-    handleMessageCommand = (
+    public handleMessageCommand = (
         message: Message,
         messageContent: string
     ) => {
-        this.messageFromChannel(message, messageContent);
+        if (message.reference) {
+            this.replyToMessage(message, messageContent);
+        } else {
+            this.messageFromChannel(message, messageContent);
+        }
     };
 
     private messageFromChannel = (
@@ -51,7 +55,24 @@ export class MessageService {
             .send({content: messageContent, files: message.attachments.map(a => a)});
     };
 
-    private replyToMessage = () => {
-        // REPLY TO A USER'S MESSAGE 
+    private replyToMessage = (       
+        message: Message,
+        messageContent: string
+    ) => {
+        const authorId = structuredClone(message.author.id);
+        message.delete();
+
+        if (message.attachments.size == 0 && messageContent.length == 0) {
+            this.logger
+                .getLogChannelIdFromMessage(message)
+                .send(
+                    `Hey, <@${authorId}>. The \`;;message\` command requires either a message or an attachment.`
+                );
+            return;
+        }
+
+        (message.guild.channels.cache.find(c => c.id === message.channelId) as TextBasedChannel)
+            .messages.cache.find(m => m.id == message.reference.messageId)
+            .reply({content: messageContent, files: message.attachments.map(a => a)});
     }
 }
