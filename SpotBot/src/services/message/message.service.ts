@@ -28,12 +28,11 @@ export class MessageService {
         const authorId = structuredClone(message.author.id);
         message.delete();
         
-        let msgChannelId: string;
-        
-        if(!messageContent.includes('<#') && !messageContent.includes('>')) {
-            msgChannelId = message.channel.id;
-        } else {
-            msgChannelId = messageContent.replace(/[^0-9]/g,''); 
+        let msgChannelId = message.channel.id;
+        let potentialChannelArg = messageContent.substring(0, (`<#${msgChannelId}>`).length)
+
+        if(potentialChannelArg.includes('<#') && potentialChannelArg.includes('>')) {
+            msgChannelId = potentialChannelArg.replace(/[^0-9]/g,''); 
             messageContent = messageContent.substring((`<#${msgChannelId}>`).length + 1);
 
             if (message.guild.channels.cache.find(c => c.id === msgChannelId) === undefined) {
