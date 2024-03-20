@@ -1,9 +1,18 @@
-import { Guild, Message, GuildMember, PartialGuildMember, REST, Client } from 'discord.js';
+import { Guild, Message, GuildMember, PartialGuildMember, REST, Client, Interaction } from 'discord.js';
 import { Routes } from "discord-api-types/v9";
 import { singleton } from 'tsyringe';
 import { Poll } from './appCommands/poll';
 import { LogService } from './services/log.service';
 import commandsData from "./appCommands";
+import {
+    PingCommand,
+    ServerCommand
+} from './appCommands';
+
+const commandsMap: Record<string, any> = {
+    ping: PingCommand,
+    server: ServerCommand,
+}
 
 @singleton()
 export class AppService {
@@ -24,6 +33,9 @@ export class AppService {
         this._guild = value;
     }
 
+    //========================================
+    //======DEPRICATION WORK IN PROGRESS======
+    //========================================
     commandKeywords = ['poll'];
 
     public extractCommand = (message: Message, commandPrefix: string) => {
@@ -57,10 +69,10 @@ export class AppService {
             }
         }
     };
+    //========================================
+    //======DEPRICATION WORK IN PROGRESS======
+    //========================================
 
-    public getCommand = (commandWord: string, commandsMap: any) => {
-        return commandsMap[commandWord]
-    }
 
     public registerCommands = async (
         client: Client,
@@ -71,25 +83,39 @@ export class AppService {
         try {
             const rest = new REST({ version: "9" }).setToken(process.env.SPOTBOT_TOKEN);
 
-            const commandData = commandsData.map((getData) => {
-                const data = getData()
-                return data.toJSON()
+            const commandsToRegister = commandsData.map((getData) => {
+                return getData().toJSON();
             });
         
             await rest.put(
                 Routes.applicationGuildCommands(client.user?.id || "missing id", guildId),
-                { body: commandData }
+                { body: commandsToRegister }
             );
     
         } catch (error) {
             if (error.rawError?.code === 50001) {
-            console.log(`Missing Access on server "${guildName}"`)
-            return
+                console.log(`Missing Access on guild ${guildId}: ${guildName}.`)
+                return
             }
-            console.log(`Register command error on ${guildId}.`)
+            console.log(`Register command error on ${guildId}: ${guildName}.`)
             console.log(error)
         }
     };
+
+    public async onInteractionCreate(interaction: Interaction) {
+        try {
+            if (!interaction.isCommand()) return;
+    
+            const Command = commandsMap[interaction.commandName];
+    
+            if (!Command) return;
+
+            const CommandClass = new Command(interaction);
+            await CommandClass.execute();
+        } catch (error) {
+            // handleInteractionError(error, interaction)
+        }
+    }
 }
 
 export const constructLeaveMessage = (

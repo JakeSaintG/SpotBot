@@ -1,5 +1,5 @@
-import { Client, GuildMember, PartialGuildMember, Role, GatewayIntentBits } from 'discord.js';
-import * as dotenv from 'dotenv';
+import { Client, GuildMember, PartialGuildMember, Role, GatewayIntentBits, Events } from 'discord.js';
+require('dotenv').config()
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { AppService, constructLeaveMessage } from './app.service';
@@ -11,7 +11,9 @@ import { PingService } from './services/ping/ping.service';
 import { HelpService } from './services/help/help.service';
 import { WelcomeService } from './services/welcome/welcome.service';
 
-dotenv.config();
+
+
+
 const CLIENT = new Client({
     intents: [
 		GatewayIntentBits.Guilds,
@@ -22,6 +24,10 @@ const CLIENT = new Client({
 	],
 });
 
+
+
+
+
 const appService = container.resolve(AppService);
 const configService = container.resolve(ConfigurationService);
 const logService = container.resolve(LogService);
@@ -30,6 +36,8 @@ const messageService = container.resolve(MessageService);
 const pingService = container.resolve(PingService);
 const welcomeService = container.resolve(WelcomeService);
 const fileService = container.resolve(FileService);
+
+
 
 const COMMAND_PREFIX: string = ';;';
 
@@ -48,15 +56,13 @@ CLIENT.on('ready', async () => {
             .send(`${CLIENT.user.username} has logged in!`);
     }
 
+    appService.registerCommands(CLIENT, appService.guild.id, appService.guild.name);
+
     console.log(`${CLIENT.user.username} successfully started!`);
-    console.log(`\r\n==================NOTICE==================`);
-    console.log(`The configuration template has changed a\r\nlittle in this alpha version of SpotBot.`);
-    console.log(`If you updated recently, please consider\r\ndoing configuration again by deleting the\r\nbot-files folder in SpotBot=>src.`)
-    console.log(`==================NOTICE==================`);
 });
 
 // LISTENING FOR COMMANDS
-CLIENT.on('messageCreate', async (message) => {
+CLIENT.on(Events.MessageCreate, async (message) => {
     //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
         return;
@@ -134,5 +140,9 @@ CLIENT.on(
             .send(constructLeaveMessage(member, adminRoleIdFromServer, appService.guild));
     }
 );
+
+CLIENT.on(Events.InteractionCreate, interaction => {
+    appService.onInteractionCreate(interaction);
+});
 
 CLIENT.login(process.env.SPOTBOT_TOKEN);
