@@ -1,7 +1,9 @@
-import { Guild, Message, GuildMember, PartialGuildMember } from 'discord.js';
+import { Guild, Message, GuildMember, PartialGuildMember, REST, Client } from 'discord.js';
+import { Routes } from "discord-api-types/v9";
 import { singleton } from 'tsyringe';
 import { Poll } from './appCommands/poll';
 import { LogService } from './services/log.service';
+import commandsData from "./appCommands";
 
 @singleton()
 export class AppService {
@@ -53,6 +55,39 @@ export class AppService {
                 await poll.startPoll(message, messageContent)
                     .then(() => this.pollSetupActive = false);
             }
+        }
+    };
+
+    public getCommand = (commandWord: string, commandsMap: any) => {
+        return commandsMap[commandWord]
+    }
+
+    public registerCommands = async (
+        client: Client,
+        guildId: string,
+        guildName: string
+    ) => {
+        
+        try {
+            const rest = new REST({ version: "9" }).setToken(process.env.SPOTBOT_TOKEN);
+
+            const commandData = commandsData.map((getData) => {
+                const data = getData()
+                return data.toJSON()
+            });
+        
+            await rest.put(
+                Routes.applicationGuildCommands(client.user?.id || "missing id", guildId),
+                { body: commandData }
+            );
+    
+        } catch (error) {
+            if (error.rawError?.code === 50001) {
+            console.log(`Missing Access on server "${guildName}"`)
+            return
+            }
+            console.log(`Register command error on ${guildId}.`)
+            console.log(error)
         }
     };
 }
