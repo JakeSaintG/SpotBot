@@ -6,12 +6,14 @@ import { LogService } from './services/log.service';
 import commandsData from "./appCommands";
 import {
     PingCommand,
-    ServerCommand
+    ServerCommand,
+    SetWelcomeCommand
 } from './appCommands';
 
 const commandsMap: Record<string, any> = {
     ping: PingCommand,
     server: ServerCommand,
+    set_welcome: SetWelcomeCommand
 }
 
 @singleton()
@@ -105,11 +107,11 @@ export class AppService {
     public async onInteractionCreate(interaction: Interaction) {
         try {
             if (!interaction.isCommand()) return;
-    
+
             const Command = commandsMap[interaction.commandName];
     
             if (!Command) return;
-
+            
             const CommandClass = new Command(interaction);
             await CommandClass.execute();
         } catch (error) {

@@ -7,12 +7,8 @@ import { LogService } from './services/log.service';
 import { FileService } from './services/file.service';
 import { ConfigurationService } from './services/configuration/configuration.service';
 import { MessageService } from './services/message/message.service';
-import { PingService } from './services/ping/ping.service';
 import { HelpService } from './services/help/help.service';
 import { WelcomeService } from './services/welcome/welcome.service';
-
-
-
 
 const CLIENT = new Client({
     intents: [
@@ -24,20 +20,13 @@ const CLIENT = new Client({
 	],
 });
 
-
-
-
-
 const appService = container.resolve(AppService);
 const configService = container.resolve(ConfigurationService);
 const logService = container.resolve(LogService);
 const helpService = container.resolve(HelpService);
 const messageService = container.resolve(MessageService);
-const pingService = container.resolve(PingService);
 const welcomeService = container.resolve(WelcomeService);
 const fileService = container.resolve(FileService);
-
-
 
 const COMMAND_PREFIX: string = ';;';
 
@@ -81,11 +70,6 @@ CLIENT.on(Events.MessageCreate, async (message) => {
         ) {
             console.log(`${message.member.user.tag} used command: ${command}`);
             messageService.handleMessageCommand(message, messageContent );
-            return;
-        }
-
-        if (pingService.pingKeywords.includes(command)) {
-            pingService.handlePing(command, message, messageContent);
             return;
         }
 
