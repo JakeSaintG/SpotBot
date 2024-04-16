@@ -1,12 +1,11 @@
-import { Interaction, SlashCommandBuilder } from 'discord.js';
+import { Interaction } from 'discord.js';
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 export const getData = () => {
     const builder = new SlashCommandBuilder();
-    builder
+    return builder
         .setName('ping')
         .setDescription('Replies with current online status of SpotBot.');
-
-    return builder;
 };
 
 export default class PingCommand {

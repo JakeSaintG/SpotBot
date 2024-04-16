@@ -2,11 +2,9 @@ import { Interaction, SlashCommandBuilder } from 'discord.js';
 
 export const getData = () => {
     const builder = new SlashCommandBuilder();
-    builder
+    return builder
         .setName('server')
         .setDescription('Provides information about the server.');
-
-    return builder;
 };
 
 export default class ServerCommand {
