@@ -5,7 +5,7 @@ import { IChannel } from '../../interfaces/IConfig';
 import { FileService } from '../file.service';
 import { AppService } from '../../app.service';
 import { IWelcomes } from '../../interfaces/IWelcomes';
-import { GuildMember, Message, TextChannel } from 'discord.js';
+import { GuildMember, GuildTextBasedChannel, Message, TextChannel, User } from 'discord.js';
 
 @singleton()
 export class WelcomeService {
@@ -85,18 +85,9 @@ export class WelcomeService {
     }
 
     setWelcomeMessage = (message: Message, messageContent: string) => {
+
         const prompt1 = message.channel.send("Please supply the message you would like to use when welcoming new members.");
         const prompt2 = message.channel.send("The next message entered by the command issuer will be saved as the welcome message.");
-        
-        /*
-        TODO: 
-            - Check if message author is premium/Nitro. If so, do prompt3
-            - Add a welcome message preview and confirmation
-        
-        const prompt3 = "It looks like you may have Discord Nitro. Be mindful not to use any emoji's that SpotBot may not have access to.";
-
-        */
-
         let prompt4: Promise<Message>;
         let prompt5: Promise<Message>;
 
@@ -144,6 +135,64 @@ export class WelcomeService {
                         message.delete();
                     }, 5000);
                 }
+            });
+    }
+
+    test = async () => {
+        console.log('testttttt')
+    }
+
+    public setWelcomeMessageV2 = async (channel: GuildTextBasedChannel, author: User, skipPrompt: boolean = false) => {
+        console.log('here')
+        
+        if (skipPrompt) {
+            console.log("Skipping prompt...");
+            return;
+        }
+        
+        console.log('prompting')
+
+        const prompt1 = channel.send("Please supply the message you would like to use when welcoming new members.");
+        const prompt2 = channel.send("The next message entered by the command issuer will be saved as the welcome message.");
+        let prompt4: Promise<Message>;
+        let prompt5: Promise<Message>;
+
+        const msgFilter = (m: Message) => m.author.id === author.id;
+
+        channel.awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time']})
+            .then((collected) => {
+                // TODO: Validate welcome message
+                this.welcomeJson.custom_channel_welcome_message = collected.first().content;
+                this.fileService.updateWelcomeJson(this.welcomeJson);
+
+                prompt4 = channel.send("Saved welcome message!");
+                
+            })
+            .catch(() => {
+                prompt4 = channel.send("An error occurred. Likely a timeout.");
+            })
+            .finally(() => {
+                // if (!messageContent.includes('no-delete')) {
+                //     setTimeout(() => {
+                //         prompt1.then( m => {
+                //             m.delete();
+                //         })
+        
+                //         prompt2.then( m => {
+                //             m.delete();
+                //         })
+        
+                //         prompt4.then( m => {
+                //             m.delete();
+                //         })
+
+                //         prompt5.then( m => {
+                //             m.delete();
+                //         })
+        
+                //         message.delete();
+                //     }, 5000);
+                // }
             });
     }
 }
