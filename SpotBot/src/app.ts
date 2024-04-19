@@ -7,8 +7,8 @@ import { LogService } from './services/log.service';
 import { FileService } from './services/file.service';
 import { ConfigurationService } from './services/configuration/configuration.service';
 import { MessageService } from './services/message/message.service';
-import { HelpService } from './services/help/help.service';
 import { WelcomeService } from './services/welcome/welcome.service';
+import { PingCommand, ServerCommand, SetWelcomeCommand } from './appCommands';
 
 const CLIENT = new Client({
     intents: [
@@ -23,15 +23,30 @@ const CLIENT = new Client({
 const appService = container.resolve(AppService);
 const configService = container.resolve(ConfigurationService);
 const logService = container.resolve(LogService);
-const helpService = container.resolve(HelpService);
 const messageService = container.resolve(MessageService);
 const welcomeService = container.resolve(WelcomeService);
 const fileService = container.resolve(FileService);
+
+const commandsMap: Record<string, any> = {
+    ping: {
+        command: PingCommand,
+        services: {'logservice':logService}
+    },
+    server: {
+        command: ServerCommand,
+        services: {'logservice':logService}
+    },
+    set_welcome: {
+        command: SetWelcomeCommand,
+        services: {'logservice':logService, 'fileService':fileService, welcomeService:welcomeService}
+    }
+}
 
 const COMMAND_PREFIX: string = ';;';
 
 // MAIN APP ENTRY POINT.
 CLIENT.on('ready', async () => {
+    
     console.log(`${CLIENT.user.username} has logged in to Discord.`);
     appService.guild = await configService.loadGuild(CLIENT); 
     
@@ -78,26 +93,6 @@ CLIENT.on(Events.MessageCreate, async (message) => {
             return;
         }
 
-        // TODO: handle this better
-        if (
-            configService.configKeywords.includes(command) && 
-            message.member.roles.cache.some(
-                (role: Role) => role.name === appService.guild.roles.highest.name
-            )
-        ) {
-            if (messageContent.toLowerCase().includes('set-welcome')) {
-                welcomeService.setWelcomeMessage(message, messageContent);
-            } else {
-                console.log("Configuration command not properly used");
-            }
-            return;
-        }
-
-        if (helpService.helpKeywords.includes(command)) {
-            helpService.handleHelpCommand(command, message, messageContent);
-            return;
-        }
-
         console.log(`User ${message.author.tag} attempted to use an unknown command.`);
     }
 });
@@ -121,12 +116,12 @@ CLIENT.on(
 
         logService
             .getLogChannelIdFromClient(CLIENT)
-            .send(constructLeaveMessage(member, adminRoleIdFromServer, appService.guild));
+            .send(constructLeaveMessage(member, adminRoleIdFromServer));
     }
 );
 
 CLIENT.on(Events.InteractionCreate, interaction => {
-    appService.onInteractionCreate(interaction);
+    appService.onInteractionCreate(interaction, commandsMap);
 });
 
 CLIENT.login(process.env.SPOTBOT_TOKEN);

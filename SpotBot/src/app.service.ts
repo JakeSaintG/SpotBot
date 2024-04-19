@@ -4,17 +4,6 @@ import { singleton } from 'tsyringe';
 import { Poll } from './appCommands/poll';
 import { LogService } from './services/log.service';
 import commandsData from "./appCommands";
-import {
-    PingCommand,
-    ServerCommand,
-    SetWelcomeCommand
-} from './appCommands';
-
-const commandsMap: Record<string, any> = {
-    ping: PingCommand,
-    server: ServerCommand,
-    set_welcome: SetWelcomeCommand
-}
 
 @singleton()
 export class AppService {
@@ -104,15 +93,15 @@ export class AppService {
         }
     };
 
-    public async onInteractionCreate(interaction: Interaction) {
+    public async onInteractionCreate(interaction: Interaction, commandsMap: Record<string, any>) {
         try {
             if (!interaction.isCommand()) return;
 
-            const Command = commandsMap[interaction.commandName];
+            const Command = commandsMap[interaction.commandName].command;
     
             if (!Command) return;
             
-            const CommandClass = new Command(interaction);
+            const CommandClass = new Command(interaction, commandsMap[interaction.commandName].services);
             await CommandClass.execute();
         } catch (error) {
             // handleInteractionError(error, interaction)
@@ -123,10 +112,8 @@ export class AppService {
 export const constructLeaveMessage = (
     member: GuildMember | PartialGuildMember,
     adminRoleId: string,
-    guild: Guild
 ): string => {
     let nickname = '';
-    let lastMessage = '';
     let roles = '';
     const joinTime = `- Member since: ${member.joinedAt.toLocaleString()}\r`;
 
