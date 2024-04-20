@@ -1,12 +1,12 @@
 import { Interaction } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { WelcomeService } from '../services/welcome/welcome.service';
+import { channel } from 'diagnostics_channel';
 
 export const getData = () => {
     const builder = new SlashCommandBuilder();
     builder
         .setName('set_welcome')
-        .setDescription('Allows user to set server-specific welcome messages.')
+        .setDescription('Allows an admin to set server-specific welcome messages.')
         .addBooleanOption(option =>
             option
                 .setName('help')
@@ -23,16 +23,18 @@ export const getData = () => {
 
 export default class SetWelcomeCommand {
     protected interaction: Interaction;
-    private welcomeService: WelcomeService;
+    private services: Record<string, any>;
 
-    constructor(interaction: Interaction, welcomeService: WelcomeService) {
+    constructor(interaction: Interaction, services: Record<string, any>) {
         this.interaction = interaction;
-        this.welcomeService = welcomeService;
+        this.services = services;
     }
 
     public execute = async (): Promise<void> => {
         
         if (!this.interaction.isCommand()) return;
+
+        let response = 'Setting...';
 
         const simpleMessage = this.interaction.options.get('message');
 
@@ -41,13 +43,21 @@ export default class SetWelcomeCommand {
             return;
         }
 
-        if (simpleMessage ) {
-            await this.welcomeService.setWelcomeMessageV2(this.interaction.channel, this.interaction.user, true);
+        if (this.interaction.options.get('message') === null) {
+            response = `Please supply the message you would like to use when welcoming new members.\r\n`+
+            `The next message entered by the command issuer will be saved as the welcome message.`;
         }
 
         await this.interaction.reply(
-            `Welcome message set!`
+            response
         );
+        
+
+        //the any in Record<string, any> is likely causing this to not know that setWelcomeMessage is actually async and returns something...
+        // I need it to KNOW that it has a welcome service... My DI solution may not work
+        await this.services['welcomeService'].setWelcomeMessage(this.interaction.channel, this.interaction.user, simpleMessage);
+
+        await this.interaction.channel.send(`testing`);
     };
 
 
@@ -60,7 +70,11 @@ export default class SetWelcomeCommand {
         `  - Only use this option if you want a really simple welcome message.\r\n` + 
         `- To get a little :sparkles:fancier:sparkles: with your welcome message, leave the \`message\` option **BLANK**.\r\n` + 
         `  - SpotBot will then prompt you to supply a welcome message and your next message to the channel will be used.\r\n` + 
-        `  - SpotBot will only wait 5min for a response so it may be good to write it out ahead of time!\r\n\r\n` +  
+        `  - SpotBot will only wait 5min for a response so it may be good to write it out ahead of time!\r\n` + 
+        `- Important notes!\r\n` +
+        `   - SpotBot can only send messages that are less than 2000 characters.\r\n` +
+        `   - If you use server-specific emoji, make sure to update the welcome message.\r\n` +
+        `   - If you have Discord Nitro, make sure to use emoji that SpotBot has access too like general ones and server-specific ones.\r\n\r\n` + 
         `Hope this helps!` 
         
         return helpMsg;
