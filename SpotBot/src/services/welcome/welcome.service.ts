@@ -84,10 +84,6 @@ export class WelcomeService {
         */
     }
 
-    public wut = ():string => {
-        return ''
-    }
-
     public setWelcomeMessage = async (
         channel: GuildTextBasedChannel, 
         author: User, 
@@ -107,26 +103,14 @@ export class WelcomeService {
         }
 
         const msgFilter = (m: Message) => m.author.id === author.id;
-        console.log('manual message')
         
-        await channel
+        return await channel
             .awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time']})
             .then((collected) => {
-                console.log('validating')
-                if (this.validateWelcomeMessage(collected.first().content)) {
-                    console.log('validated')
-                    
-                    this.welcomeJson.custom_channel_welcome_message = collected.first().content;
-                    this.fileService.updateWelcomeJson(this.welcomeJson);
-                    
-                    console.log(`returning`)
-
-                    return 'Saved welcome message!';
-                }
-
-                console.log(`failing`)
-
-                return failedValidation;
+                if (!this.validateWelcomeMessage(collected.first().content)) return failedValidation;
+                this.welcomeJson.custom_channel_welcome_message = collected.first().content;
+                this.fileService.updateWelcomeJson(this.welcomeJson);
+                return 'Saved welcome message!';
             })
             .catch(() => {
                 return 'An error occurred. Likely a timeout.';
