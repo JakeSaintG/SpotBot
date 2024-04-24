@@ -4,6 +4,7 @@ import { singleton } from 'tsyringe';
 import { Poll } from './appCommands/poll';
 import { LogService } from './services/log.service';
 import commandsData from "./appCommands";
+import { ICommandServices } from './interfaces/ICommandServices';
 
 @singleton()
 export class AppService {
@@ -93,15 +94,15 @@ export class AppService {
         }
     };
 
-    public async onInteractionCreate(interaction: Interaction, commandsMap: Record<string, any>) {
+    public async onInteractionCreate(interaction: Interaction, commandsMap: Record<string, any>, services: ICommandServices) {
         try {
             if (!interaction.isCommand()) return;
 
-            const Command = commandsMap[interaction.commandName].command;
+            const Command = commandsMap[interaction.commandName];
     
             if (!Command) return;
             
-            const CommandClass = new Command(interaction, commandsMap[interaction.commandName].services);
+            const CommandClass = new Command(interaction, services);
             await CommandClass.execute();
         } catch (error) {
             // handleInteractionError(error, interaction)

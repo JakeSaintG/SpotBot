@@ -9,6 +9,7 @@ import { ConfigurationService } from './services/configuration/configuration.ser
 import { MessageService } from './services/message/message.service';
 import { WelcomeService } from './services/welcome/welcome.service';
 import { PingCommand, ServerCommand, SetWelcomeCommand } from './appCommands';
+import { ICommandServices } from './interfaces/ICommandServices';
 
 const CLIENT = new Client({
     intents: [
@@ -28,23 +29,20 @@ const welcomeService = container.resolve(WelcomeService);
 const fileService = container.resolve(FileService);
 
 const commandsMap: Record<string, any> = {
-    ping: {
-        command: PingCommand,
-        services: {'logservice':logService}
-    },
-    server: {
-        command: ServerCommand,
-        services: {'logservice':logService}
-    },
-    set_welcome: {
-        command: SetWelcomeCommand,
-        services: {'logservice':logService, 'fileService':fileService, welcomeService:welcomeService}
-    }
+    ping: PingCommand,
+    server: ServerCommand,
+    set_welcome: SetWelcomeCommand
+}
+
+// TODO: Stop doing Dependency injection twice...
+const commandServices: ICommandServices = {
+    logService: logService,
+    fileService: fileService,
+    welcomeService: welcomeService
 }
 
 const COMMAND_PREFIX: string = ';;';
 
-// MAIN APP ENTRY POINT.
 CLIENT.on('ready', async () => {
     
     console.log(`${CLIENT.user.username} has logged in to Discord.`);
@@ -54,7 +52,7 @@ CLIENT.on('ready', async () => {
     await welcomeService.startUpWelcomeService();
     await logService.ensureLogChannelExists();
 
-    if (!(process.env.NODE_ENV || 'development')) {
+    if (!(process.env.npm_lifecycle_event === 'dev')) {
         logService
             .getLogChannelIdFromClient(CLIENT)
             .send(`${CLIENT.user.username} has logged in!`);
@@ -98,7 +96,7 @@ CLIENT.on(Events.MessageCreate, async (message) => {
 });
 
 CLIENT.on(
-    'guildMemberAdd',
+    Events.GuildMemberAdd,
     (member: GuildMember) => {
         // todo: remove temp members from temp invites getting pings
         welcomeService.postWelcomeMessage(member);
@@ -108,8 +106,10 @@ CLIENT.on(
 // Requested by admins...hard coded tech debt
 // TODO: add tests, clean up
 CLIENT.on(
-    'guildMemberRemove',
+    Events.GuildMemberRemove,
     (member: GuildMember | PartialGuildMember) => {
+        console.log('leaving....')
+        
         const adminRoleIdFromServer = CLIENT.guilds.cache
             .get(member.guild.id)
             .roles.cache.find((r) => r.name == 'Admin').id;
@@ -121,7 +121,7 @@ CLIENT.on(
 );
 
 CLIENT.on(Events.InteractionCreate, interaction => {
-    appService.onInteractionCreate(interaction, commandsMap);
+    appService.onInteractionCreate(interaction, commandsMap, commandServices);
 });
 
 CLIENT.login(process.env.SPOTBOT_TOKEN);
