@@ -5,7 +5,7 @@ import { IChannel } from '../../interfaces/IConfig';
 import { FileService } from '../file.service';
 import { AppService } from '../../app.service';
 import { IWelcomes } from '../../interfaces/IWelcomes';
-import { GuildMember, Message, TextChannel } from 'discord.js';
+import { CacheType, CommandInteractionOption, GuildMember, GuildTextBasedChannel, Message, TextChannel, User } from 'discord.js';
 
 @singleton()
 export class WelcomeService {
@@ -32,7 +32,7 @@ export class WelcomeService {
         if (this.welcomeChannel.configured && this.checkForServerWelcomeChannel()) {
             this.ensureWelcomeFileExists(false);
         } else {
-            console.log("Welcome Channel functionality was either not configured or the server channel was removed. Skipping.");
+            console.log('Welcome Channel functionality was either not configured or the server channel was removed. Skipping.');
         }
     }
 
@@ -55,7 +55,7 @@ export class WelcomeService {
     }
 
     private getWelcomeChannelFromConfig = async () => {
-        this.welcomeChannel = await this.configService.returnConfiguredGeneralChannel("welcome_channel");
+        this.welcomeChannel = await this.configService.returnConfiguredGeneralChannel('welcome_channel');
     }
 
     public postWelcomeMessage = ( member: GuildMember  ) => {
@@ -74,76 +74,46 @@ export class WelcomeService {
     }
 
     //Char length, etc
-    private validateWelcomeMessage = () => {
+    private validateWelcomeMessage = (message: string): boolean => {
+        if (message.length < 2000 ) {
+            return true;
+        }
         /*
-            pass in string to verify
-            check char length
             check for emoji that Bot may not have access to.
             misc other checks?
-            return true if good
         */
     }
 
-    setWelcomeMessage = (message: Message, messageContent: string) => {
-        const prompt1 = message.channel.send("Please supply the message you would like to use when welcoming new members.");
-        const prompt2 = message.channel.send("The next message entered by the command issuer will be saved as the welcome message.");
+    public setWelcomeMessage = async (
+        channel: GuildTextBasedChannel, 
+        author: User, 
+        skipPrompt: CommandInteractionOption<CacheType>
+    ) : Promise<string> => {
+        const failedValidation = '**Welcome message verification failed!** '+
+        'Ensure that your welcome message is less than 2000 characters and doesn\'t contain emoji from other servers.';
         
-        /*
-        TODO: 
-            - Check if message author is premium/Nitro. If so, do prompt3
-            - Add a welcome message preview and confirmation
+        if (skipPrompt) {
+            if (this.validateWelcomeMessage(skipPrompt.value.toString())) {
+                this.welcomeJson.custom_channel_welcome_message = skipPrompt.value.toString();
+                this.fileService.updateWelcomeJson(this.welcomeJson);
+                return 'Saved welcome message!';
+            }
+
+            return failedValidation;
+        }
+
+        const msgFilter = (m: Message) => m.author.id === author.id;
         
-        const prompt3 = "It looks like you may have Discord Nitro. Be mindful not to use any emoji's that SpotBot may not have access to.";
-
-        */
-
-        let prompt4: Promise<Message>;
-        let prompt5: Promise<Message>;
-
-        const msgFilter = (m: Message) => m.author.id === message.author.id;
-
-        message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time']})
+        return await channel
+            .awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time']})
             .then((collected) => {
-                // TODO: Validate welcome message
+                if (!this.validateWelcomeMessage(collected.first().content)) return failedValidation;
                 this.welcomeJson.custom_channel_welcome_message = collected.first().content;
                 this.fileService.updateWelcomeJson(this.welcomeJson);
-
-                prompt4 = message.channel.send("Saved welcome message!");
-                
-                if (!messageContent.includes('no-delete')) {
-                    prompt5 = message.channel.send("Now to clean up all these messages....");
-
-                    setTimeout(() => {
-                        message.channel.messages.delete(collected.first());
-                    }, 5000);
-                }
-
+                return 'Saved welcome message!';
             })
             .catch(() => {
-                prompt4 = message.channel.send("An error occurred. Likely a timeout.");
+                return 'An error occurred. Likely a timeout.';
             })
-            .finally(() => {
-                if (!messageContent.includes('no-delete')) {
-                    setTimeout(() => {
-                        prompt1.then( m => {
-                            m.delete();
-                        })
-        
-                        prompt2.then( m => {
-                            m.delete();
-                        })
-        
-                        prompt4.then( m => {
-                            m.delete();
-                        })
-
-                        prompt5.then( m => {
-                            m.delete();
-                        })
-        
-                        message.delete();
-                    }, 5000);
-                }
-            });
     }
 }
