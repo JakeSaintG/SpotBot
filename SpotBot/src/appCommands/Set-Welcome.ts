@@ -1,6 +1,6 @@
 import { Interaction } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { channel } from 'diagnostics_channel';
+import { ICommandServices } from '../interfaces/ICommandServices';
 
 export const getData = () => {
     const builder = new SlashCommandBuilder();
@@ -23,9 +23,9 @@ export const getData = () => {
 
 export default class SetWelcomeCommand {
     protected interaction: Interaction;
-    private services: Record<string, any>;
+    private services: ICommandServices;
 
-    constructor(interaction: Interaction, services: Record<string, any>) {
+    constructor(interaction: Interaction, services: ICommandServices) {
         this.interaction = interaction;
         this.services = services;
     }
@@ -52,12 +52,9 @@ export default class SetWelcomeCommand {
             response
         );
         
+        let setResponse = await this.services.welcomeService.setWelcomeMessage(this.interaction.channel, this.interaction.user, simpleMessage);
 
-        //the any in Record<string, any> is likely causing this to not know that setWelcomeMessage is actually async and returns something...
-        // I need it to KNOW that it has a welcome service... My DI solution may not work
-        await this.services['welcomeService'].setWelcomeMessage(this.interaction.channel, this.interaction.user, simpleMessage);
-
-        await this.interaction.channel.send(`testing`);
+        await this.interaction.channel.send(setResponse);
     };
 
 
