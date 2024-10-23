@@ -1,4 +1,4 @@
-import {Message, Attachment, TextBasedChannel} from 'discord.js';
+import {Message, Attachment, TextBasedChannel, TextChannel} from 'discord.js';
 import { LogService } from '../log.service';
 import { autoInjectable } from 'tsyringe';
 
@@ -25,6 +25,8 @@ export class MessageService {
         message: Message,
         messageContent: string
     ) => {
+        const channel: TextChannel = message.channel as TextChannel;
+        
         const authorId = structuredClone(message.author.id);
         message.delete();
         
@@ -36,7 +38,7 @@ export class MessageService {
             messageContent = messageContent.substring((`<#${msgChannelId}>`).length + 1);
 
             if (message.guild.channels.cache.find(c => c.id === msgChannelId) === undefined) {
-                message.channel.send("Unable to find a channel that matches. Please try again.");
+                channel.send("Unable to find a channel that matches. Please try again.");
                 return;
             }
         }
@@ -50,7 +52,7 @@ export class MessageService {
             return;
         }
 
-        (message.guild.channels.cache.find(c => c.id === msgChannelId) as TextBasedChannel)
+        (message.guild.channels.cache.find(c => c.id === msgChannelId) as TextChannel)
             .send({content: messageContent, files: message.attachments.map(a => a)});
     };
 
