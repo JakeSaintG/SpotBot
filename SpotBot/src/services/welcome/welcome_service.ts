@@ -1,9 +1,9 @@
-import { LogService } from '../log.service'
+import { LogService } from '../log_service'
 import { singleton } from 'tsyringe'
-import { ConfigurationService } from '../configuration/configuration.service';
+import { ConfigurationService } from '../configuration/configuration_service';
 import { IChannel } from '../../interfaces/IConfig';
-import { FileService } from '../file.service';
-import { AppService } from '../../app.service';
+import { FileService } from '../file_service';
+import { AppService } from '../../app_service';
 import { IWelcomes } from '../../interfaces/IWelcomes';
 import { CacheType, CommandInteractionOption, GuildMember, GuildTextBasedChannel, Message, TextChannel, User } from 'discord.js';
 

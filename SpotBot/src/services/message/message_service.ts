@@ -1,5 +1,5 @@
 import {Message, Attachment, TextBasedChannel, TextChannel} from 'discord.js';
-import { LogService } from '../log.service';
+import { LogService } from '../log_service';
 import { autoInjectable } from 'tsyringe';
 
 @autoInjectable()

@@ -1,10 +1,10 @@
 import { Guild, TextChannel, Client, Message, ChannelType } from 'discord.js';
 import { IChannel, IConfig } from '../../interfaces/IConfig';
 import * as ConfigMessageHelpers from './configMessageHelpers';
-import { LogService } from '../log.service';
+import { LogService } from '../log_service';
 import { autoInjectable, singleton } from 'tsyringe';
-import { FileService } from '../file.service';
-import { WelcomeService } from '../welcome/welcome.service';
+import { FileService } from '../file_service';
+import { WelcomeService } from '../welcome/welcome_service';
 const fs = require('fs');
 
 @singleton()

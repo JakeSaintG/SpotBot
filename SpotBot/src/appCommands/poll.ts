@@ -1,5 +1,5 @@
 import { Collection, Guild, Message, MessageReaction, TextChannel, User } from "discord.js";
-import { LogService } from "../services/log.service";
+import { LogService } from "../services/log_service";
 
 export class Poll {
     

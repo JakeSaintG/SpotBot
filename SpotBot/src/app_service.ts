@@ -2,7 +2,7 @@ import { Guild, Message, GuildMember, PartialGuildMember, REST, Client, Interact
 import { Routes } from "discord-api-types/v9";
 import { singleton } from 'tsyringe';
 import { Poll } from './appCommands/poll';
-import { LogService } from './services/log.service';
+import { LogService } from './services/log_service';
 import commandsData from "./appCommands";
 import { ICommandServices } from './interfaces/ICommandServices';
 
