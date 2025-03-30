@@ -126,3 +126,13 @@ CLIENT.on(Events.InteractionCreate, interaction => {
 });
 
 CLIENT.login(process.env.SPOTBOT_TOKEN);
+
+process.on('SIGINT', () => {
+    // Hopefully catch a Windows server update/restart...
+   logService
+        .getLogChannelIdFromClient(CLIENT)
+        .send("Going down!");
+
+    CLIENT.off;
+});
+

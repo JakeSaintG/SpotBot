@@ -11,8 +11,6 @@ export class MessageService {
     }
 
     public handleMessageCommand = (message: Message, messageContent: string) => {
-        console.log(messageContent)
-        
         if (message.reference) {
             this.replyToMessage(message, messageContent);
         } else {
@@ -83,8 +81,6 @@ export class MessageService {
     private replyToMessage = (message: Message, messageContent: string) => {
         const authorId = structuredClone(message.author.id);
         message.delete();
-
-        console.log('replying')
 
         if (message.attachments.size == 0 && messageContent.length == 0) {
             this.logger
