@@ -1,9 +1,9 @@
 import { Guild, Message, GuildMember, PartialGuildMember, REST, Client, Interaction } from 'discord.js';
 import { Routes } from "discord-api-types/v9";
 import { singleton } from 'tsyringe';
-import { Poll } from './appCommands/poll';
+import { Poll } from './app_commands/poll';
 import { LogService } from './services/log_service';
-import commandsData from "./appCommands";
+import commandsData from "./app_commands";
 import { ICommandServices } from './interfaces/ICommandServices';
 
 @singleton()

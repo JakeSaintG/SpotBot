@@ -8,7 +8,7 @@ import { FileService } from './services/file_service';
 import { ConfigurationService } from './services/configuration/configuration_service';
 import { MessageService } from './services/message/message_service';
 import { WelcomeService } from './services/welcome/welcome_service';
-import { PingCommand, ServerCommand, SetWelcomeCommand, ReactionCommand } from './appCommands';
+import { PingCommand, ServerCommand, SetWelcomeCommand, ReactionCommand } from './app_commands';
 import { ICommandServices } from './interfaces/ICommandServices';
 
 const CLIENT = new Client({
