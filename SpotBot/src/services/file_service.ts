@@ -1,5 +1,5 @@
 import { autoInjectable } from "tsyringe";
-import { LogService } from "./log.service";
+import { LogService } from "./log_service";
 import { IWelcomes } from "../interfaces/IWelcomes";
 const fs = require('fs');;
 

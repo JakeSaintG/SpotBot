@@ -23,10 +23,12 @@ export class LogService {
     }
 
     private generateLogChannel = () => {
+        // TODO: Do this...
         // admin view only
     }
 
     public ensureLogChannelExists = () => {
+        // TODO: Do this...
         console.log("ensuring log channel exists..."); //Remove later
         
         //Run before logging to the channel
@@ -35,14 +37,14 @@ export class LogService {
     }
 
     public getLogChannelIdFromMessage = (message: Message): TextChannel => {
-        //pull from config file eventually
+        // TODO: pull from config file eventually
         return message.guild.channels.cache.get(message.guild.channels.cache.find(
             (channel: TextChannel) => channel.name === 'bot-logs'
         ).id) as TextChannel;
     };
     
     public getLogChannelIdFromClient = (client: Client): TextChannel => {
-        //pull from config file eventually
+        // TODO: pull from config file eventually
         return client.channels.cache.get(client.channels.cache.find(
             (channel: TextChannel) => channel.name === 'bot-logs'
         ).id) as TextChannel
