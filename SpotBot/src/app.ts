@@ -8,7 +8,7 @@ import { FileService } from './services/file.service';
 import { ConfigurationService } from './services/configuration/configuration.service';
 import { MessageService } from './services/message/message.service';
 import { WelcomeService } from './services/welcome/welcome.service';
-import { PingCommand, ServerCommand, SetWelcomeCommand } from './appCommands';
+import { PingCommand, ServerCommand, SetWelcomeCommand, ReactionCommand } from './appCommands';
 import { ICommandServices } from './interfaces/ICommandServices';
 
 const CLIENT = new Client({
@@ -31,7 +31,8 @@ const fileService = container.resolve(FileService);
 const commandsMap: Record<string, any> = {
     ping: PingCommand,
     server: ServerCommand,
-    set_welcome: SetWelcomeCommand
+    set_welcome: SetWelcomeCommand,
+    reaction: ReactionCommand
 }
 
 // TODO: Stop doing Dependency injection twice...
@@ -43,7 +44,7 @@ const commandServices: ICommandServices = {
 
 const COMMAND_PREFIX: string = ';;';
 
-CLIENT.on('ready', async () => {
+CLIENT.on(Events.ClientReady, async () => {
     
     console.log(`${CLIENT.user.username} has logged in to Discord.`);
     appService.guild = await configService.loadGuild(CLIENT); 
@@ -65,7 +66,7 @@ CLIENT.on('ready', async () => {
 
 // LISTENING FOR COMMANDS
 CLIENT.on(Events.MessageCreate, async (message) => {
-    //TODO!!!! SANITIZE THIS INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //TODO! SANITIZE THIS INPUT!!!!!!!!
     if (!message.content.startsWith(COMMAND_PREFIX) || message.author.bot)
         return;
 
