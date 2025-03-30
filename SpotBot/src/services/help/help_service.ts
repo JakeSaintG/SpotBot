@@ -1,4 +1,4 @@
-import {Message} from 'discord.js';
+import {Message, TextChannel} from 'discord.js';
 import { ITip } from "../../interfaces/ITip";
 
 export class HelpService {
@@ -27,6 +27,7 @@ export class HelpService {
 
     sendTip = (message: Message) => { 
         const randomTip = this.tips[Math.floor(Math.random() * this.tips.length)];
-        message.channel.send(`Tip No: ${randomTip.tipNumber}: ${randomTip.tip}.`);       
+        const respChannel = message.channel as TextChannel;
+        respChannel.send(`Tip No: ${randomTip.tipNumber}: ${randomTip.tip}.`);       
     }
 }
