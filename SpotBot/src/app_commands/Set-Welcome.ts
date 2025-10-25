@@ -35,7 +35,7 @@ export default class SetWelcomeCommand {
     }
 
     public execute = async (): Promise<void> => {
-        if (!this.interaction.isCommand()) return;
+        if (!this.interaction.isChatInputCommand()) return;
 
         let response = 'Setting...';
 
