@@ -34,7 +34,7 @@ export default class ReactionCommand {
     }
 
     public execute = async (): Promise<void> => {
-        if (!this.interaction.isCommand()) return;
+        if (!this.interaction.isChatInputCommand()) return;
 
         // TODO: maybe don't have defaults? Help isn't easy to do...
         if (this.interaction.options.get('help') && this.interaction.options.get('help').value) {
@@ -57,7 +57,7 @@ export default class ReactionCommand {
                 ephemeral: true,
             });
 
-            reactions.forEach(reaction => 
+            reactions.forEach((reaction: string) => 
                 message.react(reaction.toString())
             );
 
