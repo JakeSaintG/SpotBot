@@ -1,0 +1,137 @@
+<hc-navbar
+    appIcon="assets/appIcon.png"
+    brandIcon="assets/pageIcon.png"
+    [fixedTop]="true"
+>
+    <hc-navbar-mobile-menu>
+        <hc-list>
+            <hc-list-item routerLink="" routerLinkActive="active-link">
+                <span hcListLine>Home</span>
+            </hc-list-item>
+            <hc-list-item routerLink="" routerLinkActive="false">
+                <span hcListLine>Projects</span>
+            </hc-list-item>
+            <hc-list-item routerLink="" routerLinkActive="false">
+                <span hcListLine>Contact</span>
+            </hc-list-item>
+        </hc-list>
+        <hr />
+        <hc-list>
+            <a href="https://github.com/JakeSaintG" target="_blank">
+                <hc-list-item
+                    ><span hcListLine>View on GitHub</span></hc-list-item
+                >
+            </a>
+        </hc-list>
+    </hc-navbar-mobile-menu>
+
+    <hc-navbar-link
+        [active]="true"
+        uri="undefined"
+        linkText="Home"
+    ></hc-navbar-link>
+
+    <!-- <hc-navbar-link
+        [active]="false"
+        uri="undefined"
+        linkText="Projects"
+    ></hc-navbar-link> -->
+
+    <hc-navbar-dropdown linkText="Contact">
+        <div hcMenu>
+            <button hcMenuItem>
+                <hc-icon hcMenuIcon fontSet="fa" fontIcon="fa-book"></hc-icon>
+                <span hcMenuText>Resume (WIP)</span>
+            </button>
+            <button hcMenuItem>
+                <hc-icon hcMenuIcon fontSet="fa" fontIcon="fa-wrench"></hc-icon>
+                <span hcMenuText>Email (WIP)</span>
+            </button>
+            <button hcMenuItem>
+                <hc-icon hcMenuIcon fontSet="fa" fontIcon="fa-list"></hc-icon>
+                <span hcMenuText>LinkedIn (WIP)</span>
+            </button>
+            <button hcMenuItem>
+                <hc-icon hcMenuIcon fontSet="fa" fontIcon="fa-list"></hc-icon>
+                <span hcMenuText>Contact Form (WIP)</span>
+            </button>
+        </div>
+    </hc-navbar-dropdown>
+
+    <hc-icon
+        class="hc-navbar-icon"
+        fontSet="fa"
+        fontIcon="fa-question-circle-o"
+        [hcPop]="options"
+        tabindex="0"
+    ></hc-icon>
+
+    <a href="https://github.com/JakeSaintG" target="_blank">
+        <hc-icon
+            class="hc-navbar-icon"
+            fontSet="fa"
+            fontIcon="fa-github"
+            tabindex="0"
+        >
+        </hc-icon>
+    </a>
+</hc-navbar>
+
+<!-- <about><about> -->
+
+<hc-pop
+    #options
+    [autoCloseOnContentClick]="true"
+    [showArrow]="false"
+    horizontalAlign="end"
+>
+    <div hcMenu>
+        <a
+            hcMenuItem
+            href="https://cashmere.healthcatalyst.net/"
+            target="_blank"
+        >
+            <hc-icon hcMenuIcon fontSet="fa" fontIcon="fa-book"></hc-icon>
+            <span hcMenuText>Cashmere</span>
+        </a>
+        <a
+            hcMenuItem
+            href="https://github.com/JakeSaintG/"
+            target="_blank"
+        >
+            <hc-icon hcMenuIcon fontSet="fa" fontIcon="fa-bug"></hc-icon>
+            <span hcMenuText>Report an issue</span>
+        </a>
+        <!-- <div hcMenuItem hcDivider></div>
+        <button hcMenuItem (click)="openAboutModal()">
+            <hc-icon
+                hcMenuIcon
+                fontSet="fa"
+                fontIcon="fa-info-circle"
+            ></hc-icon>
+            <span hcMenuText>About</span>
+        </button>
+        <button hcMenuItem (click)="openNewsModal()">
+            <hc-icon hcMenuIcon fontSet="fa" fontIcon="fa-bullhorn"></hc-icon>
+            <span hcMenuText>Find out what's new</span>
+        </button> -->
+    </div>
+</hc-pop>
+
+<hc-pop
+    #user
+    [autoCloseOnContentClick]="true"
+    [showArrow]="false"
+    horizontalAlign="end"
+>
+    <div hcMenu>
+        <button hcMenuItem>
+            <hc-icon
+                hcMenuIcon
+                fontSet="hc-icons"
+                fontIcon="hci-sign-out"
+            ></hc-icon>
+            <span hcMenuText>Log out (WIP)</span>
+        </button>
+    </div>
+</hc-pop>
